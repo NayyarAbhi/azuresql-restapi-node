@@ -4,4 +4,4 @@ const QUERY = {
 }
 
 // exporting modules, to be used in the other .js files
-module.exports = {QUERY}
+module.exports = { QUERY }

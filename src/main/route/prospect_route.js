@@ -7,4 +7,4 @@ prospectRoutes.route('/')
 
 
 // exporting modules, to be used in the other .js files
-module.exports = {prospectRoutes}
+module.exports = { prospectRoutes }
