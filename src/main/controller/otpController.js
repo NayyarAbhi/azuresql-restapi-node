@@ -12,8 +12,8 @@ const getOtprecord = async (req, res) => {
         .replace('<first_name>', first_name)
         .replace('<email>', email);
 
-    if (await db.isRecordPresent(sql)) {
-        const result = await db.getRecord(sql);
+    const result = await db.getRecord(sql);
+    if (result.rowsAffected[0] !== 0) {
         const response = "Phone : " + result.recordset[0].phone;
         // logger.info(response);
         res.status(HTTP.OK.code)
@@ -40,10 +40,10 @@ const createOtprecord = async (req, res) => {
         .replace('<email>', email)
         .replace('<phone>', phone);
 
+    const result = await db.insertRecord(sql);
+    // logger.info(result);
 
-    if (await db.isRecordPresent(sql)) {
-        const result = await db.insertRecord(sql);
-        // logger.info(result);
+    if (result.rowsAffected[0] === 1) {
         res.status(HTTP.CREATED.code)
             .json({ message: `Otp Record created with email ${email} and phone number ${phone}` })
     } else {

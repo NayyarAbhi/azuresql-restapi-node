@@ -1,5 +1,5 @@
 const TABLES = {
-    PROSPECT: 'TestSchema.Intent',
+    PROSPECT: 'TestSchema.prospectdetails',
     OTP: 'TestSchema.otprecord'
 }
 
