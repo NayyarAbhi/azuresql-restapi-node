@@ -1,5 +1,5 @@
 const QUERY = {
-    SELECT: 'select * from <tableName> where first_name=<first_name> and email=<email>;',
+    SELECT: "select * from <tableName> where first_name='<first_name>' and email='<email>';",
     INSERT: "INSERT <tableName> (id, first_name,last_name, email, phone) VALUES ('<id>','<first_name>','<last_name>','<email>','<phone>');"
 }
 

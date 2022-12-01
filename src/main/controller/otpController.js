@@ -5,8 +5,8 @@ let OTP_QUERY = require('../variables/otp_sql.js').QUERY;
 
 
 const getOtprecord = async (req, res) => {
-    let first_name = req.body.first_name;
-    let email = req.body.email;
+    let first_name = req.query.first_name;
+    let email = req.query.email;
 
     sql = OTP_QUERY.SELECT
         .replace('<tableName>', TABLES.OTP)
