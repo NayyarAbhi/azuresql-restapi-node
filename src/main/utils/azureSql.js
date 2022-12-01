@@ -57,5 +57,10 @@ async function updateRecord(sql) {
   return await dbOperation(sql);
 }
 
+async function isRecordPresent(sql) {
+  return (await getRecord(sql))
+    .rowsAffected[0] !== 0 ? true : false;
+}
+
 // exporting modules, to be used in the other .js files
-module.exports = { insertRecord, getRecord, updateRecord };
+module.exports = { insertRecord, getRecord, updateRecord, isRecordPresent };
