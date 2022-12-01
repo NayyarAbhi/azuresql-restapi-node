@@ -12,4 +12,3 @@ npm install mssql
 npm install stream
 npm install swagger-jsdoc
 npm install swagger-ui-express
-npm install tedious

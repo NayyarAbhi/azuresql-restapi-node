@@ -36,15 +36,19 @@ async function updateRecord(sql) {
 Sql Operation
 */
 // let createSchemaSql = "CREATE SCHEMA TestSchema";
-let createTableSql = "CREATE TABLE TestSchema.Intent (ProspectId varchar(255), FirstTimeBuyerFlag varchar(255), TimeEstimateForBuying varchar(255), FirstTimeBuyerSchemesFlag varchar(255), ResidenceOrBuytoLet varchar(255))";
+// let createTableSql = "CREATE TABLE TestSchema.Intent (ProspectId varchar(255), FirstTimeBuyerFlag varchar(255), TimeEstimateForBuying varchar(255), FirstTimeBuyerSchemesFlag varchar(255), ResidenceOrBuytoLet varchar(255))";
 let insertSql = "INSERT INTO TestSchema.Intent (ProspectId, FirstTimeBuyerFlag, TimeEstimateForBuying, FirstTimeBuyerSchemesFlag, ResidenceOrBuytoLet) VALUES (1, 'Y', '12months', 'Y', 'Residence'), (2, 'N', '09months', 'N', 'BuyToLet'), (3, 'Y', '06months', 'N', 'Residence')"
 let readSql = "SELECT * FROM TestSchema.Intent WHERE ProspectId = 1";
 // let updateSql = "UPDATE [SalesLT].[Customer] SET FirstName = 'ABHISHEK' WHERE CustomerID = 1"
 let dropSql = "DROP TABLE TestSchema.Intent"
+let createTableSql = 'CREATE TABLE TestSchema.otprecord (id BIGINT PRIMARY KEY, first_name VARCHAR(255) NOT NULL, last_name  VARCHAR(255) DEFAULT NULL, email VARCHAR(255) NOT NULL, phone VARCHAR(255) NOT NULL, CONSTRAINT UQ_OTP_Email UNIQUE(email))'
+
 
 // createSchema(createSchemaSql)
-// createTable(createTableSql)
+createTable(createTableSql)
 // insertRecord(insertSql)
-getRecord(readSql);
+// getRecord(readSql);
 // updateRecord(updateSql);
+
+
 
