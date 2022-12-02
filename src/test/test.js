@@ -63,3 +63,19 @@ getRecord(readSql);
 
 // const updateSql = "UPDATE TestSchema.Intent SET FirstTimeBuyerFlag='N', TimeEstimateForBuying='10months', FirstTimeBuyerSchemesFlag='N', ResidenceOrBuytoLet='BuyToLet'  WHERE ProspectId=1";
 // updateRecord(updateSql);
+
+
+// {
+// 	"ProspectId": "102",
+// 	"CustomerId": "2",
+// 	"Cookie": "cookie34",
+// 	"SessionId": "sessionId2",
+// 	"OtpEmailId": "abc2@gmail.com",
+// 	"DomusCookieId": "DomusCookieId2",
+// 	"IBLogon": "IBLogon2"
+// }
+
+
+// {
+//     "message": "Customer id 2 is updated successfully"
+// }
