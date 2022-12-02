@@ -13,10 +13,10 @@ async function isRecordPresent(customerId) {
         .recordset[0].RECORD_COUNT !== 0 ? true : false;
 }
 
-// returning the prospect, if the prospect id exist in the system
+// returning the prospect, if the customer id exist in the system
 async function getProspect(req, res) {
     const customerId = req.query.customerId;
-
+    console.log(customerId);
     if (await isRecordPresent(customerId)) {
         const getQuery = PROSPECT_QUERY.SELECT
             .replace('<tableName>', TABLES.PROSPECT)
@@ -30,6 +30,32 @@ async function getProspect(req, res) {
             .json({ message: `Customer id: ${customerId}, does not exist in the system.` })
     }
 }
+
+// creating the prospect, if the customer id does not exist in the system
+async function createProspect(req,res) {
+    var customerId = req.body.customerId;
+    if (await isRecordPresent(customerId)){
+        res.status(HTTP.NOT_FOUND.code)
+            .json({ message: `Customer id: ${customerId}, already exist in the Records.` })
+    } else {
+        const newprospectid = 5
+        const insertQuery = PROSPECT_QUERY.INSERT
+            .replace('<tableName>', TABLES.PROSPECT)
+            .replace('<prospectId>', newprospectid)
+            .replace('<cookie>', req.body.Cookie)
+            .replace('<sessionId>', req.body.SessionId)
+            .replace('<otpEmailId>', req.body.OtpEmailId)
+            .replace('<domusCookieId>', req.body.DomusCookieId)
+            .replace('<iBLogon>', req.body.IBLogon)
+            .replace('<customerId>', req.body.customerId);
+        
+            console.log(insertQuery);
+        const result = await db.insertRecord(insertQuery);
+        res.status(HTTP.OK.code)
+            .json({ message: `Customer id ${customerId} is created successfully` })
+    }
+}
+
 
 // updating the prospect, if the customerId exist in the system
 async function updateProspect(req, res) {
@@ -56,4 +82,4 @@ async function updateProspect(req, res) {
 
 
 // exporting modules, to be used in the other .js files
-module.exports = { getProspect, updateProspect }
+module.exports = { getProspect, updateProspect, createProspect }
