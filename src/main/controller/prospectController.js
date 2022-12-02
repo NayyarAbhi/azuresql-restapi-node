@@ -31,7 +31,6 @@ function getUpdateFields(obj) {
 // returning the prospect, if the customer id exist in the system
 async function getProspect(req, res) {
     const customerId = req.query.customerId;
-    console.log(customerId);
     if (await isRecordPresent(customerId)) {
         const getQuery = PROSPECT_QUERY.SELECT
             .replace('<tableName>', TABLES.PROSPECT)
