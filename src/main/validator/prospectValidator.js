@@ -13,16 +13,16 @@ const updateProspectSchema = joi.object({
     IBLogon: joi.string().optional()
 });
 
-function validateGetSchema(queryParam) {
+function validateGetQueryParams(queryParam) {
     const { error, value } = getProspectSchema.validate(queryParam, { abortEarly: false });
     return error;
 }
 
-function validateUpdateSchema(reqBody) {
+function validateUpdatePayload(reqBody) {
     const { error, value } = updateProspectSchema.validate(reqBody, { abortEarly: false });
     return error;
 }
 
 
 // exporting modules, to be used in the other .js files
-module.exports = { validateGetSchema, validateUpdateSchema }
+module.exports = { validateGetQueryParams, validateUpdatePayload }

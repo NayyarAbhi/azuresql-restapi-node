@@ -31,7 +31,7 @@ function getUpdateFields(obj) {
 
 // returning the prospect, if the customer id exist in the system
 async function getProspect(req, res) {
-    if (error = validator.validateGetSchema(req.query)) {
+    if (error = validator.validateGetQueryParams(req.query)) {
         return res.status(HTTP.BAD_REQUEST.code)
             .send(error.details);
     }
@@ -78,7 +78,7 @@ async function createProspect(req, res) {
 
 // updating the prospect, if the customerId exist in the system
 async function updateProspect(req, res) {
-    if (error = validator.validateUpdateSchema(req.body)) {
+    if (error = validator.validateUpdatePayload(req.body)) {
         return res.status(HTTP.BAD_REQUEST.code)
             .send(error.details);
     }
