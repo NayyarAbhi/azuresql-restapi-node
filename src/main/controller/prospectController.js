@@ -17,15 +17,15 @@ async function isRecordPresent(customerId) {
 
 // getting fields from payload, which needs to be updated
 function getUpdateFields(obj) {
-    for (let key of PRIMARY_KEYS) { delete obj[key] }
+    for (let key of PRIMARY_KEYS) delete obj[key];
 
-    let update_fields = ''
+    let update_fields = '';
     const lastItem = Object.values(obj).pop();
     for (let [key, value] of Object.entries(obj)) {
-        update_fields += (key + "='" + value + "'")
+        update_fields += (key + "='" + value + "'");
         update_fields += (value !== lastItem) ? ',' : '';
     }
-    return update_fields
+    return update_fields;
 }
 
 // returning the prospect, if the customer id exist in the system
@@ -38,10 +38,10 @@ async function getProspect(req, res) {
 
         const result = await db.getRecord(getQuery);
         res.status(HTTP.OK.code)
-            .json(result.recordset)
+            .json(result.recordset);
     } else {
         res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `CustomerId: ${customerId}, does not exist in the system.` })
+            .json({ message: `CustomerId: ${customerId}, does not exist in the system.` });
     }
 }
 
@@ -82,10 +82,10 @@ async function updateProspect(req, res) {
 
         const result = await db.updateRecord(updateQuery);
         res.status(HTTP.OK.code)
-            .json({ message: `CustomerId ${customerId} is updated successfully` })
+            .json({ message: `CustomerId ${customerId} is updated successfully` });
     } else {
         res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `CustomerId: ${customerId}, does not exist in the system.` })
+            .json({ message: `CustomerId: ${customerId}, does not exist in the system.` });
     }
 }
 
