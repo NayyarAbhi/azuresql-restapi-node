@@ -78,3 +78,15 @@ getRecord(readSql);
 // {
 //     "message": "Customer id 2 is updated successfully"
 // }
+
+
+
+// http://localhost:9041/prospect
+// {
+// 	"CustomerId": "2",
+// 	"Cookie": "cookie42",
+// 	"SessionId": "sessionId2",
+// 	"OtpEmailId": "abc2@gmail.com",
+// 	"DomusCookieId": "DomusCookieId2",
+// 	"IBLogon": "IBLogon2"
+// }

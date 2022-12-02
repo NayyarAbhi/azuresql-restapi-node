@@ -41,7 +41,7 @@ async function getProspect(req, res) {
             .json(result.recordset)
     } else {
         res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `Customer id: ${customerId}, does not exist in the system.` })
+            .json({ message: `CustomerId: ${customerId}, does not exist in the system.` })
     }
 }
 
@@ -70,7 +70,6 @@ async function createProspect(req, res) {
     }
 }
 
-
 // updating the prospect, if the customerId exist in the system
 async function updateProspect(req, res) {
     const customerId = req.body.CustomerId;
@@ -83,10 +82,10 @@ async function updateProspect(req, res) {
 
         const result = await db.updateRecord(updateQuery);
         res.status(HTTP.OK.code)
-            .json({ message: `Customer id ${customerId} is updated successfully` })
+            .json({ message: `CustomerId ${customerId} is updated successfully` })
     } else {
         res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `Customer id: ${customerId}, does not exist in the system.` })
+            .json({ message: `CustomerId: ${customerId}, does not exist in the system.` })
     }
 }
 
