@@ -4,7 +4,8 @@ const prospectRoutes = express.Router();
 
 prospectRoutes.route('/')
     .get(controller.getProspect)
-    .put(controller.updateProspect);
+    .put(controller.updateProspect)
+    .post(controller.createProspect);
 
 
 // exporting modules, to be used in the other .js files
