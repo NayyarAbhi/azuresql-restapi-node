@@ -1,6 +1,7 @@
 const db = require('../utils/azureSql.js');
 const TABLES = require('../variables/tables.js').TABLES;
 const HTTP = require('../variables/status.js').HTTP;
+const validator = require('../validator/prospectValidator');
 let PROSPECT_QUERY = require('../variables/prospect_sql.js').QUERY;
 
 const PRIMARY_KEYS = ['CustomerId'];
@@ -30,6 +31,11 @@ function getUpdateFields(obj) {
 
 // returning the prospect, if the customer id exist in the system
 async function getProspect(req, res) {
+    if (error = validator.validateGetSchema(req.query)) {
+        return res.status(HTTP.BAD_REQUEST.code)
+            .send(error.details);
+    }
+
     const customerId = req.query.customerId;
     if (await isRecordPresent(customerId)) {
         const getQuery = PROSPECT_QUERY.SELECT
@@ -72,8 +78,12 @@ async function createProspect(req, res) {
 
 // updating the prospect, if the customerId exist in the system
 async function updateProspect(req, res) {
-    const customerId = req.body.CustomerId;
+    if (error = validator.validateUpdateSchema(req.body)) {
+        return res.status(HTTP.BAD_REQUEST.code)
+            .send(error.details);
+    }
 
+    const customerId = req.body.CustomerId;
     if (await isRecordPresent(customerId)) {
         const updateQuery = PROSPECT_QUERY.UPDATE
             .replace('<tableName>', TABLES.PROSPECT)
