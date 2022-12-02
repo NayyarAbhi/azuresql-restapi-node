@@ -3,7 +3,7 @@ const TABLES = require('../variables/tables.js').TABLES;
 const HTTP = require('../variables/status.js').HTTP;
 let PROSPECT_QUERY = require('../variables/prospect_sql.js').QUERY;
 
-const PRIMARY_KEY = 'CustomerId';
+const PRIMARY_KEYS = ['CustomerId'];
 
 // checking if a record present in the DB
 async function isRecordPresent(customerId) {
@@ -17,13 +17,13 @@ async function isRecordPresent(customerId) {
 
 // getting fields from payload, which needs to be updated
 function getUpdateFields(obj) {
+    for (let key of PRIMARY_KEYS) { delete obj[key] }
+
     let update_fields = ''
     const lastItem = Object.values(obj).pop();
     for (let [key, value] of Object.entries(obj)) {
-        if (key !== PRIMARY_KEY) {
-            update_fields += (key + "='" + value + "'")
-            update_fields += (value !== lastItem) ? ',' : '';
-        }
+        update_fields += (key + "='" + value + "'")
+        update_fields += (value !== lastItem) ? ',' : '';
     }
     return update_fields
 }
@@ -46,9 +46,9 @@ async function getProspect(req, res) {
 }
 
 // creating the prospect, if the customer id does not exist in the system
-async function createProspect(req,res) {
+async function createProspect(req, res) {
     var customerId = req.body.customerId;
-    if (await isRecordPresent(customerId)){
+    if (await isRecordPresent(customerId)) {
         res.status(HTTP.NOT_FOUND.code)
             .json({ message: `Customer id: ${customerId}, already exist in the Records.` })
     } else {
