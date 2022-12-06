@@ -24,19 +24,6 @@ async function getMaxProspectId() {
         .recordset[0].MAX_PROSPECTID;
 }
 
-// getting fields from payload, which needs to be updated
-function getUpdateFields(obj) {
-    for (let key of PRIMARY_KEYS) delete obj[key];
-
-    let update_fields = '';
-    const lastItem = Object.values(obj).pop();
-    for (let [key, value] of Object.entries(obj)) {
-        update_fields += (key + "='" + value + "'");
-        update_fields += (value !== lastItem) ? ',' : '';
-    }
-    return update_fields;
-}
-
 // returning the prospect, if the customer id exist in the system
 async function getProspect(req, res) {
     if (error = validator.validateGetQueryParams(req.query)) {
@@ -113,4 +100,4 @@ async function updateProspect(req, res) {
 
 
 // exporting modules, to be used in the other .js files
-module.exports = { getProspect, updateProspect, createProspect }
+module.exports = { updateProspect, createProspect }
