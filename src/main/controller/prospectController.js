@@ -37,28 +37,6 @@ function getUpdateFields(obj) {
     return update_fields;
 }
 
-// returning the prospect, if the customer id exist in the system
-async function getProspect(req, res) {
-    if (error = validator.validateGetQueryParams(req.query)) {
-        return res.status(HTTP.BAD_REQUEST.code)
-            .send(error.details);
-    }
-
-    const customerId = req.query.customerId;
-    if (await isRecordPresent(customerId)) {
-        const getQuery = PROSPECT_QUERY.SELECT
-            .replace('<tableName>', TABLES.PROSPECT)
-            .replace('<customerId>', customerId);
-
-        const result = await db.getRecord(getQuery);
-        res.status(HTTP.OK.code)
-            .json(result.recordset);
-    } else {
-        res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `CustomerId: ${customerId}, does not exist in the system.` });
-    }
-}
-
 // creating the prospect, if the customer id does not exist in the system
 async function createProspect(req, res) {
     if (error = validator.validateCreatePayload(req.body)) {
@@ -113,4 +91,4 @@ async function updateProspect(req, res) {
 
 
 // exporting modules, to be used in the other .js files
-module.exports = { getProspect, updateProspect, createProspect }
+module.exports = { updateProspect, createProspect }
