@@ -82,11 +82,21 @@ getRecord(readSql);
 
 
 // http://localhost:9041/prospect
-// {
-// 	"CustomerId": "2",
-// 	"Cookie": "cookie42",
-// 	"SessionId": "sessionId2",
-// 	"OtpEmailId": "abc2@gmail.com",
-// 	"DomusCookieId": "DomusCookieId2",
-// 	"IBLogon": "IBLogon2"
-// }
+{
+	"CustomerId": "2",
+	"Cookie": "cookie42",
+	"SessionId": "sessionId2",
+	"OtpEmailId": "abc2@gmail.com",
+	"DomusCookieId": "DomusCookieId2",
+	"IBLogon": "IBLogon2"
+}
+
+
+// CREATE TABLE TestSchema.Prospect_Identifiers (
+//     ProspectIdentifierId varchar(10),
+//     ProspectId integer,
+//     Identifier varchar(50),
+//     IdentifierType varchar(50),
+//     ActiveFrom datetime,
+//     ActiveTo datetime
+//     )

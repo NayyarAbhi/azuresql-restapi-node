@@ -13,6 +13,16 @@ const updateProspectSchema = joi.object({
     IBLogon: joi.string().optional()
 });
 
+const createProspectSchema = joi.object({
+    customerId: joi.string().required(),
+    Cookie: joi.string().required(),
+    SessionId: joi.string().required(),
+    OtpEmailId: joi.string().required(),
+    DomusCookieId: joi.string().required(),
+    IBLogon: joi.string().required()
+});
+
+
 function validateGetQueryParams(queryParam) {
     const { error, value } = getProspectSchema.validate(queryParam, { abortEarly: false });
     return error;
@@ -23,6 +33,11 @@ function validateUpdatePayload(reqBody) {
     return error;
 }
 
+function validateCreatePayload(reqBody) {
+    const { error, value } = createProspectSchema.validate(reqBody, { abortEarly: false });
+    return error;
+}
+
 
 // exporting modules, to be used in the other .js files
-module.exports = { validateGetQueryParams, validateUpdatePayload }
+module.exports = { validateGetQueryParams, validateUpdatePayload, validateCreatePayload }

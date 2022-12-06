@@ -1,0 +1,179 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Mortgage DataFoundation",
+        "description": "Mortgage DataFoundation API"
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "tags": [
+        {
+            "name": "Mortgage",
+            "description": "API for mortgage prospect data in the system"
+        }
+    ],
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/prospect": {
+            "get": {
+                "tags": [
+                    "Prospects"
+                ],
+                "description": "Get prospect details from the system",
+                "parameters": [
+                    {
+                        "name": "customerId",
+                        "in": "query",
+                        "description": "Prospect that we want to get",
+                        "schema": {
+                            "$ref": "#/definitions/GetProspect"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/GetProspect"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Prospects"
+                ],
+                "description": "Update prospect details in the system",
+                "parameters": [
+                    {
+                        "name": "Payload",
+                        "in": "body",
+                        "description": "Update Prospect Request Payload",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateProspect"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateProspect"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Prospects"
+                ],
+                "description": "Create prospect details in the system",
+                "parameters": [
+                    {
+                        "name": "Payload",
+                        "in": "body",
+                        "description": "Create Prospect Request Payload",
+                        "schema": {
+                            "$ref": "#/definitions/CreateProspect"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/CreateProspect"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "GetProspect": {
+            "required": [
+                "customerId"
+            ],
+            "properties": {
+                "customerId": {
+                    "type": "string"
+                }
+            }
+        },
+        "UpdateProspect": {
+            "required": [
+                "CustomerId",
+                "Cookie",
+                "SessionId",
+                "OtpEmailId",
+                "DomusCookieId",
+                "IBLogon"
+            ],
+            "properties": {
+                "CustomerId": {
+                    "type": "string"
+                },
+                "Cookie": {
+                    "type": "string"
+                },
+                "SessionId": {
+                    "type": "string"
+                },
+                "OtpEmailId": {
+                    "type": "string"
+                },
+                "DomusCookieId": {
+                    "type": "string"
+                },
+                "IBLogon": {
+                    "type": "string"
+                }
+            }
+        },
+        "CreateProspect": {
+            "required": [
+                "CustomerId",
+                "Cookie",
+                "SessionId",
+                "OtpEmailId",
+                "DomusCookieId",
+                "IBLogon"
+            ],
+            "properties": {
+                "customerId": {
+                    "type": "string"
+                },
+                "Cookie": {
+                    "type": "string"
+                },
+                "SessionId": {
+                    "type": "string"
+                },
+                "OtpEmailId": {
+                    "type": "string"
+                },
+                "DomusCookieId": {
+                    "type": "string"
+                },
+                "IBLogon": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

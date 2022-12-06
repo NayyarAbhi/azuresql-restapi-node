@@ -16,6 +16,14 @@ async function isRecordPresent(customerId) {
         .recordset[0].RECORD_COUNT !== 0 ? true : false;
 }
 
+async function getMaxProspectId() {
+    const query = PROSPECT_QUERY.GETPROSPECTID
+        .replace('<tableName>', TABLES.PROSPECT);
+
+    return (await db.getRecord(query))
+        .recordset[0].MAX_PROSPECTID;
+}
+
 // getting fields from payload, which needs to be updated
 function getUpdateFields(obj) {
     for (let key of PRIMARY_KEYS) delete obj[key];
@@ -53,12 +61,17 @@ async function getProspect(req, res) {
 
 // creating the prospect, if the customer id does not exist in the system
 async function createProspect(req, res) {
+    if (error = validator.validateCreatePayload(req.body)) {
+        return res.status(HTTP.BAD_REQUEST.code)
+            .send(error.details);
+    }
+
     var customerId = req.body.customerId;
     if (await isRecordPresent(customerId)) {
         res.status(HTTP.NOT_FOUND.code)
             .json({ message: `Customer id: ${customerId}, already exist in the Records.` })
     } else {
-        const newprospectid = 5
+        const newprospectid = parseInt(await getMaxProspectId()) + 1;
         const insertQuery = PROSPECT_QUERY.INSERT
             .replace('<tableName>', TABLES.PROSPECT)
             .replace('<prospectId>', newprospectid)
@@ -69,7 +82,6 @@ async function createProspect(req, res) {
             .replace('<iBLogon>', req.body.IBLogon)
             .replace('<customerId>', req.body.customerId);
 
-        console.log(insertQuery);
         const result = await db.insertRecord(insertQuery);
         res.status(HTTP.OK.code)
             .json({ message: `Customer id ${customerId} is created successfully` })
