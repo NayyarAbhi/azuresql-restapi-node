@@ -24,30 +24,6 @@
     ],
     "paths": {
         "/prospect": {
-            "get": {
-                "tags": [
-                    "Prospects"
-                ],
-                "description": "Get prospect details from the system",
-                "parameters": [
-                    {
-                        "name": "customerId",
-                        "in": "query",
-                        "description": "Prospect that we want to get",
-                        "schema": {
-                            "$ref": "#/definitions/GetProspect"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/GetProspect"
-                        }
-                    }
-                }
-            },
             "put": {
                 "tags": [
                     "Prospects"
@@ -105,16 +81,6 @@
         }
     },
     "definitions": {
-        "GetProspect": {
-            "required": [
-                "customerId"
-            ],
-            "properties": {
-                "customerId": {
-                    "type": "string"
-                }
-            }
-        },
         "UpdateProspect": {
             "required": [
                 "CustomerId",

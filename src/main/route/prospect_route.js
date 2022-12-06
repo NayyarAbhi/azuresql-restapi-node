@@ -3,7 +3,6 @@ const controller = require("../controller/prospectController.js");
 const prospectRoutes = express.Router();
 
 prospectRoutes.route('/')
-    .get(controller.getProspect)
     .put(controller.updateProspect)
     .post(controller.createProspect);
 

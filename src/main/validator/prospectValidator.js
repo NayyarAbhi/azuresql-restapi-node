@@ -1,9 +1,5 @@
 const joi = require('joi');
 
-const getProspectSchema = joi.object({
-    customerId: joi.string().required()
-});
-
 const updateProspectSchema = joi.object({
     CustomerId: joi.string().required(),
     Cookie: joi.string().optional(),
@@ -22,12 +18,6 @@ const createProspectSchema = joi.object({
     IBLogon: joi.string().required()
 });
 
-
-function validateGetQueryParams(queryParam) {
-    const { error, value } = getProspectSchema.validate(queryParam, { abortEarly: false });
-    return error;
-}
-
 function validateUpdatePayload(reqBody) {
     const { error, value } = updateProspectSchema.validate(reqBody, { abortEarly: false });
     return error;
@@ -40,4 +30,4 @@ function validateCreatePayload(reqBody) {
 
 
 // exporting modules, to be used in the other .js files
-module.exports = { validateGetQueryParams, validateUpdatePayload, validateCreatePayload }
+module.exports = { validateUpdatePayload, validateCreatePayload }
