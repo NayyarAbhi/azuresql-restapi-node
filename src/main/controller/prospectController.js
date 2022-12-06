@@ -24,26 +24,17 @@ async function getMaxProspectId() {
         .recordset[0].MAX_PROSPECTID;
 }
 
-// returning the prospect, if the customer id exist in the system
-async function getProspect(req, res) {
-    if (error = validator.validateGetQueryParams(req.query)) {
-        return res.status(HTTP.BAD_REQUEST.code)
-            .send(error.details);
-    }
+// getting fields from payload, which needs to be updated
+function getUpdateFields(obj) {
+    for (let key of PRIMARY_KEYS) delete obj[key];
 
-    const customerId = req.query.customerId;
-    if (await isRecordPresent(customerId)) {
-        const getQuery = PROSPECT_QUERY.SELECT
-            .replace('<tableName>', TABLES.PROSPECT)
-            .replace('<customerId>', customerId);
-
-        const result = await db.getRecord(getQuery);
-        res.status(HTTP.OK.code)
-            .json(result.recordset);
-    } else {
-        res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `CustomerId: ${customerId}, does not exist in the system.` });
+    let update_fields = '';
+    const lastItem = Object.values(obj).pop();
+    for (let [key, value] of Object.entries(obj)) {
+        update_fields += (key + "='" + value + "'");
+        update_fields += (value !== lastItem) ? ',' : '';
     }
+    return update_fields;
 }
 
 // creating the prospect, if the customer id does not exist in the system
