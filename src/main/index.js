@@ -19,8 +19,5 @@ app.listen(port, () => {
 //prospect request
 app.use('/prospect', prospect_route.prospectRoutes);
 
-//otp request
-app.use('/otpservices', otp_route.otpRoutes);
-
 // unknown request
 app.get('*', (req, res) => res.status(HTTP.BAD_REQUEST.code).json({ message: 'not a valid request' }));
