@@ -4,91 +4,68 @@ const HTTP = require('../variables/status.js').HTTP;
 const validator = require('../validator/prospectValidator');
 let PROSPECT_QUERY = require('../variables/prospect_sql.js').QUERY;
 
-const PRIMARY_KEYS = ['CustomerId'];
-
 // checking if a record present in the DB
-async function isRecordPresent(customerId) {
-    const query = PROSPECT_QUERY.COUNT
+async function isRecordPresent(prospectId) {
+    const query = PROSPECT_QUERY.RECORD_COUNT
         .replace('<tableName>', TABLES.PROSPECT)
-        .replace('<customerId>', customerId);
+        .replace('<prospectId>', prospectId);
 
     return (await db.getRecord(query))
         .recordset[0].RECORD_COUNT !== 0 ? true : false;
 }
 
-async function getMaxProspectId() {
-    const query = PROSPECT_QUERY.GETPROSPECTID
-        .replace('<tableName>', TABLES.PROSPECT);
+async function isIdentifierPresent(prospectId, identifierType) {
+    const query = PROSPECT_QUERY.COUNT
+        .replace('<tableName>', TABLES.PROSPECT)
+        .replace('<prospectId>', prospectId);
 
     return (await db.getRecord(query))
-        .recordset[0].MAX_PROSPECTID;
+        .recordset[0].RECORD_COUNT !== 0 ? true : false;
 }
 
-// getting fields from payload, which needs to be updated
-function getUpdateFields(obj) {
-    for (let key of PRIMARY_KEYS) delete obj[key];
-
-    let update_fields = '';
-    const lastItem = Object.values(obj).pop();
-    for (let [key, value] of Object.entries(obj)) {
-        update_fields += (key + "='" + value + "'");
-        update_fields += (value !== lastItem) ? ',' : '';
-    }
-    return update_fields;
-}
-
-// creating the prospect, if the customer id does not exist in the system
-async function createProspect(req, res) {
-    if (error = validator.validateCreatePayload(req.body)) {
+async function addProspect(req, res) {
+    console.log(req.params);
+    console.log(req.body);
+    // const combine = Object.assign({}, req.params, req.body);
+    // const combine = {...req.params, ...req.body};
+    // console.log(combine)
+    if (error = validator.validateAddPayload({ ...req.params, ...req.body })) {
         return res.status(HTTP.BAD_REQUEST.code)
             .send(error.details);
     }
 
-    var customerId = req.body.customerId;
-    if (await isRecordPresent(customerId)) {
-        res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `Customer id: ${customerId}, already exist in the Records.` })
-    } else {
-        const newprospectid = parseInt(await getMaxProspectId()) + 1;
+    const prospectId = Number(req.params.ProspectId);
+    const prospectIdentifierId = 5;
+    const identifierType = req.body.IdentifierType;
+    const identifierValue = req.body.IdentifierValue;
+    const activeFrom = req.body.ActiveFrom;
+
+    if (await isRecordPresent(prospectId)) {
         const insertQuery = PROSPECT_QUERY.INSERT
-            .replace('<tableName>', TABLES.PROSPECT)
-            .replace('<prospectId>', newprospectid)
-            .replace('<cookie>', req.body.Cookie)
-            .replace('<sessionId>', req.body.SessionId)
-            .replace('<otpEmailId>', req.body.OtpEmailId)
-            .replace('<domusCookieId>', req.body.DomusCookieId)
-            .replace('<iBLogon>', req.body.IBLogon)
-            .replace('<customerId>', req.body.customerId);
+            .replace('<tableName>', TABLES.Prospect_Identifiers)
+            .replace('<prospectIdentifierId>', prospectIdentifierId)
+            .replace('<prospectId>', prospectId)
+            .replace('<identifier>', identifierValue)
+            .replace('<identifierType>', identifierType)
+            .replace('<activeFrom>', activeFrom)
+        console.log(insertQuery);
+        const insertResult = await db.insertRecord(insertQuery);
 
-        const result = await db.insertRecord(insertQuery);
-        res.status(HTTP.OK.code)
-            .json({ message: `Customer id ${customerId} is created successfully` })
-    }
-}
-
-// updating the prospect, if the customerId exist in the system
-async function updateProspect(req, res) {
-    if (error = validator.validateUpdatePayload(req.body)) {
-        return res.status(HTTP.BAD_REQUEST.code)
-            .send(error.details);
-    }
-
-    const customerId = req.body.CustomerId;
-    if (await isRecordPresent(customerId)) {
         const updateQuery = PROSPECT_QUERY.UPDATE
-            .replace('<tableName>', TABLES.PROSPECT)
-            .replace('<update_fields>', getUpdateFields(req.body))
-            .replace('<customerId>', customerId);
+            .replace('<tableName>', TABLES.Prospect_Identifiers)
+            .replace('<prospectId>', prospectId);
+        console.log(updateQuery);
+        const updateResult = await db.updateRecord(updateQuery);
 
-        const result = await db.updateRecord(updateQuery);
         res.status(HTTP.OK.code)
-            .json({ message: `CustomerId ${customerId} is updated successfully` });
+            .json({ message: `ProspectId: ${prospectId}` });
     } else {
         res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `CustomerId: ${customerId}, does not exist in the system.` });
+            .json({ message: `ProspectId: ${prospectId}, does not exist in the system.` });
     }
+
 }
 
 
 // exporting modules, to be used in the other .js files
-module.exports = { updateProspect, createProspect }
+module.exports = { addProspect }

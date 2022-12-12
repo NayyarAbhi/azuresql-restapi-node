@@ -1,4 +1,5 @@
 // Importing packages
+const { Table } = require('mssql');
 const azureSql = require('../main/utils/azureSql.js');
 
 // create schema in the db
@@ -82,21 +83,72 @@ getRecord(readSql);
 
 
 // http://localhost:9041/prospect
-{
-	"CustomerId": "2",
-	"Cookie": "cookie42",
-	"SessionId": "sessionId2",
-	"OtpEmailId": "abc2@gmail.com",
-	"DomusCookieId": "DomusCookieId2",
-	"IBLogon": "IBLogon2"
-}
+// {
+// 	"CustomerId": "2",
+// 	"Cookie": "cookie42",
+// 	"SessionId": "sessionId2",
+// 	"OtpEmailId": "abc2@gmail.com",
+// 	"DomusCookieId": "DomusCookieId2",
+// 	"IBLogon": "IBLogon2"
+// }
 
+// --------------------------------------------------------------API V2------------------------------------------------------------------------------
 
+// Drop Table TestSchema.Prospect;
+// CREATE TABLE TestSchema.Prospect (
+//     ProspectId varchar(50),
+//     CreatedOn datetime,
+//     BrandIdentifier varchar(50),
+//     ChannelIdentifier varchar(50),
+// 	FirstName varchar(50)
+// );
+
+// Drop Table TestSchema.Prospect_Identifiers;
 // CREATE TABLE TestSchema.Prospect_Identifiers (
-//     ProspectIdentifierId varchar(10),
+//     ProspectIdentifierId integer,
 //     ProspectId integer,
 //     Identifier varchar(50),
 //     IdentifierType varchar(50),
 //     ActiveFrom datetime,
 //     ActiveTo datetime
-//     )
+// );
+
+
+// INSERT INTO TestSchema.Prospect
+// (ProspectId, CreatedOn, BrandIdentifier, ChannelIdentifier, FirstName)
+// VALUES
+// (1001, GETDATE(), 'Brand1', 'Channel1', 'FirstName1'),
+// (1002, GETDATE(), 'Brand2', 'Channel2', 'FirstName2');
+
+// INSERT INTO TestSchema.Prospect_Identifiers
+// (ProspectIdentifierId, ProspectId, Identifier, IdentifierType, ActiveFrom)
+// VALUES
+// (1, 1001, 'SessionId1', 'Session', GETDATE()),
+// (2, 1001, 'CustomerId1', 'IBID', GETDATE()),
+// (3, 1002, 'SessionId2', 'Session', GETDATE()),
+// (4, 1002, 'CustomerId2', 'IBID', GETDATE());
+
+
+// SELECT *
+// FROM TestSchema.Prospect;
+
+// SELECT *
+// FROM TestSchema.Prospect_Identifiers;
+
+
+// ------ Identifier Type ------
+// Session
+// IBID
+// Email
+// MobileId
+
+
+
+[
+    {
+        "IdentifierType": "",
+        "IdentifierValue": "",
+        "ActiveFrom"
+    },
+    {}
+]
