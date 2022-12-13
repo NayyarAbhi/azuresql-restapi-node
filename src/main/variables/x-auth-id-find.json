@@ -1,5 +1,5 @@
 [{
-    "userType":"OTP_CUSTOMER",
+    "userType":"UNAUTH_CSTMR",
     "sub":"name@email.com",
     "exp": 1666343413
 },

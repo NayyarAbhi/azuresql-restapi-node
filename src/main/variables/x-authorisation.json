@@ -1,5 +1,10 @@
-{
+[{
     "userType":"UNAUTH_CUSTOMER",
-    "sub":"1234567890",
+    "sub":"1234567890",         
     "exp": 1666343413
-}
+},
+{
+    "userType":"IB_CUSTOMER",
+    "sub":"12345678",           
+    "exp": 1666343413
+}]

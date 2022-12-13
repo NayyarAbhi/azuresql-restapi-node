@@ -18,6 +18,15 @@ async function isProspectPresent(prospectId) {
         .recordset[0].RECORD_COUNT !== 0 ? true : false;
 }
 
+async function getProspectWithSessionIdorIBID(SessionId){
+    const query = PROSPECT_QUERY.GET_PROSPECT_WITH_SESSION_ID
+        .replace('<tableName>', TABLES.PROSPECT)
+        .replace('<identifier>', SessionId);
+
+    return (await db.getRecord(query))
+        .recordset[0].PROSPECT_ID;
+}
+
 async function getMaxProspectId() {
     const query = PROSPECT_QUERY.GETPROSPECTID
         .replace('<tableName>', TABLES.PROSPECT);
@@ -94,18 +103,10 @@ async function createProspect(req, res) {
     //         .send(error.details);
     // }
 
-    // var customerId = req.body.customerId;
-    // if (await isProspectPresent(customerId)) {
-    //     res.status(HTTP.NOT_FOUND.code)
-    //         .json({ message: `Customer id: ${customerId}, already exist in the Records.` })
-    // } else {
-    //(prospectId,first_name,createOn,brandIdentifier,channelIdentifier)
-
-    //asdasdasd
-    if (X_Auth.sub == req.body.SessionId || X_Auth.sub == req.body.IBID) {
+    if(getProspectWithSessionIdorIBID(X_Auth.sub) == 0 ){
 
         const newProspectId = parseInt(await getMaxProspectId()) + 1;
-        const insertProspectQuery = PROSPECT_QUERY.INSERTPROSPECT
+        const insertProspectQuery = PROSPECT_QUERY.INSERT_PROSPECT
             .replace('<tableName>', TABLES.PROSPECT)
             .replace('<prospectId>', newProspectId)
             .replace('<first_name>', req.body.first_name)
@@ -118,26 +119,26 @@ async function createProspect(req, res) {
         var prevProspectIdentifierId = await getMaxProspectIdentifierId();
         const newProspectIdentifierId = 'PID' + (parseInt(prevProspectIdentifierId.substring(3)) + 1);
         var sessionIdorIBID;
-        var insertProspectIdentifierQuery = PROSPECT_QUERY.INSERTPROSPECTIDENTIFIERS
+        var insertProspectIdentifierQuery = PROSPECT_QUERY.INSERT_PROSPECT_IDENTIFIERS
             .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
             .replace('<prospectIdentifierId>', newProspectIdentifierId)
             .replace('<prospectId>', newProspectId)
             .replace('<activeFrom>', '')
             .replace('<activeTo>', '')
-        if (req.body.SessionId != null) {
+        if (X_Auth[0].userType == 'UNAUTH_CSTMR') {
             sessionIdorIBID = req.body.SessionId;
             insertProspectIdentifierQuery
                 .replace('<identifierType>', 'SessionId')
                 .replace('<identifier>', req.body.SessionId)
-        } else {
+        }if (X_Auth[0].userType == 'UNAUTH_CSTMR') {
             sessionIdorIBID = req.body.IBID;
             insertProspectIdentifierQuery
                 .replace('<identifierType>', 'IBID')
                 .replace('<identifier>', req.body.IBID)
-
+        }else{
+            res.status(HTTP.NOT_FOUND.code)
+                .json({ message: `User_Type is invalid.` });
         }
-
-        //prospectIdentifierId,prospectId,identifier,identifierType,activeFrom,activeTo
         const prospectIdentifierInsertResult = await db.insertRecord(insertProspectIdentifierQuery);
 
         res.status(HTTP.OK.code)
@@ -187,7 +188,7 @@ async function findProspect(req, res) {
             .replace('<identifierType>', req.body.IdentifierType);
 
     const result =  (await db.getRecord(prospect_identifier_query)).recordset
-    //TODO once the x-authenticaton-id api is ready we will get the json from that api, then chagne this logic  
+    //TODO once the x-authenticaton-id api is ready we will get the json from that api, then change this logic  
     if (result != null && (X_Auth_Find[0].sub === req.body.IdentifierValue)) {
         console.log(result)
         res.status(HTTP.OK.code)
