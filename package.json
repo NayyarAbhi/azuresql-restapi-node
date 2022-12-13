@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "MOCKING=MOCKING node ./src/main/index.js "
+    "start": "node ./src/main/index.js "
   },
   "keywords": [],
   "author": "",

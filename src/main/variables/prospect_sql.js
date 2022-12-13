@@ -5,9 +5,9 @@ const QUERY = {
     INSERT_VALS: "('<prospectIdentifierId>',<prospectId>,'<identifier>','<identifierType>', CAST('<activeFrom>' as datetime))",
     INSERT_PROSPECT: "INSERT INTO <tableName> (prospectId,first_name,createdOn,brandIdentifier,channelIdentifier) values  (<prospectId>,'<first_name>',CAST('<createdOn>' as datetime),'<brandIdentifier>','<channelIdentifier>')",
     INSERT_PROSPECT_IDENTIFIERS: "INSERT INTO <tableName> (prospectIdentifierId,uniqueId,prospectId,identifier,identifierType,activeFrom,activeTo) values ('<prospectIdentifierId>',<uniqueId>,<prospectId>,'<identifier>','<identifierType>','<activeFrom>','<activeTo>')",
-    PROSPECT_VALUES_BY_PROSPECT_ID: "SELECT *  FROM <tableName> WHERE ProspectId=<prospectId>",
-    PROSPECT_IDENTIFIER_VALUES_BY_PROSPECT_ID: "SELECT * FROM <tableName> WHERE ProspectId=<prospectId>",
-    PROSPECT_IDENTIFIER_VALUES_BY_IDENTIFIER_TYPE_AND_VALUE: "SELECT * FROM <tableName> WHERE identifierType=<identifierType> AND identifier=<identifier>",
+    PROSPECT_VALUES_BY_PROSPECT_ID: "SELECT *  FROM <tableName> WHERE prospect_id=<prospect_id>",
+    PROSPECT_IDENTIFIER_VALUES_BY_PROSPECT_ID: "SELECT * FROM <tableName> WHERE prospect_id=<prospect_id>",
+    PROSPECT_IDENTIFIER_VALUES_BY_IDENTIFIER_TYPE_AND_VALUE: "SELECT * FROM <tableName> WHERE identifier_type='<IdentifierType>' and identifier='<IdentifierValue>'",
     GET_PROSPECT_WITH_SESSION_ID:"SELECT ProspectId as PROSPECT_ID from <tableName> WHERE identifier=<identifier>"
 }
 

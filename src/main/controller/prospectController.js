@@ -177,22 +177,41 @@ async function addProspect(req, res) {
 async function findProspect(req, res) {
     const reqBody = req.body;
     var X_Auth_ID = req.headers['x-authrization-id']; 
-
+    console.log(X_Auth_ID)
     if (error = (validator.validateXAuthHeader(X_Auth_ID) && validator.validateFindPayload(reqBody))) {
         return res.status(HTTP.BAD_REQUEST.code)
             .send(error.details);
     }
+
     const prospect_identifier_query = PROSPECT_QUERY.PROSPECT_IDENTIFIER_VALUES_BY_IDENTIFIER_TYPE_AND_VALUE
             .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
-            .replace('<identifier>', req.body.IdentifierValue)
-            .replace('<identifierType>', req.body.IdentifierType);
+            .replace('<IdentifierValue>', reqBody.IdentifierValue)
+            .replace('<IdentifierType>', reqBody.IdentifierType);
+    const prospect_identifier_result =  (await db.getRecord(prospect_identifier_query)).recordset
+    console.log(prospect_identifier_result)
+    if(prospect_identifier_result) {
+        return res.status(HTTP.NOT_FOUND.code)
+            .json({ message: `Record does not exist with ${reqBody.IdentifierType} = ${reqBody.IdentifierValue} in the system` });
+    }
 
-    const result =  (await db.getRecord(prospect_identifier_query)).recordset
-    //TODO once the x-authenticaton-id api is ready we will get the json from that api, then change this logic  
-    if (result != null && (X_Auth_Find[0].sub === req.body.IdentifierValue)) {
-        console.log(result)
+    const prospectId = prospect_identifier_result[0].prospect_id;
+    console.log(prospectId)
+
+    const prospect_query = PROSPECT_QUERY.PROSPECT_VALUES_BY_PROSPECT_ID
+        .replace('<tableName>', TABLES.PROSPECT)
+        .replace('<prospect_id>', prospectId);
+    const prospect_result =  (await db.getRecord(prospect_query)).recordset
+
+    var prospect_identifier_result_json = JSON.stringify(prospect_identifier_result)
+    var prospect_result_json = JSON.stringify(prospect_result)
+    var jsonValue = {prospect_result_json, prospect_identifier_result_json}
+
+    
+    //TODO once the x-authenticaton-id api is ready we will get the json from that api, then chagne this logic  
+    if (jsonValue != null ) { //&& (X_Auth_Find[0].sub === req.body.IdentifierValue)
+       
         res.status(HTTP.OK.code)
-            .json({ message: `ProspectId: ${reqBody}` });
+            .json({ message: jsonValue });
     } else {
         res.status(HTTP.NOT_FOUND.code)
             .json({ message: `ProspectId: ${reqBody}, does not exist in the system.` });
@@ -202,31 +221,37 @@ async function findProspect(req, res) {
 /* Find Prospect API to retrieve Prospect details
 */
 async function findProspectById(req, res) {
+    console.log("test")
     const reqParams = req.params;
     var X_Auth_ID = req.headers['x-authrization-id']; 
-
-    if (error = (validator.validateXAuthHeader(X_Auth_ID) && validator.validateProspectId(reqParams))) {
-        return res.status(HTTP.BAD_REQUEST.code)
-            .send(error.details);
-    }
+    console.log(X_Auth_ID)
+    // if (error = (validator.validateXAuthHeader(X_Auth_ID) && validator.validateProspectId(reqParams))) {
+    //     return res.status(HTTP.BAD_REQUEST.code)
+    //         .send(error.details);
+    // }
     const prospectId = reqParams.ProspectId;
     const prospect_query = PROSPECT_QUERY.PROSPECT_VALUES_BY_PROSPECT_ID
         .replace('<tableName>', TABLES.PROSPECT)
-        .replace('<prospectId>', prospectId);
+        .replace('<prospect_id>', prospectId);
     
     const prospect_identifier_query = PROSPECT_QUERY.PROSPECT_IDENTIFIER_VALUES_BY_PROSPECT_ID
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
-        .replace('<prospectId>', prospectId);
+        .replace('<prospect_id>', prospectId);
 
     var prospect_result =  (await db.getRecord(prospect_query)).recordset
-    console.log(prospect_result);
+    
+    var prospect_result_json = JSON.stringify(prospect_result);
     var prospect_identifier_result =  (await db.getRecord(prospect_identifier_query)).recordset
+    var prospect_identifier_result_json = JSON.stringify(prospect_identifier_result);
+    console.log(prospect_result_json);
     console.log(prospect_identifier_result);
-
+    var jsonValue = {prospect_result_json,prospect_identifier_result}
+    console.log(jsonValue)
     //TODO once the x-authenticaton-id api is ready we will get the json from that api, then chagne this logic  
-    if ((prospect_result != null && prospect_identifier_result != null) && (X_Auth_Find[1].sub === prospectId)) {
+    if ((prospect_result != null && prospect_identifier_result != null) ) { //&& (X_Auth_Find[1].sub === prospectId)
+
         res.status(HTTP.OK.code)
-            .json({ message: `ProspectId: ${prospectId}` });
+            .json({ result: jsonValue });
     } else {
         res.status(HTTP.NOT_FOUND.code)
             .json({ message: `ProspectId: ${prospectId}, does not exist in the system.` });
