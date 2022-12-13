@@ -100,6 +100,8 @@ async function createProspect(req, res) {
     //         .json({ message: `Customer id: ${customerId}, already exist in the Records.` })
     // } else {
     //(prospectId,first_name,createOn,brandIdentifier,channelIdentifier)
+
+    //asdasdasd
     if (X_Auth.sub == req.body.SessionId || X_Auth.sub == req.body.IBID) {
 
         const newProspectId = parseInt(await getMaxProspectId()) + 1;
