@@ -1,0 +1,10 @@
+[{
+    "userType":"OTP_CUSTOMER",
+    "sub":"name@email.com",
+    "exp": 1666343413
+},
+{
+    "userType":"OTP_CUSTOMER",
+    "sub":"10000001",
+    "exp": 1666343413
+}]

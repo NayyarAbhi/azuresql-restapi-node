@@ -10,7 +10,7 @@ const createProspectSchema = joi.object({
 });
 
 const xAuthSchema = joi.object({
-    X_Auth: joi.string().required()
+    X_Auth_ID: joi.string().required()
 });
 const prospectIdSchmea = joi.object({
     ProspectId: joi.number().required()
@@ -47,8 +47,8 @@ function validateFindPayload(reqBody) {
     return error;
 }
 
-function validateXAuthHeader(X_Auth) {
-    const { error, value } = xAuthSchema.validate(X_Auth, { abortEarly: false });
+function validateXAuthHeader(X_Auth_ID) {
+    const { error, value } = xAuthSchema.validate(X_Auth_ID, { abortEarly: false });
     return error;
 }
 
