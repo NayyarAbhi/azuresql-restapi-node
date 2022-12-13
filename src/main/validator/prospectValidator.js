@@ -9,6 +9,9 @@ const createProspectSchema = joi.object({
     IBLogon: joi.string().required()
 });
 
+const xAuthSchema = joi.object({
+    X_Auth: joi.string().required()
+});
 const prospectIdSchmea = joi.object({
     ProspectId: joi.number().required()
 });
@@ -18,6 +21,11 @@ const addProspectSchema = joi.array().items(joi.object({
     IdentifierValue: joi.string().required(),
     ActiveFrom: joi.string().required()
 }));
+
+const findProspectSchema = joi.object({
+    IdentifierType: joi.string().required(),
+    IdentifierValue: joi.string().required()
+});
 
 function validateProspectId(reqParams) {
     const { error, value } = prospectIdSchmea.validate(reqParams, { abortEarly: false });
@@ -34,7 +42,17 @@ function validateAddPayload(reqBody) {
     return error;
 }
 
+function validateFindPayload(reqBody) {
+    const { error, value } = findProspectSchema.validate(reqBody, { abortEarly: false });
+    return error;
+}
+
+function validateXAuthHeader(X_Auth) {
+    const { error, value } = xAuthSchema.validate(X_Auth, { abortEarly: false });
+    return error;
+}
+
 
 
 // exporting modules, to be used in the other .js files
-module.exports = { validateCreatePayload, validateProspectId, validateAddPayload }
+module.exports = { validateCreatePayload, validateProspectId, validateAddPayload, validateFindPayload, validateXAuthHeader}

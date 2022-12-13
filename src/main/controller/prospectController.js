@@ -168,6 +168,67 @@ async function addProspect(req, res) {
     }
 }
 
+/* Find Prospect API to retrieve Prospect details
+*/
+async function findProspect(req, res) {
+    const reqBody = req.body;
+    var X_Auth = req.headers['x-authrization-id']; 
+
+    if (error = (validator.validateXAuthHeader(X_Auth) && validator.validateFindPayload(reqBody))) {
+        return res.status(HTTP.BAD_REQUEST.code)
+            .send(error.details);
+    }
+
+    const prospect_identifier_query = PROSPECT_QUERY.PROSPECT_IDENTIFIER_VALUES_BY_IDENTIFIER_TYPE_AND_VALUE
+            .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
+            .replace('<identifier>', req.body.IdentifierValue)
+            .replace('<identifierType>', req.body.IdentifierType);
+
+    const result =  (await db.getRecord(prospect_identifier_query)).recordset
+
+    if (result != null) {
+        console.log(result)
+        res.status(HTTP.OK.code)
+            .json({ message: `ProspectId: ${reqBody}` });
+    } else {
+        res.status(HTTP.NOT_FOUND.code)
+            .json({ message: `ProspectId: ${reqBody}, does not exist in the system.` });
+    }
+}
+
+/* Find Prospect API to retrieve Prospect details
+*/
+async function findProspectById(req, res) {
+    const reqParams = req.params;
+    var X_Auth = req.headers['x-authrization-id']; 
+
+    if (error = (validator.validateXAuthHeader(X_Auth) && validator.validateProspectId(reqParams))) {
+        return res.status(HTTP.BAD_REQUEST.code)
+            .send(error.details);
+    }
+
+    const prospectId = reqParams.ProspectId;
+    const prospect_query = PROSPECT_QUERY.PROSPECT_VALUES_BY_PROSPECT_ID
+        .replace('<tableName>', TABLES.PROSPECT)
+        .replace('<prospectId>', prospectId);
+    
+    const prospect_identifier_query = PROSPECT_QUERY.PROSPECT_IDENTIFIER_VALUES_BY_PROSPECT_ID
+        .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
+        .replace('<prospectId>', prospectId);
+
+    var prospect_result =  (await db.getRecord(query)).recordset
+    console.log(prospect_result);
+    var prospect_identifier_result =  (await db.getRecord(query)).recordset
+    console.log(prospect_identifier_result);
+
+    if (prospect_result != null && prospect_identifier_result != null) {
+        res.status(HTTP.OK.code)
+            .json({ message: `ProspectId: ${prospectId}` });
+    } else {
+        res.status(HTTP.NOT_FOUND.code)
+            .json({ message: `ProspectId: ${prospectId}, does not exist in the system.` });
+    }
+}
 
 // exporting modules, to be used in the other .js files
-module.exports = { createProspect, addProspect }
+module.exports = { createProspect, addProspect, findProspectById, findProspect }

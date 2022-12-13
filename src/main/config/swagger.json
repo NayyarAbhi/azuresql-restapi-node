@@ -23,13 +23,20 @@
         "application/json"
     ],
     "paths": {
-        "/prospect": {
+        "/prospect/v1": {
             "put": {
                 "tags": [
                     "Prospects"
                 ],
                 "description": "Update prospect details in the system",
                 "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "An authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "Payload",
                         "in": "body",
@@ -58,6 +65,13 @@
                 "description": "Create prospect details in the system",
                 "parameters": [
                     {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "An authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
                         "name": "Payload",
                         "in": "body",
                         "description": "Create Prospect Request Payload",
@@ -74,6 +88,75 @@
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/CreateProspect"
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Find Prospects"
+                ],
+                "description": "Find prospect details in the system",
+                "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "An authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ProspectId",
+                        "in": "path",
+                        "description": "Find prospect details in the system",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/FindProspect"
+                        }
+                    }
+                }
+            }
+        },
+        "/prospect/v1/find": {
+            "post": {
+                "tags": [
+                    "Find Prospects"
+                ],
+                "description": "Find prospect details in the system",
+                "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "An authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Payload",
+                        "in": "body",
+                        "description": "Find prospect details in the system",
+                        "schema": {
+                            "$ref": "#/definitions/FindProspect"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/FindProspect"
                         }
                     }
                 }
@@ -137,6 +220,20 @@
                     "type": "string"
                 },
                 "IBLogon": {
+                    "type": "string"
+                }
+            }
+        },
+        "FindProspect": {
+            "required": [
+                "IdentifierType",
+                "IdentifierValue"
+            ],
+            "properties": {
+                "IdentifierType": {
+                    "type": "string"
+                },
+                "IdentifierValue": {
                     "type": "string"
                 }
             }
