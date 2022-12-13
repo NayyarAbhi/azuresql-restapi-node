@@ -156,7 +156,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/FindProspect"
+                            "$ref": "#/definitions/Prospect"
                         }
                     }
                 }
@@ -235,6 +235,60 @@
                 },
                 "IdentifierValue": {
                     "type": "string"
+                }
+            }
+        },
+        "Prospect": {
+            "required": [
+                "prospect_id",
+                "created_on",
+                "brand_identifier",
+                "channel_identifier",
+                "first_name",
+                "email",
+                "phone"
+            ],
+            "properties": {
+                "prospect_id": {
+                    "type": "int"
+                },
+                "created_on": {
+                    "type": "string"
+                },
+                "brand_identifier": {
+                    "type": "string"
+                },
+                "channel_identifier": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "ProspectIdentifier": {
+            "required": [
+                "prospect_id",
+                "identifier",
+                "identifier_type",
+                "active_from",
+                "active_to"
+            ],
+            "properties": {
+                "prospect_id": {
+                    "type": "string"
+                },
+                "identifier": {
+                    "type": "string"
+                },
+                "identifier_type": {
+                    "type": "string"
+                },
+                "active_from": {
+                    "type": "date"
+                },
+                "active_to": {
+                    "type": "date"
                 }
             }
         }

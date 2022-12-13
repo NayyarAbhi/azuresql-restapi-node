@@ -222,6 +222,7 @@ async function findProspectById(req, res) {
 
     //TODO once the x-authenticaton-id api is ready we will get the json from that api, then chagne this logic  
     if ((prospect_result != null && prospect_identifier_result != null) && (X_Auth_Find[1].sub === prospectId)) {
+        
         res.status(HTTP.OK.code)
             .json({ message: `ProspectId: ${prospectId}` });
     } else {
