@@ -1,7 +1,6 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const prospect_route = require('./route/prospect_route.js');
-const otp_route = require('./route/otp_route.js');
 const HTTP = require('./variables/status.js').HTTP;
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./config/swagger.json');

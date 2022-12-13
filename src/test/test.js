@@ -44,13 +44,13 @@ Sql Operation
 // let dropSql = "DROP TABLE TestSchema.Intent"
 // let createTableSql = 'CREATE TABLE TestSchema.otprecord (id BIGINT PRIMARY KEY, first_name VARCHAR(255) NOT NULL, last_name  VARCHAR(255) DEFAULT NULL, email VARCHAR(255) NOT NULL, phone VARCHAR(255) NOT NULL, CONSTRAINT UQ_OTP_Email UNIQUE(email))'
 // let createTableSql = "CREATE TABLE TestSchema.prospectdetails (ProspectId varchar(255), CustomerId varchar(255), Cookie varchar(255), SessionId varchar(255), OtpEmailId varchar(255), DomusCookieId varchar(255), IBLogon varchar(255))";
-let readSql = "SELECT * FROM TestSchema.prospectdetails WHERE CustomerId = 1";
-let insertSql = "INSERT INTO TestSchema.prospectdetails (ProspectId, CustomerId, Cookie, SessionId, OtpEmailId, DomusCookieId, IBLogon) VALUES ('101', '1', 'cookie1', 'sessionId1', 'abc1@gmail.com', 'DomusCookieId1', 'IBLogon1'), ('102', '2', 'cookie2', 'sessionId2', 'abc2@gmail.com', 'DomusCookieId2', 'IBLogon2'), ('103', '3', 'cookie3', 'sessionId3', 'abc3@gmail.com', 'DomusCookieId3', 'IBLogon3')"
+// let readSql = "SELECT * FROM TestSchema.prospectdetails WHERE CustomerId = 1";
+// let insertSql = "INSERT INTO TestSchema.prospectdetails (ProspectId, CustomerId, Cookie, SessionId, OtpEmailId, DomusCookieId, IBLogon) VALUES ('101', '1', 'cookie1', 'sessionId1', 'abc1@gmail.com', 'DomusCookieId1', 'IBLogon1'), ('102', '2', 'cookie2', 'sessionId2', 'abc2@gmail.com', 'DomusCookieId2', 'IBLogon2'), ('103', '3', 'cookie3', 'sessionId3', 'abc3@gmail.com', 'DomusCookieId3', 'IBLogon3')"
 
 // createSchema(createSchemaSql)
 // createTable(createTableSql)
 // insertRecord(insertSql)
-getRecord(readSql);
+// getRecord(readSql);
 // updateRecord(updateSql);
 
 
@@ -115,10 +115,10 @@ getRecord(readSql);
 
 
 // INSERT INTO TestSchema.Prospect
-// (ProspectId, CreatedOn, BrandIdentifier, ChannelIdentifier, FirstName)
+// (ProspectId, CreatedOn, BrandIdentifier, ChannelIdentifier)
 // VALUES
-// (1001, GETDATE(), 'Brand1', 'Channel1', 'FirstName1'),
-// (1002, GETDATE(), 'Brand2', 'Channel2', 'FirstName2');
+// (1001, GETDATE(), 'Brand1', 'Channel1'),
+// (1002, GETDATE(), 'Brand2', 'Channel2');
 
 // INSERT INTO TestSchema.Prospect_Identifiers
 // (ProspectIdentifierId, ProspectId, Identifier, IdentifierType, ActiveFrom)
@@ -144,11 +144,74 @@ getRecord(readSql);
 
 
 
-[
+let obj = [
     {
-        "IdentifierType": "",
-        "IdentifierValue": "",
-        "ActiveFrom"
+        "IdentifierType": "EmailId",
+        "IdentifierValue": "abc1@gmail.com",
+        "ActiveFrom": "2022-12-07T15:45:35.023"
     },
-    {}
+    {
+        "IdentifierType": "MobileNumber",
+        "IdentifierValue": "7499999999",
+        "ActiveFrom": "2022-12-07T15:45:35.023"
+    }
 ]
+
+
+
+let IDENTIFIER_COUNT = "UPDATE <tableName> SET ActiveTo=GETDATE() WHERE ProspectId=<prospectId> and IdentifierType in (<identifierTypeList>) and ActiveTo is NULL";
+
+function getIdentifierTypeList(reqPayload) {
+    let fields = "'SessionId'";
+    for (let value of Object.values(reqPayload)) {
+        fields += (",'" + value.IdentifierType + "'");
+    }
+    return fields;
+}
+
+async function updateActiveTo(prospectId, reqPayload) {
+    const query = IDENTIFIER_COUNT
+        .replace('<tableName>', 'TestSchema.Prospect_Identifiers')
+        .replace('<prospectId>', prospectId)
+        .replace('<identifierTypeList>', getIdentifierTypeList(reqPayload));
+
+    console.log(query);
+
+    // return (await db.getRecord(query))
+    //     .recordset[0].RECORD_COUNT !== 0 ? true : false;
+}
+
+// updateActiveTo('1001', obj)
+
+
+
+// getList()
+// console.log(obj)
+
+// for (let [key, value] of Object.entries(obj)) {
+//     console.log(key);
+//     console.log(value);
+
+// ('<prospectIdentifierId>',<prospectId>,'<identifier>','<identifierType>', CAST('<activeFrom>' as datetime))
+
+let INSERT = "INSERT INTO <tableName> (ProspectIdentifierId, ProspectId, Identifier, IdentifierType, ActiveFrom) values <insertValues>";
+let INSERT_VALS = "('<prospectIdentifierId>',<prospectId>,'<identifier>','<identifierType>', CAST('<activeFrom>' as datetime))"
+
+function getInsertValues(prospectId, reqPayload) {
+    let insert_Val_list = '';
+    const lastItem = Object.values(obj).pop();
+    for (let value of Object.values(reqPayload)) {
+        let insert_Val = INSERT_VALS
+            .replace('<prospectIdentifierId>', 'PID2')
+            .replace('<prospectId>', prospectId)
+            .replace('<identifier>', value.IdentifierValue)
+            .replace('<identifierType>', value.IdentifierType)
+            .replace('<activeFrom>', value.ActiveFrom)
+
+        insert_Val_list += insert_Val;
+        insert_Val_list += (value !== lastItem) ? ',' : '';
+    }
+    return insert_Val_list;
+}
+
+console.log(getInsertValues('1001', obj));
