@@ -11,7 +11,7 @@ let IDENTIFIER = require('../variables/identifier.js').IDENTIFIER;
 async function isProspectPresent(prospectId) {
     const query = PROSPECT_QUERY.RECORD_COUNT
         .replace('<tableName>', TABLES.PROSPECT)
-        .replace('<customerId>', customerId);
+        .replace('<prospectId>', prospectId);
 
     return (await db.getRecord(query))
         .recordset[0].RECORD_COUNT !== 0 ? true : false;
@@ -94,7 +94,7 @@ async function createProspect(req, res) {
     // }
 
     // var customerId = req.body.customerId;
-    // if (await isRecordPresent(customerId)) {
+    // if (await isProspectPresent(customerId)) {
     //     res.status(HTTP.NOT_FOUND.code)
     //         .json({ message: `Customer id: ${customerId}, already exist in the Records.` })
     // } else {
@@ -161,10 +161,10 @@ async function addProspect(req, res) {
         await updateActiveTo(prospectId, reqBody);
         await addProspIdenRecord(prospectId, reqBody);
         res.status(HTTP.OK.code)
-            .json({ message: `CustomerId ${customerId} is updated successfully` });
+            .json({ message: `ProspectId: ${prospectId}` });
     } else {
         res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `CustomerId: ${customerId}, does not exist in the system.` });
+            .json({ message: `ProspectId: ${prospectId}, does not exist in the system.` });
     }
 }
 
