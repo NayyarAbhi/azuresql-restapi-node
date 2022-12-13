@@ -216,9 +216,9 @@ async function findProspectById(req, res) {
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
         .replace('<prospectId>', prospectId);
 
-    var prospect_result =  (await db.getRecord(query)).recordset
+    var prospect_result =  (await db.getRecord(prospect_query)).recordset
     console.log(prospect_result);
-    var prospect_identifier_result =  (await db.getRecord(query)).recordset
+    var prospect_identifier_result =  (await db.getRecord(prospect_identifier_query)).recordset
     console.log(prospect_identifier_result);
 
     if (prospect_result != null && prospect_identifier_result != null) {
