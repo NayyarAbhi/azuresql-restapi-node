@@ -170,4 +170,4 @@ async function addProspect(req, res) {
 
 
 // exporting modules, to be used in the other .js files
-module.exports = { updateProspect, createProspect }
+module.exports = { createProspect, addProspect }

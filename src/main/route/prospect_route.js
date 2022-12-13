@@ -3,8 +3,10 @@ const controller = require("../controller/prospectController.js");
 const prospectRoutes = express.Router();
 
 prospectRoutes.route('/')
-    .put(controller.updateProspect)
     .post(controller.createProspect);
+
+prospectRoutes.route('/:ProspectId')
+    .put(controller.addProspect);
 
 
 // exporting modules, to be used in the other .js files
