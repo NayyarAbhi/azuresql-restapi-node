@@ -18,27 +18,33 @@ async function isProspectPresent(prospectId) {
         .recordset[0].RECORD_COUNT !== 0 ? true : false;
 }
 
-async function getProspectWithSessionIdorIBID(SessionId){
-    const query = PROSPECT_QUERY.GET_PROSPECT_WITH_SESSION_ID
-        .replace('<tableName>', TABLES.PROSPECT)
-        .replace('<identifier>', SessionId);
-
-    return (await db.getRecord(query))
-        .recordset[0].PROSPECT_ID;
+async function getProspectWithSessionIdorIBID(SessionIdorIBID){
+    console.log('inthismethod')
+    const query = PROSPECT_QUERY.GET_PROSPECT_WITH_SESSION_ID_OR_IBID
+        .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
+        .replace('<identifier>', SessionIdorIBID);
+    console.log(query)
+    var record =  (await db.getRecord(query)).recordset[0]   
+    if (record != null) {
+        return record.PROSPECT_ID;
+    } else {
+        return null;
+    }
 }
 
 async function getMaxProspectId() {
-    const query = PROSPECT_QUERY.GETPROSPECTID
-        .replace('<tableName>', TABLES.PROSPECT);
+    const query = PROSPECT_QUERY.GET_PROSPECT_ID
+                    .replace('<tableName>', TABLES.PROSPECT);
     return (await db.getRecord(query))
-        .recordset[0].MAX_PROSPECTID;
+        .recordset[0].MAXPROSPECTID;
 }
 
 async function getMaxProspectIdentifierId() {
-    const query = PROSPECT_QUERY.GETPROSPECTIDENTIFIERID
+    const query = PROSPECT_QUERY.GET_PROSPECT_IDENTIFIER_ID
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS);
+    console.log(query);
     return (await db.getRecord(query))
-        .recordset[0].MAX_PROSPECTIDENTIFIERID;
+        .recordset[0].MAXPROSPECTIDENTIFIERID;
 }
 
 /* getting the list of IdentifierType which is required to be archived
@@ -102,50 +108,64 @@ async function createProspect(req, res) {
     //     return res.status(HTTP.BAD_REQUEST.code)
     //         .send(error.details);
     // }
-
-    if(getProspectWithSessionIdorIBID(X_Auth.sub) == 0 ){
-
-        const newProspectId = parseInt(await getMaxProspectId()) + 1;
+    /**
+     * var ProspectIdfromDB 
+     * var usertype = X_Auth[0].userType
+     * if(usertype === 'UNAUTH_CUSTOMER'){
+     *      ProspectIdfromDB = await getProspectWithSessionId(X_Auth[0].sub)
+     * }else{
+     *      ProspectIdfromDB = await getProspectWithIBID(X_Auth[0].sub)
+     * }
+     * 
+     */
+    var ProspectIdfromDB = await getProspectWithSessionIdorIBID(X_Auth[0].sub);
+    if(ProspectIdfromDB == null){
+        var prevProspectId = await getMaxProspectId();
+        var newProspectId = prevProspectId==null ? 10000000 : (parseInt(prevProspectId) + 1);
         const insertProspectQuery = PROSPECT_QUERY.INSERT_PROSPECT
             .replace('<tableName>', TABLES.PROSPECT)
-            .replace('<prospectId>', newProspectId)
-            .replace('<first_name>', req.body.first_name)
-            .replace('<createdOn>', req.body.createdOn)
-            .replace('<brandIdentifier>', req.body.brandIdentifier)
-            .replace('<channelIdentifier>', req.body.channelIdentifier);
+            .replace('<prospect_id>', newProspectId)
+            .replace('<first_name>', req.body.first_name==undefined ? '' : req.body.first_name)
+            .replace('<created_on>', req.body.created_on)
+            .replace('<brand_identifier>', req.body.brand_identifier)
+            .replace('<channel_identifier>', req.body.channel_identifier==undefined ? '' : req.body.channel_identifier);
 
         const prospectInsertResult = await db.insertRecord(insertProspectQuery);
-
         var prevProspectIdentifierId = await getMaxProspectIdentifierId();
-        const newProspectIdentifierId = 'PID' + (parseInt(prevProspectIdentifierId.substring(3)) + 1);
-        var sessionIdorIBID;
-        var insertProspectIdentifierQuery = PROSPECT_QUERY.INSERT_PROSPECT_IDENTIFIERS
-            .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
-            .replace('<prospectIdentifierId>', newProspectIdentifierId)
-            .replace('<prospectId>', newProspectId)
-            .replace('<activeFrom>', '')
-            .replace('<activeTo>', '')
-        if (X_Auth[0].userType == 'UNAUTH_CSTMR') {
-            sessionIdorIBID = req.body.SessionId;
-            insertProspectIdentifierQuery
-                .replace('<identifierType>', 'SessionId')
-                .replace('<identifier>', req.body.SessionId)
-        }if (X_Auth[0].userType == 'UNAUTH_CSTMR') {
-            sessionIdorIBID = req.body.IBID;
-            insertProspectIdentifierQuery
-                .replace('<identifierType>', 'IBID')
-                .replace('<identifier>', req.body.IBID)
+        var newProspectIdentifierId = prevProspectIdentifierId==null ? 'PID1' :
+                                        'PID' + (parseInt(prevProspectIdentifierId) + 1);
+
+        var usertype = X_Auth[0].userType
+
+        if (usertype === 'UNAUTH_CUSTOMER') {
+            var insertProspectIdentifierQuery = PROSPECT_QUERY.INSERT_PROSPECT_IDENTIFIERS
+                                                    .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
+                                                    .replace('<prospect_identifier_id>', newProspectIdentifierId)
+                                                    .replace('<prospect_id>', newProspectId)
+                                                    .replace('<identifier_type>', 'SessionId')
+                                                    .replace('<identifier>', X_Auth[0].sub)
+        
+        }else if (usertype === 'IB_CUSTOMER'){
+            var insertProspectIdentifierQuery = PROSPECT_QUERY.INSERT_PROSPECT_IDENTIFIERS
+                                                    .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
+                                                    .replace('<prospect_identifier_id>', newProspectIdentifierId)
+                                                    .replace('<prospect_id>', newProspectId)
+                                                    .replace('<identifier_type>', 'IBID')
+                                                    .replace('<identifier>', X_Auth[0].sub)
+            
         }else{
             res.status(HTTP.NOT_FOUND.code)
                 .json({ message: `User_Type is invalid.` });
         }
+        
         const prospectIdentifierInsertResult = await db.insertRecord(insertProspectIdentifierQuery);
 
         res.status(HTTP.OK.code)
             .json({ message: `Prospectid ${newProspectId} is created successfully` })
+
     } else {
         res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `ProspectId: ${customerId}, already exist in the system.` });
+            .json({ message: `ProspectId: ${ProspectIdfromDB}, already exist in the system.` });
     }
 }
 
