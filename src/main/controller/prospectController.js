@@ -19,11 +19,9 @@ async function isProspectPresent(prospectId) {
 }
 
 async function getProspectWithSessionIdorIBID(SessionIdorIBID){
-    console.log('inthismethod')
     const query = PROSPECT_QUERY.GET_PROSPECT_WITH_SESSION_ID_OR_IBID
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
         .replace('<identifier>', SessionIdorIBID);
-    console.log(query)
     var record =  (await db.getRecord(query)).recordset[0]   
     if (record != null) {
         return record.PROSPECT_ID;
@@ -42,7 +40,6 @@ async function getMaxProspectId() {
 async function getMaxProspectIdentifierId() {
     const query = PROSPECT_QUERY.GET_PROSPECT_IDENTIFIER_ID
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS);
-    console.log(query);
     return (await db.getRecord(query))
         .recordset[0].MAXPROSPECTIDENTIFIERID;
 }
