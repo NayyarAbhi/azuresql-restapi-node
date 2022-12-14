@@ -114,19 +114,17 @@ Sql Operation
 // );
 
 
-// INSERT INTO TestSchema.Prospect
-// (ProspectId, CreatedOn, BrandIdentifier, ChannelIdentifier)
+// INSERT INTO prospect.tbl_prospect_identifiers
+// (prospect_id, created_on, brand_identifier, channel_identifier)
 // VALUES
-// (1001, GETDATE(), 'Brand1', 'Channel1'),
-// (1002, GETDATE(), 'Brand2', 'Channel2');
+// (10000001, GETDATE(), 'Brand1', 'Channel1'),
+// (10000002, GETDATE(), 'Brand2', 'Channel2');
 
-// INSERT INTO TestSchema.Prospect_Identifiers
-// (ProspectIdentifierId, ProspectId, Identifier, IdentifierType, ActiveFrom)
+// INSERT INTO prospect.tbl_prospect_identifiers
+// (prospect_identifier_id, prospect_id, identifier, identifier_type, active_from)
 // VALUES
-// (1, 1001, 'SessionId1', 'Session', GETDATE()),
-// (2, 1001, 'CustomerId1', 'IBID', GETDATE()),
-// (3, 1002, 'SessionId2', 'Session', GETDATE()),
-// (4, 1002, 'CustomerId2', 'IBID', GETDATE());
+// ('PID1', 10000001, 'SessionId1', 'SessionId', GETDATE()),
+// ('PID2', 10000002, 'SessionId1', 'SessionId', GETDATE());
 
 
 // SELECT *
@@ -147,39 +145,50 @@ Sql Operation
 let obj = [
     {
         "IdentifierType": "EmailId",
-        "IdentifierValue": "abc1@gmail.com",
-        "ActiveFrom": "2022-12-07T15:45:35.023"
+        "IdentifierValue": "abc3@gmail.com",
+        "ActiveFrom": "2022-12-07T15:52:35.023"
     },
     {
         "IdentifierType": "MobileNumber",
-        "IdentifierValue": "7499999999",
-        "ActiveFrom": "2022-12-07T15:45:35.023"
+        "IdentifierValue": "7499999906",
+        "ActiveFrom": "2022-12-07T15:56:35.023"
+    },
+    {
+        "IdentifierType": "first_name",
+        "IdentifierValue": "FirstName1",
+        "ActiveFrom": "2022-12-07T15:56:35.023"
+    },
+    {
+        "IdentifierType": "brand_identifier",
+        "IdentifierValue": "Brand1",
+        "ActiveFrom": "2022-12-07T15:56:35.023"
     }
 ]
 
 
 
-let IDENTIFIER_COUNT = "UPDATE <tableName> SET ActiveTo=GETDATE() WHERE ProspectId=<prospectId> and IdentifierType in (<identifierTypeList>) and ActiveTo is NULL";
 
-function getIdentifierTypeList(reqPayload) {
-    let fields = "'SessionId'";
-    for (let value of Object.values(reqPayload)) {
-        fields += (",'" + value.IdentifierType + "'");
-    }
-    return fields;
-}
+// let IDENTIFIER_COUNT = "UPDATE <tableName> SET ActiveTo=GETDATE() WHERE ProspectId=<prospectId> and IdentifierType in (<identifierTypeList>) and ActiveTo is NULL";
 
-async function updateActiveTo(prospectId, reqPayload) {
-    const query = IDENTIFIER_COUNT
-        .replace('<tableName>', 'TestSchema.Prospect_Identifiers')
-        .replace('<prospectId>', prospectId)
-        .replace('<identifierTypeList>', getIdentifierTypeList(reqPayload));
+// function getIdentifierTypeList(reqPayload) {
+//     let fields = "'SessionId'";
+//     for (let value of Object.values(reqPayload)) {
+//         fields += (",'" + value.IdentifierType + "'");
+//     }
+//     return fields;
+// }
 
-    console.log(query);
+// async function updateActiveTo(prospectId, reqPayload) {
+//     const query = IDENTIFIER_COUNT
+//         .replace('<tableName>', 'TestSchema.Prospect_Identifiers')
+//         .replace('<prospectId>', prospectId)
+//         .replace('<identifierTypeList>', getIdentifierTypeList(reqPayload));
 
-    // return (await db.getRecord(query))
-    //     .recordset[0].RECORD_COUNT !== 0 ? true : false;
-}
+//     console.log(query);
+
+//     // return (await db.getRecord(query))
+//     //     .recordset[0].RECORD_COUNT !== 0 ? true : false;
+// }
 
 // updateActiveTo('1001', obj)
 
@@ -194,24 +203,68 @@ async function updateActiveTo(prospectId, reqPayload) {
 
 // ('<prospectIdentifierId>',<prospectId>,'<identifier>','<identifierType>', CAST('<activeFrom>' as datetime))
 
-let INSERT = "INSERT INTO <tableName> (ProspectIdentifierId, ProspectId, Identifier, IdentifierType, ActiveFrom) values <insertValues>";
-let INSERT_VALS = "('<prospectIdentifierId>',<prospectId>,'<identifier>','<identifierType>', CAST('<activeFrom>' as datetime))"
+// let INSERT_VALS = "('<prospectIdentifierId>',<prospectId>,'<identifier>','<identifierType>', CAST('<activeFrom>' as datetime))"
 
-function getInsertValues(prospectId, reqPayload) {
-    let insert_Val_list = '';
-    const lastItem = Object.values(obj).pop();
+// function getInsertValues(prospectId, reqPayload) {
+//     let insert_Val_list = '';
+//     const lastItem = Object.values(obj).pop();
+//     for (let value of Object.values(reqPayload)) {
+//         let insert_Val = INSERT_VALS
+//             .replace('<prospectIdentifierId>', 'PID2')
+//             .replace('<prospectId>', prospectId)
+//             .replace('<identifier>', value.IdentifierValue)
+//             .replace('<identifierType>', value.IdentifierType)
+//             .replace('<activeFrom>', value.ActiveFrom)
+
+//         insert_Val_list += insert_Val;
+//         insert_Val_list += (value !== lastItem) ? ',' : '';
+//     }
+//     return insert_Val_list;
+// }
+
+// console.log(getInsertValues('1001', obj));
+
+const prospect_update_cols = ['brand_identifier', 'channel_identifier', 'first_name']
+function separateAddReqPayload(reqPayload) {
+    let prospect_payload = [];
+    let prospectIdentifier_payload = [];
     for (let value of Object.values(reqPayload)) {
-        let insert_Val = INSERT_VALS
-            .replace('<prospectIdentifierId>', 'PID2')
-            .replace('<prospectId>', prospectId)
-            .replace('<identifier>', value.IdentifierValue)
-            .replace('<identifierType>', value.IdentifierType)
-            .replace('<activeFrom>', value.ActiveFrom)
-
-        insert_Val_list += insert_Val;
-        insert_Val_list += (value !== lastItem) ? ',' : '';
+        if (prospect_update_cols.includes(value.IdentifierType)) {
+            prospect_payload.push(value);
+        } else {
+            prospectIdentifier_payload.push(value);
+        }
     }
-    return insert_Val_list;
+    return { prospect_payload, prospectIdentifier_payload };
 }
 
-console.log(getInsertValues('1001', obj));
+let { prospect_payload, prospectIdentifier_payload } = separateAddReqPayload(obj);
+
+let reqPayload = [
+    {
+        IdentifierType: 'first_name',
+        IdentifierValue: 'FirstName1',
+        ActiveFrom: '2022-12-07T15:56:35.023'
+    },
+    {
+        IdentifierType: 'brand_identifier',
+        IdentifierValue: 'Brand1',
+        ActiveFrom: '2022-12-07T15:56:35.023'
+    }
+]
+
+// SET FirstTimeBuyerFlag='N', TimeEstimateForBuying='10months'
+let UPDATE_PROSPECT = "UPDATE <tableName> SET <update_fields> WHERE prospect_id=<prospectId>";
+
+function getUpdateFields(payload) {
+    let update_fields = '';
+    const lastItem = Object.values(payload).pop();
+
+    for (let value of Object.values(payload)) {
+        update_fields += (value.IdentifierType + "='" + value.IdentifierValue + "'");
+        update_fields += (value !== lastItem) ? ',' : '';
+    }
+    return update_fields;
+}
+
+console.log(getUpdateFields(prospect_payload));
