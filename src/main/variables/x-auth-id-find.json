@@ -1,10 +1,10 @@
 [{
-    "userType":"UNAUTH_CSTMR",
-    "sub":"name@email.com",
+    "userType":"UNAUTH_CUSTOMER",
+    "sub":"Kumar@test.com",
     "exp": 1666343413
 },
 {
     "userType":"OTP_CUSTOMER",
-    "sub":"10000001",
+    "sub":"cookie-2",
     "exp": 1666343413
 }]

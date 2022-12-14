@@ -8,7 +8,7 @@ const QUERY = {
     PROSPECT_VALUES_BY_PROSPECT_ID: "SELECT *  FROM <tableName> WHERE prospect_id=<prospect_id>",
     PROSPECT_IDENTIFIER_VALUES_BY_PROSPECT_ID: "SELECT * FROM <tableName> WHERE prospect_id=<prospect_id>",
     PROSPECT_IDENTIFIER_VALUES_BY_IDENTIFIER_TYPE_AND_VALUE: "SELECT * FROM <tableName> WHERE identifier_type='<IdentifierType>' and identifier='<IdentifierValue>'",
-    GET_PROSPECT_WITH_SESSION_ID:"SELECT ProspectId as PROSPECT_ID from <tableName> WHERE identifier=<identifier>"
+    GET_PROSPECT_WITH_SESSION_ID:"SELECT prospect_id from <tableName> WHERE identifier='<identifier>'"
 }
 
 // exporting modules, to be used in the other .js files
