@@ -23,7 +23,7 @@ async function findProspect(req) {
     const prospect_identifier_result =  (await db.getRecord(prospect_identifier_query)).recordset
 
     if(prospect_identifier_result[0] === undefined) {
-        return { error: `Prospect Record does not exist with ${reqBody.IdentifierType} as ${reqBody.IdentifierValue} in the system` };
+        return { error: `Prospect Record does not exist with IdentifierType as ${reqBody.IdentifierType} and  IdentifierValue as ${reqBody.IdentifierValue} in the system` };
     }
     const prospectId = prospect_identifier_result[0].prospect_id;
     if (`${prospectId}` === `${headerProspectId}`) {
