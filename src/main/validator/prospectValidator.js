@@ -1,12 +1,10 @@
 const joi = require('joi');
 
 const createProspectSchema = joi.object({
-    customerId: joi.string().required(),
-    Cookie: joi.string().required(),
-    SessionId: joi.string().required(),
-    OtpEmailId: joi.string().required(),
-    DomusCookieId: joi.string().required(),
-    IBLogon: joi.string().required()
+    created_on: joi.string().required(),
+    brand_identifier: joi.string().optional(),
+    channel_identifier: joi.string().required(),
+    first_name: joi.string().optional()
 });
 
 const xAuthSchema = joi.object({

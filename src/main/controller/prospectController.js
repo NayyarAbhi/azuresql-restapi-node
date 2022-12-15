@@ -3,12 +3,12 @@ const TABLES = require('../variables/tables.js').TABLES;
 const HTTP = require('../variables/status.js').HTTP;
 const validator = require('../validator/prospectValidator');
 let PROSPECT_QUERY = require('../variables/prospect_sql.js').QUERY;
-const prospectIden_Service = require('../helper/prospect-record/prospect-identifier-service.js');
+const dbService = require('../service/db-services.js');
 let X_Auth = require('../variables/x-authorisation.json');
 let X_Auth_Find = require('../variables/x-auth-id-find.json');
 const X_Auth_Add = require('../variables/x-auth-add.json');
 let IDENTIFIER = require('../variables/identifier.js').IDENTIFIER;
-const findBy = require('../helper/prospect-record/find-service.js')
+const findBy = require('../service/find-service.js')
 const PROSPECT_UPDATE_COLS = ['brand_identifier', 'channel_identifier', 'first_name']
 
 /* checking if a Prospect present in the DB
@@ -22,11 +22,11 @@ async function isProspectPresent(prospectId) {
         .recordset[0].RECORD_COUNT !== 0 ? true : false;
 }
 
-async function getProspectWithSessionIdorIBID(SessionIdorIBID) {
+async function getProspectWithSessionIdorIBID(SessionIdorIBID){
     const query = PROSPECT_QUERY.GET_PROSPECT_WITH_SESSION_ID_OR_IBID
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
         .replace('<identifier>', SessionIdorIBID);
-    var record = (await db.getRecord(query)).recordset[0]
+    var record =  (await db.getRecord(query)).recordset[0]   
     if (record != null) {
         return record.PROSPECT_ID;
     } else {
@@ -154,38 +154,39 @@ async function updateProspectRecord(prospectId, reqPayload) {
 // creating the prospect, if the customer id does not exist in the system
 async function createProspect(req, res) {
 
-    // if (error = validator.validateCreatePayload(req.body)) {
-    //     return res.status(HTTP.BAD_REQUEST.code)
-    //         .send(error.details);
-    // }
-
-    var ProspectIdfromDB
+     if (error = validator.validateCreatePayload(req.body)) {
+         return res.status(HTTP.BAD_REQUEST.code)
+             .send(error.details);
+     }
+    
+    var ProspectIdfromDB 
     var usertype = X_Auth[0].userType
-    if (usertype === 'UNAUTH_CUSTOMER') {
-        ProspectIdfromDB = await prospectIden_Service.getProspectWithSessionId(X_Auth[0].sub)
-    } else if (usertype === 'IB_CUSTOMER') {
-        ProspectIdfromDB = await prospectIden_Service.getProspectWithIBID(X_Auth[0].sub)
+    if(usertype === 'UNAUTH_CUSTOMER'){
+          ProspectIdfromDB = await dbService.getProspectWithSessionId(X_Auth[0].sub)
+    }else if(usertype === 'IB_CUSTOMER'){
+          ProspectIdfromDB = await dbService.getProspectWithIBID(X_Auth[0].sub)
+    }else{
+        res.status(HTTP.NOT_FOUND.code)
+                .json({ message: `User_Type is invalid.` });
+        return
     }
-    console.log(ProspectIdfromDB);
-    //var ProspectIdfromDB = await getProspectWithSessionIdorIBID(X_Auth[0].sub);
-    if (ProspectIdfromDB == null) {
+    if(ProspectIdfromDB == null){
         var prevProspectId = await getMaxProspectId();
-        var newProspectId = prevProspectId == null ? 10000000 : (parseInt(prevProspectId) + 1);
+        var newProspectId = prevProspectId==null ? 10000000 : (parseInt(prevProspectId) + 1);
         const insertProspectQuery = PROSPECT_QUERY.INSERT_PROSPECT
             .replace('<tableName>', TABLES.PROSPECT)
             .replace('<prospect_id>', newProspectId)
-            .replace('<first_name>', req.body.first_name == undefined ? '' : req.body.first_name)
+            .replace('<first_name>', req.body.first_name==undefined ? '' : req.body.first_name)
             .replace('<created_on>', req.body.created_on)
             .replace('<brand_identifier>', req.body.brand_identifier)
-            .replace('<channel_identifier>', req.body.channel_identifier == undefined ? '' : req.body.channel_identifier);
+            .replace('<channel_identifier>', req.body.channel_identifier==undefined ? '' : req.body.channel_identifier);
 
         const prospectInsertResult = await db.insertRecord(insertProspectQuery);
+
         var prevProspectIdentifierId = await getMaxProspectIdenId();
-        console.log(prevProspectIdentifierId);
         var newProspectIdentifierId = getNextProspectIdenId(prevProspectIdentifierId)
 
         var usertype = X_Auth[0].userType
-
         if (usertype === 'UNAUTH_CUSTOMER') {
             var insertProspectIdentifierQuery = PROSPECT_QUERY.INSERT_PROSPECT_IDENTIFIERS
                 .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
@@ -194,23 +195,19 @@ async function createProspect(req, res) {
                 .replace('<identifier_type>', 'SessionId')
                 .replace('<identifier>', X_Auth[0].sub)
 
-        } else if (usertype === 'IB_CUSTOMER') {
+        }else{
             var insertProspectIdentifierQuery = PROSPECT_QUERY.INSERT_PROSPECT_IDENTIFIERS
                 .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
                 .replace('<prospect_identifier_id>', newProspectIdentifierId)
                 .replace('<prospect_id>', newProspectId)
                 .replace('<identifier_type>', 'IBID')
                 .replace('<identifier>', X_Auth[0].sub)
-
-        } else {
-            res.status(HTTP.NOT_FOUND.code)
-                .json({ message: `User_Type is invalid.` });
         }
 
         const prospectIdentifierInsertResult = await db.insertRecord(insertProspectIdentifierQuery);
 
         res.status(HTTP.OK.code)
-            .json({ message: `Prospectid ${newProspectId} is created successfully` })
+            .json({ message: `ProspectId ${newProspectId} is created successfully` })
 
     } else {
         res.status(HTTP.NOT_FOUND.code)
@@ -230,7 +227,7 @@ async function addProspectById(req, res) {
     }
 
     if (X_Auth_Add.userType === "UNAUTH_CUSTOMER") {
-        const dbProspectId = await prospectIden_Service.getProspectWithSessionId(X_Auth_Add.sub);
+        const dbProspectId = await dbService.getProspectWithSessionId(X_Auth_Add.sub);
 
         if (dbProspectId == null || dbProspectId != reqParams.ProspectId) {
             res.status(HTTP.NOT_FOUND.code)
@@ -261,7 +258,7 @@ async function addProspect(req, res) {
     }
 
     if (X_Auth_Add.userType === "UNAUTH_CUSTOMER") {
-        const dbProspectId = await prospectIden_Service.getProspectWithSessionId(X_Auth_Add.sub);
+        const dbProspectId = await dbService.getProspectWithSessionId(X_Auth_Add.sub);
 
         if (dbProspectId == null) {
             res.status(HTTP.NOT_FOUND.code)
@@ -297,7 +294,7 @@ async function findProspect(req, res) {
     const result = await findBy.findProspect(req);
     console.log(result.error);
 
-    if (result.error == null) {
+    if (result.error == null ) {
         res.status(HTTP.OK.code)
             .json({ result: result });
     } else {
@@ -321,7 +318,7 @@ async function findProspectById(req, res) {
     const result = await findBy.findProspectById(req);
     console.log(result.error);
 
-    if (result.error == null) {
+    if (result.error == null ) {
         res.status(HTTP.OK.code)
             .json({ result: result });
     } else {
