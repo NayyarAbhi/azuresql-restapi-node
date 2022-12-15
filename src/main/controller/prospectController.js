@@ -49,7 +49,7 @@ async function getMaxProspectIdenId() {
 }
 
 function getNextProspectIdenId(prospectIdenId) {
-    return (prospectIdenId == null) ? 'PID1'
+    return (prospectIdenId == 'PIDnull') ? 'PID1'
         : 'PID' + (parseInt(prospectIdenId.substring(3)) + 1);
 }
 
@@ -158,17 +158,16 @@ async function createProspect(req, res) {
     //     return res.status(HTTP.BAD_REQUEST.code)
     //         .send(error.details);
     // }
-    /**
-     * var ProspectIdfromDB 
-     * var usertype = X_Auth[0].userType
-     * if(usertype === 'UNAUTH_CUSTOMER'){
-     *      ProspectIdfromDB = await getProspectWithSessionId(X_Auth[0].sub)
-     * }else{
-     *      ProspectIdfromDB = await getProspectWithIBID(X_Auth[0].sub)
-     * }
-     * 
-     */
-    var ProspectIdfromDB = await getProspectWithSessionIdorIBID(X_Auth[0].sub);
+    
+    var ProspectIdfromDB 
+    var usertype = X_Auth[0].userType
+    if(usertype === 'UNAUTH_CUSTOMER'){
+          ProspectIdfromDB = await dbService.getProspectWithSessionId(X_Auth[0].sub)
+    }else if(usertype === 'IB_CUSTOMER'){
+          ProspectIdfromDB = await dbService.getProspectWithIBID(X_Auth[0].sub)
+    }
+    console.log(ProspectIdfromDB);
+    //var ProspectIdfromDB = await getProspectWithSessionIdorIBID(X_Auth[0].sub);
     if(ProspectIdfromDB == null){
         var prevProspectId = await getMaxProspectId();
         var newProspectId = prevProspectId==null ? 10000000 : (parseInt(prevProspectId) + 1);
@@ -182,8 +181,7 @@ async function createProspect(req, res) {
 
         const prospectInsertResult = await db.insertRecord(insertProspectQuery);
         var prevProspectIdentifierId = await getMaxProspectIdenId();
-        // var newProspectIdentifierId = prevProspectIdentifierId == null ? 'PID1' :
-        //     'PID' + (parseInt(prevProspectIdentifierId) + 1);
+        console.log(prevProspectIdentifierId);
         var newProspectIdentifierId = getNextProspectIdenId(prevProspectIdentifierId)
 
         var usertype = X_Auth[0].userType

@@ -10,11 +10,18 @@ async function findProspect(req) {
     //TO-DO needs to be integrated with Domus Cookie /validate api to get the session id, and read the value from "sub". For now mocked sub.
     //var X_Auth_ID = req.headers['x-authrization-id']; 
     // invoke /validate(X_Auth_ID.json as body)
-    var cookie = X_Auth_Find[1].sub;
-    var headerProspectId = await dbService.getProspectWithSessionId(cookie);
+    //var cookie = X_Auth_Find[0].sub;
+    var usertype = X_Auth_Find[0].userType
+    var headerProspectId;
+    if(usertype === 'UNAUTH_CUSTOMER'){
+        headerProspectId = await dbService.getProspectWithSessionId(X_Auth_Find[0].sub)
+    }else if(usertype === 'IB_CUSTOMER'){
+        headerProspectId = await dbService.getProspectWithIBID(X_Auth_Find[0].sub)
+    }
+    //var headerProspectId = await dbService.getProspectWithSessionId(cookie);
     //if prospect id is null for x-aurhrazition-id header return error message
     if (headerProspectId == null) {
-        return {"error":`Prospect could not found with SESSIONID ${cookie} in the system`};
+        return {"error":`Prospect could not found with SESSIONID ${X_Auth_Find[0].sub} in the system`};
     }
     const prospect_identifier_query = PROSPECT_QUERY.PROSPECT_IDENTIFIER_VALUES_BY_IDENTIFIER_TYPE_AND_VALUE
             .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
@@ -45,13 +52,21 @@ async function findProspectById(req) {
     //TO-DO needs to be integrated with Domus Cookie /validate api to get the session id, and read the value from "sub". For now mocked sub.
     //var X_Auth_ID = req.headers['x-authrization-id']; 
     // invoke /validate(X_Auth_ID.json as body)
-    var cookie = X_Auth_Find[1].sub;
+    //var cookie = X_Auth_Find[1].sub;
 
-    var headerProspectId = await dbService.getProspectWithSessionId(cookie);
+    //var headerProspectId = await dbService.getProspectWithSessionId(cookie);
+
+    var usertype = X_Auth_Find[0].userType
+    var headerProspectId;
+    if(usertype === 'UNAUTH_CUSTOMER'){
+        headerProspectId = await dbService.getProspectWithSessionId(X_Auth_Find[0].sub)
+    }else if(usertype === 'IB_CUSTOMER'){
+        headerProspectId = await dbService.getProspectWithIBID(X_Auth_Find[0].sub)
+    }
 
     //if prospect id is null for x-aurhrazition-id header return error message
     if (headerProspectId == null) {
-        return {"error":`Prospect could not found with SESSIONID ${cookie} in the system`};
+        return {"error":`Prospect could not found with SESSIONID ${X_Auth_Find[0].sub} in the system`};
     }
     //check below,
     //prospect id retrieved from db for x-aurhrazition-id header is not null and 

@@ -18,10 +18,9 @@ async function getProspectWithSessionId(SessionId){
 }
 
 async function getProspectWithIBID(IBID){
-    const query = PROSPECT_QUERY.GET_PROSPECT_WITH_SESSION_ID
+    const query = PROSPECT_QUERY.GET_PROSPECT_WITH_IBID
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
-        .replace('<identifier>', IBID)
-        .replace('<ibid>', IBID);
+        .replace('<identifier>', IBID);
 
     var record =  (await db.getRecord(query))
         .recordset[0]; 
