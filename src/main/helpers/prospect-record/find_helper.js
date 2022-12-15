@@ -1,7 +1,7 @@
 let PROSPECT_QUERY = require('../../variables/prospect_sql.js').QUERY;
 const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
-const dbService = require('./prospect-identifier-service.js');
+const dbService = require('./prospect_identifier_helper.js');
 let X_Auth_Find = require('../../variables/x-auth-id-find.json');
 
 async function findProspect(req) {
