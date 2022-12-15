@@ -20,18 +20,18 @@ async function findProspect(req) {
             .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
             .replace('<IdentifierValue>', reqBody.IdentifierValue)
             .replace('<IdentifierType>', reqBody.IdentifierType);
-    const prospect_identifier_result =  (await db.getRecord(prospect_identifier_query)).recordset
+    const prospect_identifier =  (await db.getRecord(prospect_identifier_query)).recordset
 
-    if(prospect_identifier_result[0] === undefined) {
+    if(prospect_identifier[0] === undefined) {
         return { error: `Prospect Record does not exist with IdentifierType as ${reqBody.IdentifierType} and  IdentifierValue as ${reqBody.IdentifierValue} in the system` };
     }
-    const prospectId = prospect_identifier_result[0].prospect_id;
+    const prospectId = prospect_identifier[0].prospect_id;
     if (`${prospectId}` === `${headerProspectId}`) {
         const prospect_query = PROSPECT_QUERY.PROSPECT_VALUES_BY_PROSPECT_ID
             .replace('<tableName>', TABLES.PROSPECT)
             .replace('<prospect_id>', prospectId);
-        const prospect_result =  (await db.getRecord(prospect_query)).recordset
-        return {prospect_result, prospect_identifier_result}
+        const prospect =  (await db.getRecord(prospect_query)).recordset
+        return {prospect, prospect_identifier}
     } else {
         return {"error":`Prospect with id ${prospectId} retrieved from request for identifier ${reqBody.IdentifierValue}  could not match with the prospect id retrieved from db for x-aurhrazition-id header ${headerProspectId}`};
     }
