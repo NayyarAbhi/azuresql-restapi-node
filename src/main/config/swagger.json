@@ -26,23 +26,16 @@
         "/prospect/v1": {
             "put": {
                 "tags": [
-                    "Prospects"
+                    "Add Prospect Contact"
                 ],
-                "description": "Update prospect details in the system",
+                "description": "Add prospect contact details in the system",
                 "parameters": [
-                    {
-                        "name": "x-authorization-id",
-                        "in": "header",
-                        "description": "An authorization header",
-                        "required": true,
-                        "type": "string"
-                    },
                     {
                         "name": "Payload",
                         "in": "body",
                         "description": "Update Prospect Request Payload",
                         "schema": {
-                            "$ref": "#/definitions/UpdateProspect"
+                            "$ref": "#/definitions/AddProspectContact_ReqPayload"
                         }
                     }
                 ],
@@ -53,7 +46,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/UpdateProspect"
+                            "$ref": "#/definitions/AddProspectContact_ResPayload"
                         }
                     }
                 }
@@ -126,6 +119,42 @@
                 }
             }
         },
+        "/prospect/v1/{ProspectId}": {
+            "put": {
+                "tags": [
+                    "Add Prospect Contact"
+                ],
+                "description": "Add prospect contact details in the system",
+                "parameters": [
+                    {
+                        "name": "ProspectId",
+                        "in": "path",
+                        "description": "Add prospect details in the system with ProspectId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Payload",
+                        "in": "body",
+                        "description": "Update Prospect Request Payload",
+                        "schema": {
+                            "$ref": "#/definitions/AddProspectContact_ReqPayload"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/AddProspectContact_ResPayload"
+                        }
+                    }
+                }
+            }
+        },
         "/prospect/v1/find": {
             "post": {
                 "tags": [
@@ -164,32 +193,30 @@
         }
     },
     "definitions": {
-        "UpdateProspect": {
+        "AddProspectContact_ReqPayload": {
             "required": [
-                "CustomerId",
-                "Cookie",
-                "SessionId",
-                "OtpEmailId",
-                "DomusCookieId",
-                "IBLogon"
+                "IdentifierType",
+                "IdentifierValue",
+                "ActiveFrom"
             ],
             "properties": {
-                "CustomerId": {
+                "IdentifierType": {
                     "type": "string"
                 },
-                "Cookie": {
+                "IdentifierValue": {
                     "type": "string"
                 },
-                "SessionId": {
+                "ActiveFrom": {
                     "type": "string"
-                },
-                "OtpEmailId": {
-                    "type": "string"
-                },
-                "DomusCookieId": {
-                    "type": "string"
-                },
-                "IBLogon": {
+                }
+            }
+        },
+        "AddProspectContact_ResPayload": {
+            "required": [
+                "ProspectId"
+            ],
+            "properties": {
+                "ProspectId": {
                     "type": "string"
                 }
             }
