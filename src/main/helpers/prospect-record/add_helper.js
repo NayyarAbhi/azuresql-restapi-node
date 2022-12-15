@@ -2,7 +2,9 @@ let PROSPECT_QUERY = require('../../variables/prospect_sql.js').QUERY;
 const PROSPECT_IDENTIFIER_HELPER = require('./prospect_identifier_helper.js');
 const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
-const PROSPECT_UPDATE_COLS = ['brand_identifier', 'channel_identifier', 'first_name']
+
+const PROSPECT_UPDATE_COLS = ['brand_identifier', 'channel_identifier', 'first_name'];
+const VALID_USER_TYPE = ['UNAUTH_CUSTOMER'];
 
 
 function separateAddReqPayload(reqPayload) {
@@ -16,17 +18,6 @@ function separateAddReqPayload(reqPayload) {
         }
     }
     return { prospect_payload, prospectIdentifier_payload };
-}
-
-/* updating Prospect details to the already existing Prospect
-*/
-async function updateProspectRecord(prospectId, reqPayload) {
-    const updateQuery = PROSPECT_QUERY.UPDATE_PROSPECT
-        .replace('<tableName>', TABLES.PROSPECT)
-        .replace('<update_fields>', getUpdateFields(reqPayload))
-        .replace('<prospectId>', prospectId);
-    console.log("\nupdateQuery prospect: \n" + updateQuery);
-    await db.updateRecord(updateQuery);
 }
 
 /* getting the list of IdentifierType which is required to be archived
@@ -48,7 +39,7 @@ async function updateActiveTo(prospectId, reqPayload) {
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
         .replace('<prospectId>', prospectId)
         .replace('<identifierTypeList>', getIdentifierTypeList(reqPayload));
-    console.log(updateQuery)
+    console.log("\nupdateQuery prospect_identifier: \n" + updateQuery)
     await db.updateRecord(updateQuery);
 }
 
@@ -77,16 +68,6 @@ async function getInsertValues(prospectId, reqPayload) {
     return insert_Val_list;
 }
 
-/* adding Prospect Identifiers details to the already existing Prospect
-*/
-async function addProspectIdenRecord(prospectId, reqPayload) {
-    const insertQuery = PROSPECT_QUERY.ADD_PROSP_IDENTIFIER
-        .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
-        .replace('<insertVals>', await getInsertValues(prospectId, reqPayload));
-    console.log(insertQuery);
-    await db.insertRecord(insertQuery);
-}
-
 /* getting list of columns and values to be updates in the Prospect_Identifiers table
 return: 
 <colName1>=<colValue1>,<colName2>=<colValue2>
@@ -99,9 +80,46 @@ function getUpdateFields(payload) {
         update_fields += (value.IdentifierType + "='" + value.IdentifierValue + "'");
         update_fields += (value !== lastItem) ? ',' : '';
     }
-    console.log("\nupdate_fields: \n" + update_fields);
     return update_fields;
 }
 
+/* updating Prospect details to the already existing Prospect
+*/
+async function updateProspectRecord(prospectId, reqPayload) {
+    const updateQuery = PROSPECT_QUERY.UPDATE_PROSPECT
+        .replace('<tableName>', TABLES.PROSPECT)
+        .replace('<update_fields>', getUpdateFields(reqPayload))
+        .replace('<prospectId>', prospectId);
+    console.log("\nupdateQuery prospect: \n" + updateQuery);
+    await db.updateRecord(updateQuery);
+}
+
+/* adding Prospect Identifiers details to the already existing Prospect
+*/
+async function addProspectIdenRecord(prospectId, reqPayload) {
+    const insertQuery = PROSPECT_QUERY.ADD_PROSP_IDENTIFIER
+        .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
+        .replace('<insertVals>', await getInsertValues(prospectId, reqPayload));
+    console.log("\ninsertQuery prospect_identifier:\n" + insertQuery);
+    await db.insertRecord(insertQuery);
+}
+
+
+async function addProspectContact(dbProspectId, reqPayload) {
+    let { prospect_payload, prospectIdentifier_payload } = separateAddReqPayload(reqPayload);
+
+    if (Object.keys(prospect_payload).length !== 0) {
+        await updateProspectRecord(dbProspectId, prospect_payload);
+    } else {
+        console.log("\nPayload doesnot contain tbl_prospect record to be updated");
+    }
+    if (Object.keys(prospectIdentifier_payload).length !== 0) {
+        await updateActiveTo(dbProspectId, prospectIdentifier_payload);
+        await addProspectIdenRecord(dbProspectId, prospectIdentifier_payload);
+    } else {
+        console.log("\nPayload doesnot contain tbl_prospect_identifier record to be updated");
+    }
+}
+
 // exporting modules, to be used in the other .js files
-module.exports = { separateAddReqPayload, updateProspectRecord, updateActiveTo, addProspectIdenRecord };
+module.exports = { VALID_USER_TYPE, addProspectContact };

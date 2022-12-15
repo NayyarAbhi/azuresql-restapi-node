@@ -1,5 +1,5 @@
 {
-    "userType":"UNAUTH_CUSTOMER",
-    "sub":"123232320",         
+    "userType": "UNAUTH_CUSTOMER",
+    "sub": "123232320",
     "exp": 1666343413
 }
