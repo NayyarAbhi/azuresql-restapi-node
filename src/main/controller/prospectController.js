@@ -237,9 +237,7 @@ async function addProspect(req, res) {
 
         if (dbProspectId == null || dbProspectId != reqProspectId) {
             res.status(HTTP.NOT_FOUND.code)
-                // .json({ message: `ProspectId: ${reqProspectId}, does not exist in the system.` });
-                // .json({ error: `ProspectId from request ${reqProspectId} do not matches with ProspectId retrieved from DB for x-authorization-id header ${dbProspectId}` });
-                .json({ error: `ProspectId: ${reqProspectId}, is not associated with SessionId: ${X_Auth_Add.sub}` });
+                .json({ error: `ProspectId: ${reqProspectId}, is not associated with Auth SessionId: ${X_Auth_Add.sub}` });
         } else {
             let { prospect_payload, prospectIdentifier_payload } = separateAddReqPayload(reqPayload);
             await updateActiveTo(reqProspectId, prospectIdentifier_payload);
