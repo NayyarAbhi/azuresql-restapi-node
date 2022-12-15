@@ -84,6 +84,7 @@ async function addProspectById(req, res) {
     const reqParams = req.params;
     const reqPayload = req.body;
     const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
+    let dbProspectId;
 
     if (error = (validator.validateXAuthHeader(authObj) || validator.validateProspectId(reqParams) || validator.validateAddPayload(reqPayload))) {
         return res.status(HTTP.BAD_REQUEST.code)
@@ -91,32 +92,32 @@ async function addProspectById(req, res) {
     }
 
     if (X_Auth_Add.userType === "UNAUTH_CUSTOMER") {
-        const dbProspectId = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(X_Auth_Add.sub);
-
-        if (dbProspectId == null || dbProspectId != reqParams.ProspectId) {
-            res.status(HTTP.NOT_FOUND.code)
-                .json({ error: `ProspectId: ${dbProspectId}, is not associated with Auth SessionId: ${X_Auth_Add.sub}` });
-        } else {
-            let { prospect_payload, prospectIdentifier_payload } = ADD_HELPER.separateAddReqPayload(reqPayload);
-
-            if (Object.keys(prospect_payload).length !== 0) {
-                await ADD_HELPER.updateProspectRecord(dbProspectId, prospect_payload);
-            } else {
-                console.log("\nPayload doesnot contain tbl_prospect record to be updated");
-            }
-            if (Object.keys(prospectIdentifier_payload).length !== 0) {
-                await ADD_HELPER.updateActiveTo(dbProspectId, prospectIdentifier_payload);
-                await ADD_HELPER.addProspectIdenRecord(dbProspectId, prospectIdentifier_payload);
-            } else {
-                console.log("\nPayload doesnot contain tbl_prospect_identifier record to be updated");
-            }
-
-            res.status(HTTP.OK.code)
-                .json({ ProspectId: dbProspectId });
-        }
+        dbProspectId = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(X_Auth_Add.sub);
     } else {
         res.status(HTTP.BAD_REQUEST.code)
             .json({ error: `Auth userType: ${X_Auth_Add.userType}, is not valid.` });
+    }
+
+    if (dbProspectId == null || dbProspectId != reqParams.ProspectId) {
+        res.status(HTTP.NOT_FOUND.code)
+            .json({ error: `ProspectId: ${dbProspectId}, is not associated with Auth SessionId: ${X_Auth_Add.sub}` });
+    } else {
+        let { prospect_payload, prospectIdentifier_payload } = ADD_HELPER.separateAddReqPayload(reqPayload);
+
+        if (Object.keys(prospect_payload).length !== 0) {
+            await ADD_HELPER.updateProspectRecord(dbProspectId, prospect_payload);
+        } else {
+            console.log("\nPayload doesnot contain tbl_prospect record to be updated");
+        }
+        if (Object.keys(prospectIdentifier_payload).length !== 0) {
+            await ADD_HELPER.updateActiveTo(dbProspectId, prospectIdentifier_payload);
+            await ADD_HELPER.addProspectIdenRecord(dbProspectId, prospectIdentifier_payload);
+        } else {
+            console.log("\nPayload doesnot contain tbl_prospect_identifier record to be updated");
+        }
+
+        res.status(HTTP.OK.code)
+            .json({ ProspectId: dbProspectId });
     }
 }
 
@@ -211,5 +212,7 @@ async function findProspectById(req, res) {
     }
 
 }
+
+
 // exporting modules, to be used in the other .js files
 module.exports = { createProspect, addProspectById, addProspect, findProspectById, findProspect }
