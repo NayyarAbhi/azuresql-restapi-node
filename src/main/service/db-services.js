@@ -6,7 +6,6 @@ async function getProspectWithSessionId(SessionId){
     const query = PROSPECT_QUERY.GET_PROSPECT_WITH_SESSION_ID
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
         .replace('<identifier>', SessionId);
-    console.log(query)
 
     var record =  (await db.getRecord(query))
         .recordset[0];
@@ -18,5 +17,20 @@ async function getProspectWithSessionId(SessionId){
     }
 }
 
+async function getProspectWithIBID(IBID){
+    const query = PROSPECT_QUERY.GET_PROSPECT_WITH_SESSION_ID
+        .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
+        .replace('<identifier>', IBID)
+        .replace('<ibid>', IBID);
+
+    var record =  (await db.getRecord(query))
+        .recordset[0]; 
+    if (record != null) {
+        return record.prospect_id;
+    } else {
+        return null;
+    }
+}
+
 // exporting modules, to be used in the other .js files
-module.exports = { getProspectWithSessionId };
+module.exports = { getProspectWithSessionId,getProspectWithIBID };
