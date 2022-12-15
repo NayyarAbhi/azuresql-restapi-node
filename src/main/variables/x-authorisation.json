@@ -1,10 +1,10 @@
 [{
-    "userType":"IB_CUSTOMER",
+    "userType":"UNAUTH_CUSTOMER",
     "sub":"123232320",         
     "exp": 1666343413
 },
 {
-    "userType":"UNAUTH_CUSTOMER",
+    "userType":"IB_CUSTOMER",
     "sub":"12345678",           
     "exp": 1666343413
 }]

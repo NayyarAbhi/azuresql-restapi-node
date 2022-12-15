@@ -153,8 +153,9 @@ async function updateProspectRecord(prospectId, reqPayload) {
 
 // creating the prospect, if the customer id does not exist in the system
 async function createProspect(req, res) {
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
 
-    if (error = validator.validateCreatePayload(req.body)) {
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateCreatePayload(req.body))) {
         return res.status(HTTP.BAD_REQUEST.code)
             .send(error.details);
     }
@@ -167,7 +168,7 @@ async function createProspect(req, res) {
         ProspectIdfromDB = await prospectIden_Service.getProspectWithIBID(X_Auth[0].sub)
     } else {
         res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `User_Type is invalid.` });
+            .json({ message: `User_Type: ${usertype} is invalid.` });
         return
     }
     if (ProspectIdfromDB == null) {
@@ -220,8 +221,9 @@ async function createProspect(req, res) {
 async function addProspectById(req, res) {
     const reqParams = req.params;
     const reqPayload = req.body;
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
 
-    if (error = (validator.validateProspectId(reqParams) || validator.validateAddPayload(reqPayload))) {
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateProspectId(reqParams) || validator.validateAddPayload(reqPayload))) {
         return res.status(HTTP.BAD_REQUEST.code)
             .send(error.details);
     }
@@ -234,9 +236,18 @@ async function addProspectById(req, res) {
                 .json({ error: `ProspectId: ${dbProspectId}, is not associated with Auth SessionId: ${X_Auth_Add.sub}` });
         } else {
             let { prospect_payload, prospectIdentifier_payload } = separateAddReqPayload(reqPayload);
-            await updateActiveTo(dbProspectId, prospectIdentifier_payload);
-            await addProspectIdenRecord(dbProspectId, prospectIdentifier_payload);
-            await updateProspectRecord(dbProspectId, prospect_payload);
+
+            if (Object.keys(prospect_payload).length !== 0) {
+                await updateProspectRecord(dbProspectId, prospect_payload);
+            } else {
+                console.log("Payload doesnot contain tbl_prospect record to be updated");
+            }
+            if (Object.keys(prospectIdentifier_payload).length !== 0) {
+                await updateActiveTo(dbProspectId, prospectIdentifier_payload);
+                await addProspectIdenRecord(dbProspectId, prospectIdentifier_payload);
+            } else {
+                console.log("Payload doesnot contain tbl_prospect_identifier record to be updated");
+            }
 
             res.status(HTTP.OK.code)
                 .json({ ProspectId: dbProspectId });
@@ -251,8 +262,9 @@ async function addProspectById(req, res) {
 */
 async function addProspect(req, res) {
     const reqPayload = req.body;
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
 
-    if (error = validator.validateAddPayload(reqPayload)) {
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateAddPayload(reqPayload))) {
         return res.status(HTTP.BAD_REQUEST.code)
             .send(error.details);
     }
@@ -265,9 +277,18 @@ async function addProspect(req, res) {
                 .json({ error: `ProspectId: ${dbProspectId}, is not associated with Auth SessionId: ${X_Auth_Add.sub}` });
         } else {
             let { prospect_payload, prospectIdentifier_payload } = separateAddReqPayload(reqPayload);
-            await updateActiveTo(dbProspectId, prospectIdentifier_payload);
-            await addProspectIdenRecord(dbProspectId, prospectIdentifier_payload);
-            await updateProspectRecord(dbProspectId, prospect_payload);
+
+            if (Object.keys(prospect_payload).length !== 0) {
+                await updateProspectRecord(dbProspectId, prospect_payload);
+            } else {
+                console.log("Payload doesnot contain tbl_prospect record to be updated");
+            }
+            if (Object.keys(prospectIdentifier_payload).length !== 0) {
+                await updateActiveTo(dbProspectId, prospectIdentifier_payload);
+                await addProspectIdenRecord(dbProspectId, prospectIdentifier_payload);
+            } else {
+                console.log("Payload doesnot contain tbl_prospect_identifier record to be updated");
+            }
 
             res.status(HTTP.OK.code)
                 .json({ ProspectId: dbProspectId });
@@ -281,12 +302,12 @@ async function addProspect(req, res) {
 /* Find Prospect API to retrieve Prospect details
 */
 async function findProspect(req, res) {
-
     const reqBody = req.body;
-    var X_Auth_ID = req.headers['x-authrization-id'];
-    console.log(X_Auth_ID)
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
+    console.log(authObj)
+
     //validate request body and x-authrization-id are not empty
-    if (error = (validator.validateXAuthHeader(X_Auth_ID) && validator.validateFindPayload(reqBody))) {
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateFindPayload(reqBody))) {
         return res.status(HTTP.BAD_REQUEST.code)
             .send(error.details);
     }
@@ -296,10 +317,10 @@ async function findProspect(req, res) {
 
     if (result.error == null) {
         res.status(HTTP.OK.code)
-            .json({ result: result });
+            .send(result);
     } else {
         res.status(HTTP.NOT_FOUND.code)
-            .json({ result: result });
+            .send(result);
     }
 }
 
@@ -308,9 +329,10 @@ async function findProspect(req, res) {
 async function findProspectById(req, res) {
     const reqParams = req.params;
     const prospectId = reqParams.ProspectId;
-    var X_Auth_ID = req.headers['x-authrization-id'];
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
+
     //validate the request data and headers
-    if (error = (validator.validateXAuthHeader(X_Auth_ID) && validator.validateProspectId(reqParams))) {
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateProspectId(reqParams))) {
         return res.status(HTTP.BAD_REQUEST.code)
             .send(error.details);
     }
@@ -320,10 +342,10 @@ async function findProspectById(req, res) {
 
     if (result.error == null) {
         res.status(HTTP.OK.code)
-            .json({ result: result });
+            .send(result);
     } else {
         res.status(HTTP.NOT_FOUND.code)
-            .json({ result: result });
+            .send(result);
     }
 
 }

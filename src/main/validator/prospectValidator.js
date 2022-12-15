@@ -2,13 +2,13 @@ const joi = require('joi');
 
 const createProspectSchema = joi.object({
     created_on: joi.string().required(),
-    brand_identifier: joi.string().optional(),
-    channel_identifier: joi.string().required(),
+    brand_identifier: joi.string().required(),
+    channel_identifier: joi.string().optional(),
     first_name: joi.string().optional()
 });
 
 const xAuthSchema = joi.object({
-    X_Auth_ID: joi.string().required()
+    'x-authorization-id': joi.string().required()
 });
 const prospectIdSchmea = joi.object({
     ProspectId: joi.number().required()
@@ -53,4 +53,4 @@ function validateXAuthHeader(X_Auth_ID) {
 
 
 // exporting modules, to be used in the other .js files
-module.exports = { validateCreatePayload, validateProspectId, validateAddPayload, validateFindPayload, validateXAuthHeader}
+module.exports = { validateCreatePayload, validateProspectId, validateAddPayload, validateFindPayload, validateXAuthHeader }

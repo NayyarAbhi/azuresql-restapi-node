@@ -30,7 +30,7 @@ async function findProspect(req) {
     const prospect_identifier = (await db.getRecord(prospect_identifier_query)).recordset
 
     if (prospect_identifier[0] === undefined) {
-        return { error: `Prospect Record does not exist with IdentifierType as ${reqBody.IdentifierType} and  IdentifierValue as ${reqBody.IdentifierValue} in the system` };
+        return { error: `Prospect Record does not exist with IdentifierType as ${reqBody.IdentifierType} and IdentifierValue as ${reqBody.IdentifierValue} in the system` };
     }
     const prospectId = prospect_identifier[0].prospect_id;
     if (`${prospectId}` === `${headerProspectId}`) {
@@ -40,7 +40,7 @@ async function findProspect(req) {
         const prospect = (await db.getRecord(prospect_query)).recordset
         return { prospect, prospect_identifier }
     } else {
-        return { "error": `Prospect with id ${prospectId} retrieved from request for identifier ${reqBody.IdentifierValue}  could not match with the prospect id retrieved from db for x-aurhrazition-id header ${headerProspectId}` };
+        return { "error": `Prospect with id ${prospectId} retrieved from request for identifier ${reqBody.IdentifierValue} could not match with the prospect id retrieved from db for x-aurhrazition-id header ${headerProspectId}` };
     }
 }
 
