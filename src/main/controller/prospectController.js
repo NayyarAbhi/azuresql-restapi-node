@@ -220,9 +220,9 @@ async function createProspect(req, res) {
     }
 }
 
-/* Add Prospect API to add Prospect details to the already existing Prospect
+/* Add Prospect API to add Prospect contact details by ProspectId to the already existing Prospect
 */
-async function addProspect(req, res) {
+async function addProspectById(req, res) {
     const reqParams = req.params;
     const reqPayload = req.body;
 
@@ -233,19 +233,49 @@ async function addProspect(req, res) {
 
     if (X_Auth_Add.userType === "UNAUTH_CUSTOMER") {
         const dbProspectId = await dbService.getProspectWithSessionId(X_Auth_Add.sub);
-        const reqProspectId = reqParams.ProspectId;
 
-        if (dbProspectId == null || dbProspectId != reqProspectId) {
+        if (dbProspectId == null || dbProspectId != reqParams.ProspectId) {
             res.status(HTTP.NOT_FOUND.code)
-                .json({ error: `ProspectId: ${reqProspectId}, is not associated with Auth SessionId: ${X_Auth_Add.sub}` });
+                .json({ error: `ProspectId: ${dbProspectId}, is not associated with Auth SessionId: ${X_Auth_Add.sub}` });
         } else {
             let { prospect_payload, prospectIdentifier_payload } = separateAddReqPayload(reqPayload);
-            await updateActiveTo(reqProspectId, prospectIdentifier_payload);
-            await addProspectIdenRecord(reqProspectId, prospectIdentifier_payload);
-            await updateProspectRecord(reqProspectId, prospect_payload);
+            await updateActiveTo(dbProspectId, prospectIdentifier_payload);
+            await addProspectIdenRecord(dbProspectId, prospectIdentifier_payload);
+            await updateProspectRecord(dbProspectId, prospect_payload);
 
             res.status(HTTP.OK.code)
-                .json({ ProspectId: reqProspectId });
+                .json({ ProspectId: dbProspectId });
+        }
+    } else {
+        res.status(HTTP.BAD_REQUEST.code)
+            .json({ error: `Auth userType: ${X_Auth_Add.userType}, is not valid.` });
+    }
+}
+
+/* Add Prospect API to add Prospect contact details to the already existing Prospect
+*/
+async function addProspect(req, res) {
+    const reqPayload = req.body;
+
+    if (error = validator.validateAddPayload(reqPayload)) {
+        return res.status(HTTP.BAD_REQUEST.code)
+            .send(error.details);
+    }
+
+    if (X_Auth_Add.userType === "UNAUTH_CUSTOMER") {
+        const dbProspectId = await dbService.getProspectWithSessionId(X_Auth_Add.sub);
+
+        if (dbProspectId == null) {
+            res.status(HTTP.NOT_FOUND.code)
+                .json({ error: `ProspectId: ${dbProspectId}, is not associated with Auth SessionId: ${X_Auth_Add.sub}` });
+        } else {
+            let { prospect_payload, prospectIdentifier_payload } = separateAddReqPayload(reqPayload);
+            await updateActiveTo(dbProspectId, prospectIdentifier_payload);
+            await addProspectIdenRecord(dbProspectId, prospectIdentifier_payload);
+            await updateProspectRecord(dbProspectId, prospect_payload);
+
+            res.status(HTTP.OK.code)
+                .json({ ProspectId: dbProspectId });
         }
     } else {
         res.status(HTTP.BAD_REQUEST.code)
@@ -340,4 +370,4 @@ async function findProspectById(req, res) {
 }
 
 // exporting modules, to be used in the other .js files
-module.exports = { createProspect, addProspect, findProspectById, findProspect }
+module.exports = { createProspect, addProspectById, addProspect, findProspectById, findProspect }
