@@ -3,10 +3,11 @@ const controller = require("../controller/prospectController.js");
 const prospectRoutes = express.Router();
 
 prospectRoutes.route('/')
-    .post(controller.createProspect);
+    .post(controller.createProspect)
+    .put(controller.addProspect);
 
 prospectRoutes.route('/:ProspectId')
-    .put(controller.addProspect);
+    .put(controller.addProspectById);
 
 prospectRoutes.route('/find')
     .post(controller.findProspect);
