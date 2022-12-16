@@ -90,25 +90,27 @@ async function addProspectById(req, res) {
             .send(error.details);
     }
 
-    if (!(ADD_HELPER.VALID_USER_TYPE.includes(X_Auth_Add.userType))) {
+    const auth_userType = X_Auth_Add.userType;
+    const auth_sub = X_Auth_Add.sub;
+    const { prospectId, invalid_auth_userType } = await ADD_HELPER.getProspectId(auth_userType, auth_sub);
+
+    if (invalid_auth_userType) {
         return res.status(HTTP.BAD_REQUEST.code)
-            .json({ error: `Auth userType: ${X_Auth_Add.userType}, is not valid.` });
+            .json({ error: `Auth userType: ${auth_userType}, is not valid.` });
+    }
+    else if (prospectId == null) {
+        return res.status(HTTP.NOT_FOUND.code)
+            .json({ error: `Prospect Record not found with userType:${auth_userType} and sub: ${auth_sub}` });
     }
 
     const reqProspectId = reqParams.ProspectId;
-    const dbProspectId = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(X_Auth_Add.sub);
-    if (dbProspectId == null) {
-        return res.status(HTTP.NOT_FOUND.code)
-            .json({ error: `Prospect Record not found with userType:${X_Auth_Add.userType} and sub: ${X_Auth_Add.sub}` });
-    }
-
-    if (dbProspectId == reqProspectId) {
-        ADD_HELPER.addProspectContact(dbProspectId, reqPayload);
+    if (prospectId == reqProspectId) {
+        ADD_HELPER.addProspectContact(prospectId, reqPayload);
         res.status(HTTP.OK.code)
-            .json({ ProspectId: dbProspectId });
+            .json({ ProspectId: prospectId });
     } else {
         res.status(HTTP.NOT_FOUND.code)
-            .json({ error: `ProspectId: ${reqProspectId} in the request is not associated with userType:${X_Auth_Add.userType} and sub: ${X_Auth_Add.sub}` });
+            .json({ error: `ProspectId: ${reqProspectId} in the request is not associated with userType:${auth_userType} and sub: ${auth_sub}` });
     }
 }
 
@@ -123,20 +125,23 @@ async function addProspect(req, res) {
             .send(error.details);
     }
 
-    if (!(ADD_HELPER.VALID_USER_TYPE.includes(X_Auth_Add.userType))) {
+    const auth_userType = X_Auth_Add.userType;
+    const auth_sub = X_Auth_Add.sub;
+    const { prospectId, invalid_auth_userType } = await ADD_HELPER.getProspectId(auth_userType, auth_sub);
+
+    if (invalid_auth_userType) {
         return res.status(HTTP.BAD_REQUEST.code)
-            .json({ error: `Auth userType: ${X_Auth_Add.userType}, is not valid.` });
+            .json({ error: `Auth userType: ${auth_userType}, is not valid.` });
     }
 
-    const dbProspectId = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(X_Auth_Add.sub);
-    if (dbProspectId == null) {
+    if (prospectId == null) {
         return res.status(HTTP.NOT_FOUND.code)
-            .json({ error: `Prospect Record not found with userType:${X_Auth_Add.userType} and sub: ${X_Auth_Add.sub}` });
+            .json({ error: `Prospect Record not found with userType:${auth_userType} and sub: ${auth_sub}` });
     }
 
-    ADD_HELPER.addProspectContact(dbProspectId, reqPayload);
+    ADD_HELPER.addProspectContact(prospectId, reqPayload);
     res.status(HTTP.OK.code)
-        .json({ ProspectId: dbProspectId });
+        .json({ ProspectId: prospectId });
 }
 
 /* Find Prospect API to retrieve Prospect details

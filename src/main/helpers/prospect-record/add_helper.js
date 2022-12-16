@@ -4,8 +4,6 @@ const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
 
 const PROSPECT_UPDATE_COLS = ['brand_identifier', 'channel_identifier', 'first_name'];
-const VALID_USER_TYPE = ['UNAUTH_CUSTOMER'];
-
 
 function separateAddReqPayload(reqPayload) {
     let prospect_payload = [];
@@ -18,6 +16,19 @@ function separateAddReqPayload(reqPayload) {
         }
     }
     return { prospect_payload, prospectIdentifier_payload };
+}
+
+async function getProspectId(userType, sub) {
+    let prospectId;
+    let invalid_auth_userType = false;
+    switch (userType) {
+        case 'UNAUTH_CUSTOMER':
+            prospectId = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(sub);
+            break;
+        default:
+            invalid_auth_userType = true;
+    }
+    return { prospectId, invalid_auth_userType };
 }
 
 /* getting the list of IdentifierType which is required to be archived
@@ -122,4 +133,4 @@ async function addProspectContact(dbProspectId, reqPayload) {
 }
 
 // exporting modules, to be used in the other .js files
-module.exports = { VALID_USER_TYPE, addProspectContact };
+module.exports = { getProspectId, addProspectContact };
