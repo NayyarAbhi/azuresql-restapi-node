@@ -6,6 +6,8 @@ const HTTP = require('../../variables/status.js').HTTP;
 
 const PROSPECT_UPDATE_COLS = ['brand_identifier', 'channel_identifier', 'first_name'];
 
+/* segregating tbl_prospect and tbl_prospect_identifiers payload from RequestPayload
+*/
 function separateAddReqPayload(reqPayload) {
     let prospect_payload = [];
     let prospectIdentifier_payload = [];
@@ -16,9 +18,11 @@ function separateAddReqPayload(reqPayload) {
             prospectIdentifier_payload.push(value);
         }
     }
-    return { prospect_payload, prospectIdentifier_payload };
+    return [prospect_payload, prospectIdentifier_payload];
 }
 
+/* getting the ProspectId from the DB, with the help of Auth userType and sub
+*/
 async function getProspectId(userType, sub) {
     let prospectId;
     let invalid_auth_userType = false;
@@ -30,6 +34,32 @@ async function getProspectId(userType, sub) {
             invalid_auth_userType = true;
     }
     return { prospectId, invalid_auth_userType };
+}
+
+/* getting list of columns and values to be updates in the Prospect_Identifiers table
+return: 
+<colName1>=<colValue1>,<colName2>=<colValue2>
+*/
+function getUpdateFields(payload) {
+    let update_fields = '';
+    const lastItem = Object.values(payload).pop();
+
+    for (let value of Object.values(payload)) {
+        update_fields += (value.IdentifierType + "='" + value.IdentifierValue + "'");
+        update_fields += (value !== lastItem) ? ',' : '';
+    }
+    return update_fields;
+}
+
+/* updating Prospect details to the already existing Prospect
+*/
+async function updateProspectRecord(prospectId, reqPayload) {
+    const updateQuery = PROSPECT_QUERY.UPDATE_PROSPECT
+        .replace('<tableName>', TABLES.PROSPECT)
+        .replace('<update_fields>', getUpdateFields(reqPayload))
+        .replace('<prospectId>', prospectId);
+    console.log("\nupdateQuery prospect: \n" + updateQuery);
+    await db.updateRecord(updateQuery);
 }
 
 /* getting the list of IdentifierType which is required to be archived
@@ -80,32 +110,6 @@ async function getInsertValues(prospectId, reqPayload) {
     return insert_Val_list;
 }
 
-/* getting list of columns and values to be updates in the Prospect_Identifiers table
-return: 
-<colName1>=<colValue1>,<colName2>=<colValue2>
-*/
-function getUpdateFields(payload) {
-    let update_fields = '';
-    const lastItem = Object.values(payload).pop();
-
-    for (let value of Object.values(payload)) {
-        update_fields += (value.IdentifierType + "='" + value.IdentifierValue + "'");
-        update_fields += (value !== lastItem) ? ',' : '';
-    }
-    return update_fields;
-}
-
-/* updating Prospect details to the already existing Prospect
-*/
-async function updateProspectRecord(prospectId, reqPayload) {
-    const updateQuery = PROSPECT_QUERY.UPDATE_PROSPECT
-        .replace('<tableName>', TABLES.PROSPECT)
-        .replace('<update_fields>', getUpdateFields(reqPayload))
-        .replace('<prospectId>', prospectId);
-    console.log("\nupdateQuery prospect: \n" + updateQuery);
-    await db.updateRecord(updateQuery);
-}
-
 /* adding Prospect Identifiers details to the already existing Prospect
 */
 async function addProspectIdenRecord(prospectId, reqPayload) {
@@ -116,9 +120,22 @@ async function addProspectIdenRecord(prospectId, reqPayload) {
     await db.insertRecord(insertQuery);
 }
 
+/* doing below operation in order to add/update a prospect contact in the system.
 
+Step1: Updating tbl_prospect record.
+       For Example: updating the first_name, brand_identifier, channel_identifier of a prospect.
+       Method Used --> updateProspectRecord(dbProspectId, prospect_payload)
+
+Step2: Archiving (to maintain history) records by updating ActiveTo column in tbl_prospect_identifier.
+       For Example: archiving the EmailId of a prospect, when new update comes for a EmailID.
+       Method Used --> updateActiveTo(dbProspectId, prospectIdentifier_payload)
+
+Step3: Adding new Prospect Identifier/Contact details to the already existing Prospect in the tbl_prospect_identifier.
+       For Example: Adding  Mobile_Number OR Email_Id to the prospect
+       Method Used --> addProspectIdenRecord(dbProspectId, prospectIdentifier_payload)
+*/
 async function addProspectContact(dbProspectId, reqPayload) {
-    let { prospect_payload, prospectIdentifier_payload } = separateAddReqPayload(reqPayload);
+    let [prospect_payload, prospectIdentifier_payload] = separateAddReqPayload(reqPayload);
 
     if (Object.keys(prospect_payload).length !== 0) {
         await updateProspectRecord(dbProspectId, prospect_payload);
@@ -133,7 +150,11 @@ async function addProspectContact(dbProspectId, reqPayload) {
     }
 }
 
-
+/* Building a Response Payload to be sent back by the API.
+   return [response_status_code, response_message]
+   response_status_code: contains the response status code
+   response_message: contains the response message
+*/
 async function getResponse(X_Auth_Add, req, ById) {
     let response_status_code;
     let response_message;
@@ -145,13 +166,13 @@ async function getResponse(X_Auth_Add, req, ById) {
     if (invalid_auth_userType) {
         response_status_code = HTTP.BAD_REQUEST.code;
         response_message = { error: `Auth userType: ${auth_userType}, is not valid.` };
-        return { response_status_code, response_message };
+        return [response_status_code, response_message];
     }
 
     if (prospectId == null) {
         response_status_code = HTTP.NOT_FOUND.code;
         response_message = { error: `Prospect Record not found with userType:${auth_userType} and sub: ${auth_sub}` };
-        return { response_status_code, response_message };
+        return [response_status_code, response_message];
     }
 
     if (ById) {
@@ -160,17 +181,17 @@ async function getResponse(X_Auth_Add, req, ById) {
             addProspectContact(prospectId, reqPayload);
             response_status_code = HTTP.OK.code;
             response_message = { ProspectId: prospectId };
-            return { response_status_code, response_message };
+            return [response_status_code, response_message];
         } else {
             response_status_code = HTTP.NOT_FOUND.code;
             response_message = { error: `ProspectId: ${reqProspectId} in the request is not associated with userType:${auth_userType} and sub: ${auth_sub}` };
-            return { response_status_code, response_message };
+            return [response_status_code, response_message];
         }
     } else {
         addProspectContact(prospectId, reqPayload);
         response_status_code = HTTP.OK.code;
         response_message = { ProspectId: prospectId };
-        return { response_status_code, response_message };
+        return [response_status_code, response_message];
     }
 }
 

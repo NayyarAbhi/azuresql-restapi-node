@@ -90,7 +90,7 @@ async function addProspectById(req, res) {
             .send(error.details);
     }
 
-    const { response_status_code, response_message } = await ADD_HELPER.getResponse(X_Auth_Add, req, true);
+    const [response_status_code, response_message] = await ADD_HELPER.getResponse(X_Auth_Add, req, true);
     res.status(response_status_code)
         .send(response_message);
 }
@@ -106,7 +106,7 @@ async function addProspect(req, res) {
             .send(error.details);
     }
 
-    const { response_status_code, response_message } = await ADD_HELPER.getResponse(X_Auth_Add, req, false);
+    const [response_status_code, response_message] = await ADD_HELPER.getResponse(X_Auth_Add, req, false);
     res.status(response_status_code)
         .send(response_message);
 }
