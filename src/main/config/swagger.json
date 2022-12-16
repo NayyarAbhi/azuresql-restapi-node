@@ -23,19 +23,19 @@
         "application/json"
     ],
     "paths": {
-        "/prospect": {
+        "/prospect/v1": {
             "put": {
                 "tags": [
-                    "Prospects"
+                    "Add Prospect Contact"
                 ],
-                "description": "Update prospect details in the system",
+                "description": "Add prospect contact details in the system",
                 "parameters": [
                     {
                         "name": "Payload",
                         "in": "body",
                         "description": "Update Prospect Request Payload",
                         "schema": {
-                            "$ref": "#/definitions/UpdateProspect"
+                            "$ref": "#/definitions/AddProspectContact_ReqPayload"
                         }
                     }
                 ],
@@ -46,7 +46,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/UpdateProspect"
+                            "$ref": "#/definitions/AddProspectContact_ResPayload"
                         }
                     }
                 }
@@ -57,6 +57,13 @@
                 ],
                 "description": "Create prospect details in the system",
                 "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "An authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
                     {
                         "name": "Payload",
                         "in": "body",
@@ -77,36 +84,139 @@
                         }
                     }
                 }
+            },
+            "get": {
+                "tags": [
+                    "Find Prospects"
+                ],
+                "description": "Find prospect details in the system",
+                "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "An authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ProspectId",
+                        "in": "path",
+                        "description": "Find prospect details in the system",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/FindProspect"
+                        }
+                    }
+                }
+            }
+        },
+        "/prospect/v1/{ProspectId}": {
+            "put": {
+                "tags": [
+                    "Add Prospect Contact"
+                ],
+                "description": "Add prospect contact details in the system",
+                "parameters": [
+                    {
+                        "name": "ProspectId",
+                        "in": "path",
+                        "description": "Add prospect details in the system with ProspectId",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Payload",
+                        "in": "body",
+                        "description": "Update Prospect Request Payload",
+                        "schema": {
+                            "$ref": "#/definitions/AddProspectContact_ReqPayload"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/AddProspectContact_ResPayload"
+                        }
+                    }
+                }
+            }
+        },
+        "/prospect/v1/find": {
+            "post": {
+                "tags": [
+                    "Find Prospects"
+                ],
+                "description": "Find prospect details in the system",
+                "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "An authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Payload",
+                        "in": "body",
+                        "description": "Find prospect details in the system",
+                        "schema": {
+                            "$ref": "#/definitions/FindProspect"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Prospect"
+                        }
+                    }
+                }
             }
         }
     },
     "definitions": {
-        "UpdateProspect": {
+        "AddProspectContact_ReqPayload": {
             "required": [
-                "CustomerId",
-                "Cookie",
-                "SessionId",
-                "OtpEmailId",
-                "DomusCookieId",
-                "IBLogon"
+                "IdentifierType",
+                "IdentifierValue",
+                "ActiveFrom"
             ],
             "properties": {
-                "CustomerId": {
+                "IdentifierType": {
                     "type": "string"
                 },
-                "Cookie": {
+                "IdentifierValue": {
                     "type": "string"
                 },
-                "SessionId": {
+                "ActiveFrom": {
                     "type": "string"
-                },
-                "OtpEmailId": {
-                    "type": "string"
-                },
-                "DomusCookieId": {
-                    "type": "string"
-                },
-                "IBLogon": {
+                }
+            }
+        },
+        "AddProspectContact_ResPayload": {
+            "required": [
+                "ProspectId"
+            ],
+            "properties": {
+                "ProspectId": {
                     "type": "string"
                 }
             }
@@ -138,6 +248,74 @@
                 },
                 "IBLogon": {
                     "type": "string"
+                }
+            }
+        },
+        "FindProspect": {
+            "required": [
+                "IdentifierType",
+                "IdentifierValue"
+            ],
+            "properties": {
+                "IdentifierType": {
+                    "type": "string"
+                },
+                "IdentifierValue": {
+                    "type": "string"
+                }
+            }
+        },
+        "Prospect": {
+            "required": [
+                "prospect_id",
+                "created_on",
+                "brand_identifier",
+                "channel_identifier",
+                "first_name",
+                "email",
+                "phone"
+            ],
+            "properties": {
+                "prospect_id": {
+                    "type": "int"
+                },
+                "created_on": {
+                    "type": "string"
+                },
+                "brand_identifier": {
+                    "type": "string"
+                },
+                "channel_identifier": {
+                    "type": "string"
+                },
+                "first_name": {
+                    "type": "string"
+                }
+            }
+        },
+        "ProspectIdentifier": {
+            "required": [
+                "prospect_id",
+                "identifier",
+                "identifier_type",
+                "active_from",
+                "active_to"
+            ],
+            "properties": {
+                "prospect_id": {
+                    "type": "string"
+                },
+                "identifier": {
+                    "type": "string"
+                },
+                "identifier_type": {
+                    "type": "string"
+                },
+                "active_from": {
+                    "type": "date"
+                },
+                "active_to": {
+                    "type": "date"
                 }
             }
         }

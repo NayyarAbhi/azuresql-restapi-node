@@ -1,4 +1,5 @@
 // Importing packages
+const { Table } = require('mssql');
 const azureSql = require('../main/utils/azureSql.js');
 
 // create schema in the db
@@ -43,13 +44,13 @@ Sql Operation
 // let dropSql = "DROP TABLE TestSchema.Intent"
 // let createTableSql = 'CREATE TABLE TestSchema.otprecord (id BIGINT PRIMARY KEY, first_name VARCHAR(255) NOT NULL, last_name  VARCHAR(255) DEFAULT NULL, email VARCHAR(255) NOT NULL, phone VARCHAR(255) NOT NULL, CONSTRAINT UQ_OTP_Email UNIQUE(email))'
 // let createTableSql = "CREATE TABLE TestSchema.prospectdetails (ProspectId varchar(255), CustomerId varchar(255), Cookie varchar(255), SessionId varchar(255), OtpEmailId varchar(255), DomusCookieId varchar(255), IBLogon varchar(255))";
-let readSql = "SELECT * FROM TestSchema.prospectdetails WHERE CustomerId = 1";
-let insertSql = "INSERT INTO TestSchema.prospectdetails (ProspectId, CustomerId, Cookie, SessionId, OtpEmailId, DomusCookieId, IBLogon) VALUES ('101', '1', 'cookie1', 'sessionId1', 'abc1@gmail.com', 'DomusCookieId1', 'IBLogon1'), ('102', '2', 'cookie2', 'sessionId2', 'abc2@gmail.com', 'DomusCookieId2', 'IBLogon2'), ('103', '3', 'cookie3', 'sessionId3', 'abc3@gmail.com', 'DomusCookieId3', 'IBLogon3')"
+// let readSql = "SELECT * FROM TestSchema.prospectdetails WHERE CustomerId = 1";
+// let insertSql = "INSERT INTO TestSchema.prospectdetails (ProspectId, CustomerId, Cookie, SessionId, OtpEmailId, DomusCookieId, IBLogon) VALUES ('101', '1', 'cookie1', 'sessionId1', 'abc1@gmail.com', 'DomusCookieId1', 'IBLogon1'), ('102', '2', 'cookie2', 'sessionId2', 'abc2@gmail.com', 'DomusCookieId2', 'IBLogon2'), ('103', '3', 'cookie3', 'sessionId3', 'abc3@gmail.com', 'DomusCookieId3', 'IBLogon3')"
 
 // createSchema(createSchemaSql)
 // createTable(createTableSql)
 // insertRecord(insertSql)
-getRecord(readSql);
+// getRecord(readSql);
 // updateRecord(updateSql);
 
 
@@ -82,18 +83,29 @@ getRecord(readSql);
 
 
 // http://localhost:9041/prospect
-{
-	"CustomerId": "2",
-	"Cookie": "cookie42",
-	"SessionId": "sessionId2",
-	"OtpEmailId": "abc2@gmail.com",
-	"DomusCookieId": "DomusCookieId2",
-	"IBLogon": "IBLogon2"
-}
+// {
+// 	"CustomerId": "2",
+// 	"Cookie": "cookie42",
+// 	"SessionId": "sessionId2",
+// 	"OtpEmailId": "abc2@gmail.com",
+// 	"DomusCookieId": "DomusCookieId2",
+// 	"IBLogon": "IBLogon2"
+// }
 
+// --------------------------------------------------------------API V2------------------------------------------------------------------------------
 
+// Drop Table TestSchema.Prospect;
+// CREATE TABLE TestSchema.Prospect (
+//     ProspectId varchar(50),
+//     CreatedOn datetime,
+//     BrandIdentifier varchar(50),
+//     ChannelIdentifier varchar(50),
+// 	FirstName varchar(50)
+// );
+
+// Drop Table TestSchema.Prospect_Identifiers;
 // CREATE TABLE TestSchema.Prospect_Identifiers (
-//     ProspectIdentifierId varchar(10),
+//     ProspectIdentifierId integer,
 //     ProspectId integer,
 //     Identifier varchar(50),
 //     IdentifierType varchar(50),

@@ -3,92 +3,164 @@ const TABLES = require('../variables/tables.js').TABLES;
 const HTTP = require('../variables/status.js').HTTP;
 const validator = require('../validator/prospectValidator');
 let PROSPECT_QUERY = require('../variables/prospect_sql.js').QUERY;
+const PROSPECT_HELPER = require('../helpers/prospect/prospect_helper.js');
+const PROSPECT_IDENTIFIER_HELPER = require('../helpers/prospect-record/prospect_identifier_helper.js');
+let IDENTIFIER = require('../variables/identifier.js').IDENTIFIER;
+const FIND_HELPER = require('../helpers/prospect-record/find_helper.js');
+const ADD_HELPER = require('../helpers/prospect-record/add_helper');
+let X_Auth = require('../variables/x-authorisation.json');
+let X_Auth_Find = require('../variables/x-auth-id-find.json');
+const X_Auth_Add = require('../variables/x-auth-add.json');
 
-const PRIMARY_KEYS = ['CustomerId'];
-
-// checking if a record present in the DB
-async function isRecordPresent(customerId) {
-    const query = PROSPECT_QUERY.COUNT
-        .replace('<tableName>', TABLES.PROSPECT)
-        .replace('<customerId>', customerId);
-
-    return (await db.getRecord(query))
-        .recordset[0].RECORD_COUNT !== 0 ? true : false;
-}
-
-async function getMaxProspectId() {
-    const query = PROSPECT_QUERY.GETPROSPECTID
-        .replace('<tableName>', TABLES.PROSPECT);
-
-    return (await db.getRecord(query))
-        .recordset[0].MAX_PROSPECTID;
-}
-
-// getting fields from payload, which needs to be updated
-function getUpdateFields(obj) {
-    for (let key of PRIMARY_KEYS) delete obj[key];
-
-    let update_fields = '';
-    const lastItem = Object.values(obj).pop();
-    for (let [key, value] of Object.entries(obj)) {
-        update_fields += (key + "='" + value + "'");
-        update_fields += (value !== lastItem) ? ',' : '';
-    }
-    return update_fields;
-}
 
 // creating the prospect, if the customer id does not exist in the system
 async function createProspect(req, res) {
-    if (error = validator.validateCreatePayload(req.body)) {
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
+
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateCreatePayload(req.body))) {
         return res.status(HTTP.BAD_REQUEST.code)
             .send(error.details);
     }
 
-    var customerId = req.body.customerId;
-    if (await isRecordPresent(customerId)) {
-        res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `Customer id: ${customerId}, already exist in the Records.` })
+    var ProspectIdfromDB
+    var usertype = X_Auth[0].userType
+    if (usertype === 'UNAUTH_CUSTOMER') {
+        ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(X_Auth[0].sub)
+    } else if (usertype === 'IB_CUSTOMER') {
+        ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithIBID(X_Auth[0].sub)
     } else {
-        const newprospectid = parseInt(await getMaxProspectId()) + 1;
-        const insertQuery = PROSPECT_QUERY.INSERT
+        res.status(HTTP.NOT_FOUND.code)
+            .json({ message: `User_Type: ${usertype} is invalid.` });
+        return
+    }
+    if (ProspectIdfromDB == null) {
+        var prevProspectId = await PROSPECT_HELPER.getMaxProspectId();
+        var newProspectId = prevProspectId == null ? 10000000 : (parseInt(prevProspectId) + 1);
+        const insertProspectQuery = PROSPECT_QUERY.INSERT_PROSPECT
             .replace('<tableName>', TABLES.PROSPECT)
-            .replace('<prospectId>', newprospectid)
-            .replace('<cookie>', req.body.Cookie)
-            .replace('<sessionId>', req.body.SessionId)
-            .replace('<otpEmailId>', req.body.OtpEmailId)
-            .replace('<domusCookieId>', req.body.DomusCookieId)
-            .replace('<iBLogon>', req.body.IBLogon)
-            .replace('<customerId>', req.body.customerId);
+            .replace('<prospect_id>', newProspectId)
+            .replace('<first_name>', req.body.first_name == undefined ? '' : req.body.first_name)
+            .replace('<created_on>', req.body.created_on)
+            .replace('<brand_identifier>', req.body.brand_identifier)
+            .replace('<channel_identifier>', req.body.channel_identifier == undefined ? '' : req.body.channel_identifier);
 
-        const result = await db.insertRecord(insertQuery);
+        const prospectInsertResult = await db.insertRecord(insertProspectQuery);
+
+        var prevProspectIdentifierId = await PROSPECT_IDENTIFIER_HELPER.getMaxProspectIdenId();
+        var newProspectIdentifierId = PROSPECT_IDENTIFIER_HELPER.getNextProspectIdenId(prevProspectIdentifierId)
+
+        var usertype = X_Auth[0].userType
+        if (usertype === 'UNAUTH_CUSTOMER') {
+            var insertProspectIdentifierQuery = PROSPECT_QUERY.INSERT_PROSPECT_IDENTIFIERS
+                .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
+                .replace('<prospect_identifier_id>', newProspectIdentifierId)
+                .replace('<prospect_id>', newProspectId)
+                .replace('<identifier_type>', 'SessionId')
+                .replace('<identifier>', X_Auth[0].sub)
+
+        } else {
+            var insertProspectIdentifierQuery = PROSPECT_QUERY.INSERT_PROSPECT_IDENTIFIERS
+                .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
+                .replace('<prospect_identifier_id>', newProspectIdentifierId)
+                .replace('<prospect_id>', newProspectId)
+                .replace('<identifier_type>', 'IBID')
+                .replace('<identifier>', X_Auth[0].sub)
+        }
+
+        const prospectIdentifierInsertResult = await db.insertRecord(insertProspectIdentifierQuery);
+
         res.status(HTTP.OK.code)
-            .json({ message: `Customer id ${customerId} is created successfully` })
+            .json({ message: `ProspectId ${newProspectId} is created successfully` })
+
+    } else {
+        res.status(HTTP.NOT_FOUND.code)
+            .json({ message: `ProspectId: ${ProspectIdfromDB}, already exist in the system.` });
     }
 }
 
-// updating the prospect, if the customerId exist in the system
-async function updateProspect(req, res) {
-    if (error = validator.validateUpdatePayload(req.body)) {
+/* Add Prospect API to add Prospect contact details by ProspectId to the already existing Prospect
+*/
+async function addProspectById(req, res) {
+    const reqParams = req.params;
+    const reqPayload = req.body;
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
+
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateProspectId(reqParams) || validator.validateAddPayload(reqPayload))) {
         return res.status(HTTP.BAD_REQUEST.code)
             .send(error.details);
     }
 
-    const customerId = req.body.CustomerId;
-    if (await isRecordPresent(customerId)) {
-        const updateQuery = PROSPECT_QUERY.UPDATE
-            .replace('<tableName>', TABLES.PROSPECT)
-            .replace('<update_fields>', getUpdateFields(req.body))
-            .replace('<customerId>', customerId);
+    const [response_status_code, response_message] = await ADD_HELPER.getResponse(X_Auth_Add, req, true);
+    res.status(response_status_code)
+        .send(response_message);
+}
 
-        const result = await db.updateRecord(updateQuery);
+/* Add Prospect API to add Prospect contact details to the already existing Prospect
+*/
+async function addProspect(req, res) {
+    const reqPayload = req.body;
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
+
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateAddPayload(reqPayload))) {
+        return res.status(HTTP.BAD_REQUEST.code)
+            .send(error.details);
+    }
+
+    const [response_status_code, response_message] = await ADD_HELPER.getResponse(X_Auth_Add, req, false);
+    res.status(response_status_code)
+        .send(response_message);
+}
+
+/* Find Prospect API to retrieve Prospect details
+*/
+async function findProspect(req, res) {
+    const reqBody = req.body;
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
+    console.log(authObj)
+
+    //validate request body and x-authrization-id are not empty
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateFindPayload(reqBody))) {
+        return res.status(HTTP.BAD_REQUEST.code)
+            .send(error.details);
+    }
+
+    const result = await FIND_HELPER.findProspect(req);
+    console.log(result.error);
+
+    if (result.error == null) {
         res.status(HTTP.OK.code)
-            .json({ message: `CustomerId ${customerId} is updated successfully` });
+            .send(result);
     } else {
         res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `CustomerId: ${customerId}, does not exist in the system.` });
+            .send(result);
     }
+}
+
+/* Find Prospect API to retrieve Prospect details
+*/
+async function findProspectById(req, res) {
+    const reqParams = req.params;
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
+
+    //validate the request data and headers
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateProspectId(reqParams))) {
+        return res.status(HTTP.BAD_REQUEST.code)
+            .send(error.details);
+    }
+
+    const result = await FIND_HELPER.findProspectById(req);
+    console.log(result.error);
+
+    if (result.error == null) {
+        res.status(HTTP.OK.code)
+            .send(result);
+    } else {
+        res.status(HTTP.NOT_FOUND.code)
+            .send(result);
+    }
+
 }
 
 
 // exporting modules, to be used in the other .js files
-module.exports = { updateProspect, createProspect }
+module.exports = { createProspect, addProspectById, addProspect, findProspectById, findProspect }
