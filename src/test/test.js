@@ -111,160 +111,93 @@ Sql Operation
 //     IdentifierType varchar(50),
 //     ActiveFrom datetime,
 //     ActiveTo datetime
-// );
+//     )
 
+// Scenario 1 -- invalid userType
 
-// INSERT INTO prospect.tbl_prospect_identifiers
-// (prospect_id, created_on, brand_identifier, channel_identifier)
-// VALUES
-// (10000001, GETDATE(), 'Brand1', 'Channel1'),
-// (10000002, GETDATE(), 'Brand2', 'Channel2');
+// {
+//     "error": "Auth userType: IB_CUSTOMER, is not valid."
+// }
 
-// INSERT INTO prospect.tbl_prospect_identifiers
-// (prospect_identifier_id, prospect_id, identifier, identifier_type, active_from)
-// VALUES
-// ('PID1', 10000001, 'SessionId1', 'SessionId', GETDATE()),
-// ('PID2', 10000002, 'SessionId1', 'SessionId', GETDATE());
+// http://localhost:8000/prospect/v1/{10000000}
 
-
-// SELECT *
-// FROM TestSchema.Prospect;
-
-// SELECT *
-// FROM TestSchema.Prospect_Identifiers;
-
-
-// ------ Identifier Type ------
-// Session
-// IBID
-// Email
-// MobileId
-
-
-
-let obj = [
-    {
-        "IdentifierType": "EmailId",
-        "IdentifierValue": "abc3@gmail.com",
-        "ActiveFrom": "2022-12-07T15:52:35.023"
-    },
-    {
-        "IdentifierType": "MobileNumber",
-        "IdentifierValue": "7499999906",
-        "ActiveFrom": "2022-12-07T15:56:35.023"
-    },
-    {
-        "IdentifierType": "first_name",
-        "IdentifierValue": "FirstName1",
-        "ActiveFrom": "2022-12-07T15:56:35.023"
-    },
-    {
-        "IdentifierType": "brand_identifier",
-        "IdentifierValue": "Brand1",
-        "ActiveFrom": "2022-12-07T15:56:35.023"
-    }
-]
-
-
-
-
-// let IDENTIFIER_COUNT = "UPDATE <tableName> SET ActiveTo=GETDATE() WHERE ProspectId=<prospectId> and IdentifierType in (<identifierTypeList>) and ActiveTo is NULL";
-
-// function getIdentifierTypeList(reqPayload) {
-//     let fields = "'SessionId'";
-//     for (let value of Object.values(reqPayload)) {
-//         fields += (",'" + value.IdentifierType + "'");
+// [
+//     {
+//         "IdentifierType": "EmailId",
+//         "IdentifierValue": "abc3@gmail.com",
+//         "ActiveFrom": "2022-12-07T15:52:35.023"
 //     }
-//     return fields;
+// ]
+
+// {
+//     "userType": "IB_CUSTOMER",
+//     "sub": "123232320",
+//     "exp": 1666343413
 // }
 
-// async function updateActiveTo(prospectId, reqPayload) {
-//     const query = IDENTIFIER_COUNT
-//         .replace('<tableName>', 'TestSchema.Prospect_Identifiers')
-//         .replace('<prospectId>', prospectId)
-//         .replace('<identifierTypeList>', getIdentifierTypeList(reqPayload));
+// Scenario 2 - invalid sessionid
 
-//     console.log(query);
 
-//     // return (await db.getRecord(query))
-//     //     .recordset[0].RECORD_COUNT !== 0 ? true : false;
+// {
+//     "error": "Prospect Record not found with userType:UNAUTH_CUSTOMER and sub: 123232321"
 // }
 
-// updateActiveTo('1001', obj)
+// http://localhost:8000/prospect/v1/{10000000}
 
+// {
+//     "userType": "UNAUTH_CUSTOMER",
+//     "sub": "123232321",
+//     "exp": 1666343413
+// }
 
-
-// getList()
-// console.log(obj)
-
-// for (let [key, value] of Object.entries(obj)) {
-//     console.log(key);
-//     console.log(value);
-
-// ('<prospectIdentifierId>',<prospectId>,'<identifier>','<identifierType>', CAST('<activeFrom>' as datetime))
-
-// let INSERT_VALS = "('<prospectIdentifierId>',<prospectId>,'<identifier>','<identifierType>', CAST('<activeFrom>' as datetime))"
-
-// function getInsertValues(prospectId, reqPayload) {
-//     let insert_Val_list = '';
-//     const lastItem = Object.values(obj).pop();
-//     for (let value of Object.values(reqPayload)) {
-//         let insert_Val = INSERT_VALS
-//             .replace('<prospectIdentifierId>', 'PID2')
-//             .replace('<prospectId>', prospectId)
-//             .replace('<identifier>', value.IdentifierValue)
-//             .replace('<identifierType>', value.IdentifierType)
-//             .replace('<activeFrom>', value.ActiveFrom)
-
-//         insert_Val_list += insert_Val;
-//         insert_Val_list += (value !== lastItem) ? ',' : '';
+// [
+//     {
+//         "IdentifierType": "EmailId",
+//         "IdentifierValue": "abc3@gmail.com",
+//         "ActiveFrom": "2022-12-07T15:52:35.023"
 //     }
-//     return insert_Val_list;
+// ]
+
+
+// Scenario 3 - invalid prospectid
+
+// {
+//     "error": "ProspectId: 10000001 in the request is not associated with userType:UNAUTH_CUSTOMER and sub: 123232320"
 // }
 
-// console.log(getInsertValues('1001', obj));
+// http://localhost:8000/prospect/v1/{10000001}
 
-const prospect_update_cols = ['brand_identifier', 'channel_identifier', 'first_name']
-function separateAddReqPayload(reqPayload) {
-    let prospect_payload = [];
-    let prospectIdentifier_payload = [];
-    for (let value of Object.values(reqPayload)) {
-        if (prospect_update_cols.includes(value.IdentifierType)) {
-            prospect_payload.push(value);
-        } else {
-            prospectIdentifier_payload.push(value);
-        }
-    }
-    return { prospect_payload, prospectIdentifier_payload };
-}
+// {
+//     "userType": "UNAUTH_CUSTOMER",
+//     "sub": "123232320",
+//     "exp": 1666343413
+// }
 
-let { prospect_payload, prospectIdentifier_payload } = separateAddReqPayload(obj);
+// [
+//     {
+//         "IdentifierType": "EmailId",
+//         "IdentifierValue": "abc3@gmail.com",
+//         "ActiveFrom": "2022-12-07T15:52:35.023"
+//     }
+// ]
 
-let reqPayload = [
-    {
-        IdentifierType: 'first_name',
-        IdentifierValue: 'FirstName1',
-        ActiveFrom: '2022-12-07T15:56:35.023'
-    },
-    {
-        IdentifierType: 'brand_identifier',
-        IdentifierValue: 'Brand1',
-        ActiveFrom: '2022-12-07T15:56:35.023'
-    }
-]
+// Scenario 4 
 
-// SET FirstTimeBuyerFlag='N', TimeEstimateForBuying='10months'
-let UPDATE_PROSPECT = "UPDATE <tableName> SET <update_fields> WHERE prospect_id=<prospectId>";
+// {
+//     "ProspectId": 10000000
+// }
 
-function getUpdateFields(payload) {
-    let update_fields = '';
-    const lastItem = Object.values(payload).pop();
 
-    for (let value of Object.values(payload)) {
-        update_fields += (value.IdentifierType + "='" + value.IdentifierValue + "'");
-        update_fields += (value !== lastItem) ? ',' : '';
-    }
-    return update_fields;
-}
+// {
+//     "userType": "UNAUTH_CUSTOMER",
+//     "sub": "123232320",
+//     "exp": 1666343413
+// }
 
-console.log(getUpdateFields(prospect_payload));
+// [
+//     {
+//         "IdentifierType": "EmailId",
+//         "IdentifierValue": "abc3@gmail.com",
+//         "ActiveFrom": "2022-12-07T15:52:35.023"
+//     }
+// ]
