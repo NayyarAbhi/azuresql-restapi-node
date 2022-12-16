@@ -90,28 +90,9 @@ async function addProspectById(req, res) {
             .send(error.details);
     }
 
-    const auth_userType = X_Auth_Add.userType;
-    const auth_sub = X_Auth_Add.sub;
-    const { prospectId, invalid_auth_userType } = await ADD_HELPER.getProspectId(auth_userType, auth_sub);
-
-    if (invalid_auth_userType) {
-        return res.status(HTTP.BAD_REQUEST.code)
-            .json({ error: `Auth userType: ${auth_userType}, is not valid.` });
-    }
-    else if (prospectId == null) {
-        return res.status(HTTP.NOT_FOUND.code)
-            .json({ error: `Prospect Record not found with userType:${auth_userType} and sub: ${auth_sub}` });
-    }
-
-    const reqProspectId = reqParams.ProspectId;
-    if (prospectId == reqProspectId) {
-        ADD_HELPER.addProspectContact(prospectId, reqPayload);
-        res.status(HTTP.OK.code)
-            .json({ ProspectId: prospectId });
-    } else {
-        res.status(HTTP.NOT_FOUND.code)
-            .json({ error: `ProspectId: ${reqProspectId} in the request is not associated with userType:${auth_userType} and sub: ${auth_sub}` });
-    }
+    const { response_status_code, response_message } = await ADD_HELPER.getResponse(X_Auth_Add, req, true);
+    res.status(response_status_code)
+        .send(response_message);
 }
 
 /* Add Prospect API to add Prospect contact details to the already existing Prospect
@@ -125,23 +106,9 @@ async function addProspect(req, res) {
             .send(error.details);
     }
 
-    const auth_userType = X_Auth_Add.userType;
-    const auth_sub = X_Auth_Add.sub;
-    const { prospectId, invalid_auth_userType } = await ADD_HELPER.getProspectId(auth_userType, auth_sub);
-
-    if (invalid_auth_userType) {
-        return res.status(HTTP.BAD_REQUEST.code)
-            .json({ error: `Auth userType: ${auth_userType}, is not valid.` });
-    }
-
-    if (prospectId == null) {
-        return res.status(HTTP.NOT_FOUND.code)
-            .json({ error: `Prospect Record not found with userType:${auth_userType} and sub: ${auth_sub}` });
-    }
-
-    ADD_HELPER.addProspectContact(prospectId, reqPayload);
-    res.status(HTTP.OK.code)
-        .json({ ProspectId: prospectId });
+    const { response_status_code, response_message } = await ADD_HELPER.getResponse(X_Auth_Add, req, false);
+    res.status(response_status_code)
+        .send(response_message);
 }
 
 /* Find Prospect API to retrieve Prospect details

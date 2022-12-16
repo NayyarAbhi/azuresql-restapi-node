@@ -2,6 +2,7 @@ let PROSPECT_QUERY = require('../../variables/prospect_sql.js').QUERY;
 const PROSPECT_IDENTIFIER_HELPER = require('./prospect_identifier_helper.js');
 const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
+const HTTP = require('../../variables/status.js').HTTP;
 
 const PROSPECT_UPDATE_COLS = ['brand_identifier', 'channel_identifier', 'first_name'];
 
@@ -132,5 +133,47 @@ async function addProspectContact(dbProspectId, reqPayload) {
     }
 }
 
+
+async function getResponse(X_Auth_Add, req, ById) {
+    let response_status_code;
+    let response_message;
+    const reqPayload = req.body;
+    const auth_userType = X_Auth_Add.userType;
+    const auth_sub = X_Auth_Add.sub;
+    const { prospectId, invalid_auth_userType } = await getProspectId(auth_userType, auth_sub);
+
+    if (invalid_auth_userType) {
+        response_status_code = HTTP.BAD_REQUEST.code;
+        response_message = { error: `Auth userType: ${auth_userType}, is not valid.` };
+        return { response_status_code, response_message };
+    }
+
+    if (prospectId == null) {
+        response_status_code = HTTP.NOT_FOUND.code;
+        response_message = { error: `Prospect Record not found with userType:${auth_userType} and sub: ${auth_sub}` };
+        return { response_status_code, response_message };
+    }
+
+    if (ById) {
+        const reqProspectId = req.params.ProspectId;
+        if (prospectId == reqProspectId) {
+            addProspectContact(prospectId, reqPayload);
+            response_status_code = HTTP.OK.code;
+            response_message = { ProspectId: prospectId };
+            return { response_status_code, response_message };
+        } else {
+            response_status_code = HTTP.NOT_FOUND.code;
+            response_message = { error: `ProspectId: ${reqProspectId} in the request is not associated with userType:${auth_userType} and sub: ${auth_sub}` };
+            return { response_status_code, response_message };
+        }
+    } else {
+        addProspectContact(prospectId, reqPayload);
+        response_status_code = HTTP.OK.code;
+        response_message = { ProspectId: prospectId };
+        return { response_status_code, response_message };
+    }
+}
+
+
 // exporting modules, to be used in the other .js files
-module.exports = { getProspectId, addProspectContact };
+module.exports = { getResponse };
