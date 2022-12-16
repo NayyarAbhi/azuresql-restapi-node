@@ -168,7 +168,6 @@ async function findProspect(req, res) {
 */
 async function findProspectById(req, res) {
     const reqParams = req.params;
-    const prospectId = reqParams.ProspectId;
     const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
 
     //validate the request data and headers
