@@ -90,26 +90,9 @@ async function addProspectById(req, res) {
             .send(error.details);
     }
 
-    if (!(ADD_HELPER.VALID_USER_TYPE.includes(X_Auth_Add.userType))) {
-        return res.status(HTTP.BAD_REQUEST.code)
-            .json({ error: `Auth userType: ${X_Auth_Add.userType}, is not valid.` });
-    }
-
-    const reqProspectId = reqParams.ProspectId;
-    const dbProspectId = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(X_Auth_Add.sub);
-    if (dbProspectId == null) {
-        return res.status(HTTP.NOT_FOUND.code)
-            .json({ error: `Prospect Record not found with userType:${X_Auth_Add.userType} and sub: ${X_Auth_Add.sub}` });
-    }
-
-    if (dbProspectId == reqProspectId) {
-        ADD_HELPER.addProspectContact(dbProspectId, reqPayload);
-        res.status(HTTP.OK.code)
-            .json({ ProspectId: dbProspectId });
-    } else {
-        res.status(HTTP.NOT_FOUND.code)
-            .json({ error: `ProspectId: ${reqProspectId} in the request is not associated with userType:${X_Auth_Add.userType} and sub: ${X_Auth_Add.sub}` });
-    }
+    const [response_status_code, response_message] = await ADD_HELPER.getResponse(X_Auth_Add, req, true);
+    res.status(response_status_code)
+        .send(response_message);
 }
 
 /* Add Prospect API to add Prospect contact details to the already existing Prospect
@@ -123,20 +106,9 @@ async function addProspect(req, res) {
             .send(error.details);
     }
 
-    if (!(ADD_HELPER.VALID_USER_TYPE.includes(X_Auth_Add.userType))) {
-        return res.status(HTTP.BAD_REQUEST.code)
-            .json({ error: `Auth userType: ${X_Auth_Add.userType}, is not valid.` });
-    }
-
-    const dbProspectId = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(X_Auth_Add.sub);
-    if (dbProspectId == null) {
-        return res.status(HTTP.NOT_FOUND.code)
-            .json({ error: `Prospect Record not found with userType:${X_Auth_Add.userType} and sub: ${X_Auth_Add.sub}` });
-    }
-
-    ADD_HELPER.addProspectContact(dbProspectId, reqPayload);
-    res.status(HTTP.OK.code)
-        .json({ ProspectId: dbProspectId });
+    const [response_status_code, response_message] = await ADD_HELPER.getResponse(X_Auth_Add, req, false);
+    res.status(response_status_code)
+        .send(response_message);
 }
 
 /* Find Prospect API to retrieve Prospect details
