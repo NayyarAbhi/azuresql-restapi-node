@@ -100,3 +100,92 @@ getRecord(readSql);
 //     ActiveFrom datetime,
 //     ActiveTo datetime
 //     )
+
+// Scenario 1 -- invalid userType
+
+// {
+//     "error": "Auth userType: IB_CUSTOMER, is not valid."
+// }
+
+// http://localhost:8000/prospect/v1/{10000000}
+
+// [
+//     {
+//         "IdentifierType": "EmailId",
+//         "IdentifierValue": "abc3@gmail.com",
+//         "ActiveFrom": "2022-12-07T15:52:35.023"
+//     }
+// ]
+
+// {
+//     "userType": "IB_CUSTOMER",
+//     "sub": "123232320",
+//     "exp": 1666343413
+// }
+
+// Scenario 2 - invalid sessionid
+
+
+// {
+//     "error": "Prospect Record not found with userType:UNAUTH_CUSTOMER and sub: 123232321"
+// }
+
+// http://localhost:8000/prospect/v1/{10000000}
+
+// {
+//     "userType": "UNAUTH_CUSTOMER",
+//     "sub": "123232321",
+//     "exp": 1666343413
+// }
+
+// [
+//     {
+//         "IdentifierType": "EmailId",
+//         "IdentifierValue": "abc3@gmail.com",
+//         "ActiveFrom": "2022-12-07T15:52:35.023"
+//     }
+// ]
+
+
+// Scenario 3 - invalid prospectid
+
+// {
+//     "error": "ProspectId: 10000001 in the request is not associated with userType:UNAUTH_CUSTOMER and sub: 123232320"
+// }
+
+// http://localhost:8000/prospect/v1/{10000001}
+
+// {
+//     "userType": "UNAUTH_CUSTOMER",
+//     "sub": "123232320",
+//     "exp": 1666343413
+// }
+
+// [
+//     {
+//         "IdentifierType": "EmailId",
+//         "IdentifierValue": "abc3@gmail.com",
+//         "ActiveFrom": "2022-12-07T15:52:35.023"
+//     }
+// ]
+
+// Scenario 4 
+
+// {
+//     "ProspectId": 10000000
+// }
+
+
+// {
+//     "userType": "UNAUTH_CUSTOMER",
+//     "sub": "123232320",
+//     "exp": 1666343413
+// }
+
+// [
+//     {
+//         "IdentifierType": "EmailId",
+//         "IdentifierValue": "abc3@gmail.com",
+//         "ActiveFrom": "2022-12-07T15:52:35.023"
+//     }
+// ]
