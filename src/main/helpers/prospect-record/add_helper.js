@@ -1,4 +1,4 @@
-let PROSPECT_QUERY = require('../../variables/prospect_sql.js').QUERY;
+let PROSPECT_IDENTIFIER_QUERY = require('../../variables/queries.js').TBL_PROSPECT_IDENTIFIER_QUERY;
 const PROSPECT_IDENTIFIER_HELPER = require('./prospect_identifier_helper.js');
 const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
@@ -54,7 +54,7 @@ function getUpdateFields(payload) {
 /* updating Prospect details to the already existing Prospect
 */
 async function updateProspectRecord(prospectId, reqPayload) {
-    const updateQuery = PROSPECT_QUERY.UPDATE_PROSPECT
+    const updateQuery = PROSPECT_IDENTIFIER_QUERY.UPDATE_PROSPECT
         .replace('<tableName>', TABLES.PROSPECT)
         .replace('<update_fields>', getUpdateFields(reqPayload))
         .replace('<prospectId>', prospectId);
@@ -77,7 +77,7 @@ function getIdentifierTypeList(reqPayload) {
 /* archiving the previous records by populating the ActiveTo column in Prospect_Identifiers table
 */
 async function updateActiveTo(prospectId, reqPayload) {
-    const updateQuery = PROSPECT_QUERY.UPDATE_ACTIVETO
+    const updateQuery = PROSPECT_IDENTIFIER_QUERY.UPDATE_ACTIVETO
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
         .replace('<prospectId>', prospectId)
         .replace('<identifierTypeList>', getIdentifierTypeList(reqPayload));
@@ -96,7 +96,7 @@ async function getInsertValues(prospectId, reqPayload) {
 
     for (let value of Object.values(reqPayload)) {
         let prospectIdenId = PROSPECT_IDENTIFIER_HELPER.getNextProspectIdenId(max_prospectIdenId);
-        const insert_Val = PROSPECT_QUERY.INSERT_VALS
+        const insert_Val = PROSPECT_IDENTIFIER_QUERY.INSERT_VALS
             .replace('<prospectIdentifierId>', prospectIdenId)
             .replace('<prospectId>', prospectId)
             .replace('<identifier>', value.IdentifierValue)
@@ -113,7 +113,7 @@ async function getInsertValues(prospectId, reqPayload) {
 /* adding Prospect Identifiers details to the already existing Prospect
 */
 async function addProspectIdenRecord(prospectId, reqPayload) {
-    const insertQuery = PROSPECT_QUERY.ADD_PROSP_IDENTIFIER
+    const insertQuery = PROSPECT_IDENTIFIER_QUERY.ADD_PROSP_IDENTIFIER
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
         .replace('<insertVals>', await getInsertValues(prospectId, reqPayload));
     console.log("\ninsertQuery prospect_identifier:\n" + insertQuery);
