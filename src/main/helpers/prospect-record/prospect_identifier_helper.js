@@ -1,4 +1,4 @@
-let PROSPECT_QUERY = require('../../variables/prospect_sql.js').QUERY;
+let PROSPECT_QUERY = require('../../variables/queries.js').TBL_PROSPECT_QUERY;
 const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
 

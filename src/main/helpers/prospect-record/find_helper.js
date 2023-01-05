@@ -1,4 +1,4 @@
-let PROSPECT_QUERY = require('../../variables/prospect_sql.js').QUERY;
+let PROSPECT_IDENTIFIER_QUERY = require('../../variables/queries.js').TBL_PROSPECT_IDENTIFIER_QUERY;
 const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
 const dbService = require('./prospect_identifier_helper.js');
@@ -23,7 +23,7 @@ async function findProspect(req) {
     if (headerProspectId == null) {
         return { "error": `Prospect could not found with SESSIONID ${X_Auth_Find[0].sub} in the system` };
     }
-    const prospect_identifier_query = PROSPECT_QUERY.PROSPECT_IDENTIFIER_VALUES_BY_IDENTIFIER_TYPE_AND_VALUE
+    const prospect_identifier_query = PROSPECT_IDENTIFIER_QUERY.PROSPECT_IDENTIFIER_VALUES_BY_IDENTIFIER_TYPE_AND_VALUE
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
         .replace('<IdentifierValue>', reqBody.IdentifierValue)
         .replace('<IdentifierType>', reqBody.IdentifierType);
@@ -34,7 +34,7 @@ async function findProspect(req) {
     }
     const prospectId = prospect_identifier[0].prospect_id;
     if (`${prospectId}` === `${headerProspectId}`) {
-        const prospect_query = PROSPECT_QUERY.PROSPECT_VALUES_BY_PROSPECT_ID
+        const prospect_query = PROSPECT_IDENTIFIER_QUERY.PROSPECT_VALUES_BY_PROSPECT_ID
             .replace('<tableName>', TABLES.PROSPECT)
             .replace('<prospect_id>', prospectId);
         const prospect = (await db.getRecord(prospect_query)).recordset
@@ -72,11 +72,11 @@ async function findProspectById(req) {
     //prospect id retrieved from db for x-aurhrazition-id header is not null and 
     //prospect id from uri is matching with prospect id retrieved from db for x-aurhrazition-id header
     if (`${prospectId}` === `${headerProspectId}`) {
-        const prospect_query = PROSPECT_QUERY.PROSPECT_VALUES_BY_PROSPECT_ID
+        const prospect_query = PROSPECT_IDENTIFIER_QUERY.PROSPECT_VALUES_BY_PROSPECT_ID
             .replace('<tableName>', TABLES.PROSPECT)
             .replace('<prospect_id>', prospectId);
 
-        const prospect_identifier_query = PROSPECT_QUERY.PROSPECT_IDENTIFIER_VALUES_BY_PROSPECT_ID
+        const prospect_identifier_query = PROSPECT_IDENTIFIER_QUERY.PROSPECT_IDENTIFIER_VALUES_BY_PROSPECT_ID
             .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
             .replace('<prospect_id>', prospectId);
 

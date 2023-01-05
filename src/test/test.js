@@ -201,3 +201,27 @@ Sql Operation
 //         "ActiveFrom": "2022-12-07T15:52:35.023"
 //     }
 // ]
+
+
+// [
+//     {
+//         "IdentifierType": "EmailId",
+//         "IdentifierValue": "abc30@gmail.com",
+//         "ActiveFrom": "2022-12-07T15:52:35.023"
+//     },
+//     {
+//         "IdentifierType": "MobileNumber",
+//         "IdentifierValue": "7499990000",
+//         "ActiveFrom": "2022-12-07T15:56:35.023"
+//     },
+//     {
+//         "IdentifierType": "first_name",
+//         "IdentifierValue": "FirstName2",
+//         "ActiveFrom": "2022-12-07T15:56:35.023"
+//     },
+//     {
+//         "IdentifierType": "brand_identifier",
+//         "IdentifierValue": "Brand2",
+//         "ActiveFrom": "2022-12-07T15:56:35.023"
+//     }
+// ]
