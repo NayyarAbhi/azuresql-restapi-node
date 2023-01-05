@@ -8,6 +8,7 @@ const PROSPECT_IDENTIFIER_HELPER = require('../helpers/prospect-record/prospect_
 let IDENTIFIER = require('../variables/identifier.js').IDENTIFIER;
 const FIND_HELPER = require('../helpers/prospect-record/find_helper.js');
 const ADD_HELPER = require('../helpers/prospect-record/add_helper');
+const CREATE_HELPER = require('../helpers/prospect-record/create_helper');
 let X_Auth = require('../variables/x-authorisation.json');
 let X_Auth_Find = require('../variables/x-auth-id-find.json');
 const X_Auth_Add = require('../variables/x-auth-add.json');
@@ -20,62 +21,11 @@ async function createProspect(req, res) {
     if (error = (validator.validateXAuthHeader(authObj) || validator.validateCreatePayload(req.body))) {
         return res.status(HTTP.BAD_REQUEST.code)
             .send(error.details);
-    }
+    } 
+    const [response_status_code, response_message] = await CREATE_HELPER.getResponse(X_Auth, req);
+    res.status(response_status_code)
+        .send(response_message);
 
-    var ProspectIdfromDB
-    var usertype = X_Auth[0].userType
-    if (usertype === 'UNAUTH_CUSTOMER') {
-        ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(X_Auth[0].sub)
-    } else if (usertype === 'IB_CUSTOMER') {
-        ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithIBID(X_Auth[0].sub)
-    } else {
-        res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `User_Type: ${usertype} is invalid.` });
-        return
-    }
-    if (ProspectIdfromDB == null) {
-        var prevProspectId = await PROSPECT_HELPER.getMaxProspectId();
-        var newProspectId = prevProspectId == null ? 10000000 : (parseInt(prevProspectId) + 1);
-        const insertProspectQuery = PROSPECT_QUERY.INSERT_PROSPECT
-            .replace('<tableName>', TABLES.PROSPECT)
-            .replace('<prospect_id>', newProspectId)
-            .replace('<first_name>', req.body.first_name == undefined ? '' : req.body.first_name)
-            .replace('<created_on>', req.body.created_on)
-            .replace('<brand_identifier>', req.body.brand_identifier)
-            .replace('<channel_identifier>', req.body.channel_identifier == undefined ? '' : req.body.channel_identifier);
-
-        const prospectInsertResult = await db.insertRecord(insertProspectQuery);
-
-        var prevProspectIdentifierId = await PROSPECT_IDENTIFIER_HELPER.getMaxProspectIdenId();
-        var newProspectIdentifierId = PROSPECT_IDENTIFIER_HELPER.getNextProspectIdenId(prevProspectIdentifierId)
-
-        var usertype = X_Auth[0].userType
-        if (usertype === 'UNAUTH_CUSTOMER') {
-            var insertProspectIdentifierQuery = PROSPECT_QUERY.INSERT_PROSPECT_IDENTIFIERS
-                .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
-                .replace('<prospect_identifier_id>', newProspectIdentifierId)
-                .replace('<prospect_id>', newProspectId)
-                .replace('<identifier_type>', 'SessionId')
-                .replace('<identifier>', X_Auth[0].sub)
-
-        } else {
-            var insertProspectIdentifierQuery = PROSPECT_QUERY.INSERT_PROSPECT_IDENTIFIERS
-                .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
-                .replace('<prospect_identifier_id>', newProspectIdentifierId)
-                .replace('<prospect_id>', newProspectId)
-                .replace('<identifier_type>', 'IBID')
-                .replace('<identifier>', X_Auth[0].sub)
-        }
-
-        const prospectIdentifierInsertResult = await db.insertRecord(insertProspectIdentifierQuery);
-
-        res.status(HTTP.OK.code)
-            .json({ message: `ProspectId ${newProspectId} is created successfully` })
-
-    } else {
-        res.status(HTTP.NOT_FOUND.code)
-            .json({ message: `ProspectId: ${ProspectIdfromDB}, already exist in the system.` });
-    }
 }
 
 /* Add Prospect API to add Prospect contact details by ProspectId to the already existing Prospect
