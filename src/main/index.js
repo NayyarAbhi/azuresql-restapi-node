@@ -16,7 +16,7 @@ app.listen(port, () => {
 });
 
 //prospect request
-app.use('/prospect/v1', prospect_route.prospectRoutes);
+app.use('/api/v1/prospect', prospect_route.prospectRoutes);
 
 // unknown request
 app.get('*', (req, res) => res.status(HTTP.BAD_REQUEST.code).json({ message: 'not a valid request' }));
