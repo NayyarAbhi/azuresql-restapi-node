@@ -19,8 +19,8 @@ const TBL_PROSPECT_IDENTIFIER_QUERY = {
     PROSPECT_IDENTIFIER_VALUES_BY_PROSPECT_ID: "SELECT * FROM <tableName> WHERE prospect_id=<prospect_id>",    
 }
 
-const TBL_PROSPECT_INTENT_QUERY = {
+const TBL_INTENT_QUERY = {
 }
 
 // exporting modules, to be used in the other .js files
-module.exports = { TBL_PROSPECT_QUERY, TBL_PROSPECT_IDENTIFIER_QUERY, TBL_PROSPECT_INTENT_QUERY }
+module.exports = { TBL_PROSPECT_QUERY, TBL_PROSPECT_IDENTIFIER_QUERY, TBL_INTENT_QUERY }
