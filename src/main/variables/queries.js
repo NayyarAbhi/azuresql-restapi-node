@@ -3,8 +3,7 @@ const TBL_PROSPECT_QUERY = {
     GET_PROSPECT_ID: "SELECT max(prospect_id) as MAXPROSPECTID from <tableName>",
     GET_PROSPECT_WITH_SESSION_ID: "SELECT prospect_id from <tableName> WHERE identifier='<identifier>' and identifier_type='SessionId'",
     GET_PROSPECT_WITH_IBID: "SELECT prospect_id from <tableName> WHERE identifier='<identifier>' and identifier_type='IBID'",
-    GET_PROSPECT_IDENTIFIER_ID: "SELECT MAX(CAST(SUBSTRING(prospect_identifier_id,4,len(prospect_identifier_id)) as int))as MAXPROSPECTIDENTIFIERID from <tableName>",
-
+    GET_PROSPECT_IDENTIFIER_ID: "SELECT MAX(CAST(SUBSTRING(prospect_identifier_id,4,len(prospect_identifier_id)) as int))as MAXPROSPECTIDENTIFIERID from <tableName>"
 }
 
 const TBL_PROSPECT_IDENTIFIER_QUERY = {
@@ -16,10 +15,13 @@ const TBL_PROSPECT_IDENTIFIER_QUERY = {
     INSERT_PROSPECT_IDENTIFIERS: "INSERT INTO <tableName> (prospect_identifier_id,prospect_id,identifier,identifier_type,active_from) values ('<prospect_identifier_id>',<prospect_id>,'<identifier>','<identifier_type>',GETDATE())",
     PROSPECT_IDENTIFIER_VALUES_BY_IDENTIFIER_TYPE_AND_VALUE: "SELECT * FROM <tableName> WHERE identifier_type='<IdentifierType>' and identifier='<IdentifierValue>'",
     PROSPECT_VALUES_BY_PROSPECT_ID: "SELECT *  FROM <tableName> WHERE prospect_id=<prospect_id>",
-    PROSPECT_IDENTIFIER_VALUES_BY_PROSPECT_ID: "SELECT * FROM <tableName> WHERE prospect_id=<prospect_id>",    
+    PROSPECT_IDENTIFIER_VALUES_BY_PROSPECT_ID: "SELECT * FROM <tableName> WHERE prospect_id=<prospect_id>"   
 }
 
 const TBL_INTENT_QUERY = {
+    RECORD_COUNT: "SELECT COUNT(*) as RECORD_COUNT FROM <tableName> WHERE prospect_id=<prospectId>",
+    GET_INTENT_ID: "SELECT MAX(CAST(SUBSTRING(intent_id,4,len(intent_id)) as int))as MAXINTENTID from <tableName>",
+    INSERT_INTENT: "INSERT INTO <tableName> (intent_id,prospect_id,intent_questionaire_payload,active_from) values  ('<intent_id>',<prospect_id>,'<intent_questionaire_payload>',CAST('<active_from>' as datetime2))"
 }
 
 // exporting modules, to be used in the other .js files

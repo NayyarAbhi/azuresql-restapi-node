@@ -1,7 +1,7 @@
 const joi = require('joi');
 
 const createProspectSchema = joi.object({
-    created_on: joi.string().required(),
+    created_on: joi.date().required(),
     brand_identifier: joi.string().required(),
     channel_identifier: joi.string().optional(),
     first_name: joi.string().optional()
@@ -17,7 +17,7 @@ const prospectIdSchmea = joi.object({
 const addProspectSchema = joi.array().items(joi.object({
     IdentifierType: joi.string().required(),
     IdentifierValue: joi.string().required(),
-    ActiveFrom: joi.string().required()
+    ActiveFrom: joi.date().required()
 }));
 
 const findProspectSchema = joi.object({
