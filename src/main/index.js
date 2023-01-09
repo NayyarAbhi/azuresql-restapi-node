@@ -1,6 +1,7 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const prospect_route = require('./route/prospect_route.js');
+const intent_route = require('./route/intent_route.js');
 const HTTP = require('./variables/status.js').HTTP;
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./config/swagger.json');
@@ -17,6 +18,9 @@ app.listen(port, () => {
 
 //prospect request
 app.use('/api/v1/prospect', prospect_route.prospectRoutes);
+
+//intent request
+app.use('/api/v1/prospect', intent_route.prospectIntentRoutes);
 
 // unknown request
 app.get('*', (req, res) => res.status(HTTP.BAD_REQUEST.code).json({ message: 'not a valid request' }));
