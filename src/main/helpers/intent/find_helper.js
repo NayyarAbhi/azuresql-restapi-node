@@ -22,6 +22,7 @@ async function getProspectId(userType, sub) {
     return { prospectId, invalid_auth_userType };
 }
 
+/* getting response status and response payload */
 async function getResponseAndPayload(By, req, reqProspectId) {
     /* fetching prospect data from tbl_prospect table */
     let prospect = await PROSPECT_HELPER.getProspectData(reqProspectId);
