@@ -106,5 +106,5 @@ async function findProspectById(req, res) {
 }
 
 
-// exporting modules, to be used in the other .js files
+// exporting modules, to be used in the api router
 module.exports = { createProspect, addProspectById, addProspect, findProspectById, findProspect }

@@ -19,4 +19,41 @@ async function addIntent(req, res) {
 
 }
 
-module.exports = { addIntent }
+/* 
+To retrieve Intent details based on IntentId
+*/
+async function findIntentByIntentId(req, res) {
+    const reqParams = req.params;
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
+
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateFindByIntentIdParam(reqParams))) {
+        return res.status(HTTP.BAD_REQUEST.code)
+            .send(error.details);
+    }
+
+    const [response_status_code, response_message] = await FIND_HELPER.getResponse(X_Auth_Find[0], req, "IntentId");
+    res.status(response_status_code)
+        .send(response_message);
+}
+
+/* To retrieve active Intent details based on ProspectId
+*/
+async function findIntentByProspectId(req, res) {
+    console.log('hello')
+    const reqParams = req.params;
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
+
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateProspectId(reqParams))) {
+        return res.status(HTTP.BAD_REQUEST.code)
+            .send(error.details);
+    }
+
+    const [response_status_code, response_message] = await FIND_HELPER.getResponse(X_Auth_Find[0], req, "ProspectId");
+    res.status(response_status_code)
+        .send(response_message);
+}
+
+
+
+// exporting modules, to be used in the api router
+module.exports = { addIntent, findIntentByProspectId, findIntentByIntentId }
