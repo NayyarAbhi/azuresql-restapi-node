@@ -7,7 +7,7 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./config/swagger.json');
 
 const port = 8001;
-const host = 'localhost';
+const host = '0.0.0.0';
 const app = express();
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));

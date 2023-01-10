@@ -1,7 +1,8 @@
-FROM node:12.18.2
+FROM node:16
 WORKDIR /usr/src/app
 COPY ["package.json", "./"]
-RUN npm install
+RUN npm install yarn
+RUN yarn install
 COPY . .
 EXPOSE 8001
-CMD ["node", "/usr/src/app/src/main/index.js"]
+CMD ["npm", "start"]
