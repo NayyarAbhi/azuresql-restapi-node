@@ -34,11 +34,11 @@ function validateXAuthHeader(X_Auth_ID) {
     return error;
 }
 
-function validateFindByIntentIdParam(reqParams) {
+function validateFindParams(reqParams) {
     const { error, value } = findByIntentIdSchema.validate(reqParams, { abortEarly: false });
     return error;
 }
 
 
 // exporting modules, to be used in the other .js files
-module.exports = { validateProspectId, validateAddPayload, validateXAuthHeader, validateFindByIntentIdParam }
+module.exports = { validateProspectId, validateAddPayload, validateXAuthHeader, validateFindParams }

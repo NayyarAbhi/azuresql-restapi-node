@@ -4,10 +4,10 @@ const prospectIntentRoutes = express.Router();
 
 prospectIntentRoutes.route('/:ProspectId/intent')
     .post(controller.addIntent)
-    .get(controller.findIntentByProspectId)
+    .get(controller.findByProspectId)
 
 prospectIntentRoutes.route('/:ProspectId/intent/:IntentId')
-    .get(controller.findIntentByIntentId)
+    .get(controller.findByIntentIdProspectId)
 
 // exporting modules, to be used in the other .js files
 module.exports = { prospectIntentRoutes }
