@@ -31,7 +31,7 @@ async function getResponseAndPayload(By, req, reqProspectId) {
     let intent = [];
     if (By === 'IntentIdProspectId') {
         const reqIntentId = req.params.IntentId;
-        intent = await INTENT_HELPER.getIntentWithIntentId(reqProspectId, reqIntentId);
+        intent = await INTENT_HELPER.getIntentData(reqProspectId, reqIntentId);
         if (intent.length === 0) {
             response_status_code = HTTP.NOT_FOUND.code;
             response_message = { error: `No Intent Record found with ProspectId: ${reqProspectId} and IntentId: ${reqIntentId}` };
