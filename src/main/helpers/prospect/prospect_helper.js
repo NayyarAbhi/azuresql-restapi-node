@@ -23,5 +23,16 @@ async function getMaxProspectId() {
         .recordset[0].MAXPROSPECTID;
 }
 
+/* getting prospect Data with the help of ProspectId from the Prospect table
+*/
+async function getProspectData(prospectId) {
+    const query = PROSPECT_QUERY.GET_PROSPECT_DATA
+        .replace('<tableName>', TABLES.PROSPECT)
+        .replace('<prospectId>', prospectId);
+    console.log("getProspectData query:\n" + query);
+
+    return (await db.getRecord(query)).recordset;
+}
+
 // exporting modules, to be used in the other .js files
-module.exports = { isProspectPresent, getMaxProspectId };
+module.exports = { isProspectPresent, getMaxProspectId, getProspectData };
