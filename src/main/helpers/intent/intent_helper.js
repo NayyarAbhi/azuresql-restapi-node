@@ -25,12 +25,12 @@ async function getMaxIntentId() {
 
 /*This function with return the Intent Data with the given prospectId and intentId from tbl_intent
 */
-async function getIntentWithIntentId(prospectId, intentId) {
+async function getIntentData(prospectId, intentId) {
     const query = INTENT_QUERY.GET_INTENT_BY_INTENTID
         .replace('<tableName>', TABLES.INTENT)
         .replace('<prospectId>', prospectId)
         .replace('<intentId>', intentId);
-    console.log("\ngetIntentWithIntentId query: \n" + query);
+    console.log("\ngetIntentData query: \n" + query);
 
     var data = (await db.getRecord(query)).recordset;
 
@@ -59,4 +59,4 @@ async function getActiveIntentData(prospectId) {
 }
 
 // exporting modules, to be used in the other .js files
-module.exports = { isIntentPresent, getMaxIntentId, getIntentWithIntentId, getActiveIntentData };
+module.exports = { isIntentPresent, getMaxIntentId, getIntentData, getActiveIntentData };
