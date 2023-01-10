@@ -17,11 +17,11 @@ app.listen(port, host, () => {
     console.log(`Server running on host:${host} and port:${port}`);
 });
 
-//prospect request
-app.use('/api/v1/prospect', prospect_route.prospectRoutes);
-
-//intent request
-app.use('/api/v1/prospect', intent_route.prospectIntentRoutes);
+//prospect api entry point
+app.use('/api/v1/prospect',
+    prospect_route.prospectRoutes,
+    intent_route.prospectIntentRoutes
+);
 
 // unknown request
 app.get('*', (req, res) => res.status(HTTP.BAD_REQUEST.code).json({ message: 'not a valid request' }));
