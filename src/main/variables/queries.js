@@ -22,9 +22,11 @@ const TBL_PROSPECT_IDENTIFIER_QUERY = {
 const TBL_INTENT_QUERY = {
     RECORD_COUNT: "SELECT COUNT(*) as RECORD_COUNT FROM <tableName> WHERE prospect_id=<prospectId>",
     GET_MAX_INTENT_ID: "SELECT MAX(CAST(SUBSTRING(intent_id,4,len(intent_id)) as int))as MAXINTENTID from <tableName>",
-    INSERT_INTENT: "INSERT INTO <tableName> (intent_id,prospect_id,intent_questionaire_payload,active_from) values  ('<intent_id>',<prospect_id>,'<intent_questionaire_payload>',CAST('<active_from>' as datetime2))",
+    INSERT_INTENT: "INSERT INTO <tableName> (intent_id,prospect_id,intent_questionaire_payload,active_from) values  ('<intent_id>',<prospect_id>,'<intent_questionaire_payload>',CAST('<active_from>' as datetime))",
     GET_INTENT_BY_INTENTID: "SELECT * from <tableName> WHERE prospect_id=<prospectId> and intent_id='<intentId>'",
     GET_ACTIVE_INTENT_BY_PROSPECTID: "SELECT * from <tableName> WHERE prospect_id=<prospectId> and active_to is NULL",
+    IS_INTENT_ACTIVE: "SELECT COUNT(*) as ACTIVE_INTENT_COUNT from <tableName> WHERE prospect_id=<prospectId> and intent_id='<intentId>' and active_to is NULL",
+    UPDATE_ACTIVETO: "UPDATE <tableName> SET active_to=GETDATE() WHERE prospect_id=<prospectId> and active_to is NULL"
 }
 
 // exporting modules, to be used in the other .js files
