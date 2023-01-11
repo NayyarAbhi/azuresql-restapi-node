@@ -15,9 +15,15 @@ const prospectIdSchema = joi.object({
 
 const findByIntentIdSchema = joi.object({
     ProspectId: joi.number().required(),
-    IntentId: joi.string().required()
+    IntentId: joi.string().required().alphanum().min(1),
 });
 
+const updateIntentSchema = joi.object({
+    ProspectId: joi.number().required(),
+    IntentId: joi.string().required().alphanum().min(1),
+    intent_questionaire_payload: joi.required(),
+    active_from: joi.date().required()
+});
 
 function validateProspectId(reqParams) {
     const { error, value } = prospectIdSchema.validate(reqParams, { abortEarly: false });
@@ -39,6 +45,10 @@ function validateFindParams(reqParams) {
     return error;
 }
 
+function validateUpdateSchema(reqParams) {
+    const { error, value } = updateIntentSchema.validate(reqParams, { abortEarly: false });
+    return error;
+}
 
 // exporting modules, to be used in the other .js files
-module.exports = { validateProspectId, validateAddPayload, validateXAuthHeader, validateFindParams }
+module.exports = { validateProspectId, validateAddPayload, validateXAuthHeader, validateFindParams, validateUpdateSchema }
