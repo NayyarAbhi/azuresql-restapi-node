@@ -20,7 +20,7 @@ app.listen(port, host, () => {
 //prospect api entry point
 app.use('/api/v1/prospect',
     prospect_route.prospectRoutes,
-    intent_route.prospectIntentRoutes
+    intent_route.intentRoutes
 );
 
 // unknown request

@@ -236,5 +236,27 @@ VALUES
 ('INT1', 10000000, '{newHome:"YES"}', GETDATE(), GETDATE()),
 ('INT2', 10000000, '{"newHome":"NO"}', GETDATE(), null);
 
+-- DEMO
+delete from [prospect].[tbl_intent];
+delete from [prospect].[tbl_prospect_identifiers];
+delete from [prospect].[tbl_prospect];
+
+select * from [prospect].[tbl_prospect];
+
+select * from [prospect].[tbl_prospect_identifiers];
+
+select * from [prospect].[tbl_intent];
+
+
+
+UPDATE [prospect].[tbl_intent] SET active_to = GETDATE() where intent_id in ('INT2')
+
+INSERT INTO [prospect].[tbl_intent] 
+(intent_id, prospect_id, intent_questionaire_payload, active_from, active_to)
+VALUES 
+('INT3', 10000001, 
+'{"CustomerIntention":"Customer_Intention1","FirstProperty":"FirstProperty1","BuyingReadiness":"BuyingReadiness1","NoOfApplicants":"NoOfApplicants1","Occupying":"Occupying1","LbgMortgaged":"LbgMortgaged1","RemoReadiness":"RemoReadiness1"}'
+, GETDATE(), null)
+
 
 */
