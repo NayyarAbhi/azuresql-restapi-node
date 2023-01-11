@@ -242,3 +242,16 @@ Sql Operation
 //         "ActiveFrom": "2022-12-07T15:56:35.023"
 //     }
 // ]
+
+
+/* ---------------------------------- INTENT -----------------------
+
+
+INSERT INTO [prospect].[tbl_intent] 
+(intent_id, prospect_id, intent_questionaire_payload, active_from, active_to)
+VALUES 
+('INT1', 10000000, '{newHome:"YES"}', GETDATE(), GETDATE()),
+('INT2', 10000000, '{"newHome":"NO"}', GETDATE(), null);
+
+
+*/

@@ -8,9 +8,16 @@ const addIntentSchema = joi.object({
 const xAuthSchema = joi.object({
     'x-authorization-id': joi.string().required()
 });
+
 const prospectIdSchema = joi.object({
     ProspectId: joi.number().required()
 });
+
+const findByIntentIdSchema = joi.object({
+    ProspectId: joi.number().required(),
+    IntentId: joi.string().required()
+});
+
 
 function validateProspectId(reqParams) {
     const { error, value } = prospectIdSchema.validate(reqParams, { abortEarly: false });
@@ -27,6 +34,11 @@ function validateXAuthHeader(X_Auth_ID) {
     return error;
 }
 
+function validateFindParams(reqParams) {
+    const { error, value } = findByIntentIdSchema.validate(reqParams, { abortEarly: false });
+    return error;
+}
+
 
 // exporting modules, to be used in the other .js files
-module.exports = { validateProspectId, validateAddPayload, validateXAuthHeader }
+module.exports = { validateProspectId, validateAddPayload, validateXAuthHeader, validateFindParams }

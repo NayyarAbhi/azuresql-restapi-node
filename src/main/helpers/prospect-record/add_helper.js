@@ -1,5 +1,6 @@
 let PROSPECT_IDENTIFIER_QUERY = require('../../variables/queries.js').TBL_PROSPECT_IDENTIFIER_QUERY;
 const PROSPECT_IDENTIFIER_HELPER = require('./prospect_identifier_helper.js');
+const PROSPECT_HELPER = require('../prospect/prospect_helper.js');
 const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
 const HTTP = require('../../variables/status.js').HTTP;
@@ -163,18 +164,28 @@ async function getResponse(X_Auth_Add, req, ById) {
     const auth_sub = X_Auth_Add.sub;
     const { prospectId, invalid_auth_userType } = await getProspectId(auth_userType, auth_sub);
 
+    /* checking if auth_userType is valid or not, and returning 404, if invalid */
     if (invalid_auth_userType) {
         response_status_code = HTTP.BAD_REQUEST.code;
         response_message = { error: `Auth userType: ${auth_userType}, is not valid.` };
         return [response_status_code, response_message];
     }
 
+    /* checking if Prospect is present in tbl_prospect_identifier table, and returning 404, if not present  */
     if (prospectId == null) {
         response_status_code = HTTP.NOT_FOUND.code;
         response_message = { error: `Prospect Record not found with userType:${auth_userType} and sub: ${auth_sub}` };
         return [response_status_code, response_message];
     }
 
+    /* checking if Prospect is present in tbl_prospect, and returning 404, if not present */
+    if (!(await PROSPECT_HELPER.isProspectPresent(prospectId))) {
+        response_status_code = HTTP.NOT_FOUND.code;
+        response_message = { error: `Prospect Record not found in Prospect table with ProspectId: ${reqProspectId}` };
+        return [response_status_code, response_message];
+    }
+
+    /* returning final response status and response payload */
     if (ById) {
         const reqProspectId = req.params.ProspectId;
         if (prospectId == reqProspectId) {
