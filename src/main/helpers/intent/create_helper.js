@@ -3,16 +3,9 @@ const db = require('../../utils/azureSql.js');
 const HTTP = require('../../variables/status.js').HTTP;
 const PROSPECT_HELPER = require('../prospect/prospect_helper.js');
 const PROSPECT_IDENTIFIER_HELPER = require('../prospect-record/prospect_identifier_helper.js');
-INTENT_HELPER = require('../intent/intent_helper.js');
+const INTENT_HELPER = require('../intent/intent_helper.js');
 let INTENT_QUERY = require('../../variables/queries.js').TBL_INTENT_QUERY;
 
-
-/*this function will give max intent_id which is present in the intent table
-*/
-function getNextIntentId(intentId) {
-    return (intentId == 'INTnull') ? 'INT1'
-        : 'INT' + (parseInt(intentId.substring(3)) + 1);
-}
 
 /* Building a Response Payload to be sent back by the API.
    return [response_status_code, response_message]
@@ -58,7 +51,7 @@ async function getResponse(X_Auth, req) {
     if (isprospectpresent) {
         //creating new intentid
         var prevIntentId = await INTENT_HELPER.getMaxIntentId();
-        var newIntentId = getNextIntentId(prevIntentId);
+        var newIntentId = INTENT_HELPER.getNextIntentId(prevIntentId);
         var intent_questionaire_payload_string = JSON.stringify(req.body.intent_questionaire_payload);
         //inserting new intent record in the intent table
         const insertIntentQuery = INTENT_QUERY.INSERT_INTENT
