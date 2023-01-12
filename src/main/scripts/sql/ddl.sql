@@ -36,3 +36,17 @@ CREATE TABLE prospect.tbl_intent (
     FOREIGN KEY (prospect_id) references prospect.tbl_prospect(prospect_id)
  );
 GO
+
+IF OBJECT_ID(N'prospect.tbl_prospect_information', N'U') IS NULL
+
+CREATE TABLE prospect.tbl_prospect_information (
+    payload_id varchar(50) NOT NULL PRIMARY KEY,
+    prospect_id integer ,
+    payload_identifier varchar(50),
+    payload_body varchar(max),
+    active_from datetime,
+    active_to datetime,
+    FOREIGN KEY (prospect_id) references prospect.tbl_prospect(prospect_id)
+ );
+ GO
+

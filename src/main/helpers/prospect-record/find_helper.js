@@ -1,23 +1,13 @@
 let PROSPECT_IDENTIFIER_QUERY = require('../../variables/queries.js').TBL_PROSPECT_IDENTIFIER_QUERY;
 const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
-const dbService = require('./prospect_identifier_helper.js');
+const cookie = require('../../validator/cookieValidator.js');
 let X_Auth_Find = require('../../variables/x-auth-id-find.json');
 
 async function findProspect(req) {
     const reqBody = req.body;
-
-    //TO-DO needs to be integrated with Domus Cookie /validate api to get the session id, and read the value from "sub". For now mocked sub.
-    //var X_Auth_ID = req.headers['x-authrization-id']; 
-    // invoke /validate(X_Auth_ID.json as body)
-    //var cookie = X_Auth_Find[0].sub;
-    var usertype = X_Auth_Find[0].userType
-    var headerProspectId;
-    if (usertype === 'UNAUTH_CUSTOMER') {
-        headerProspectId = await dbService.getProspectWithSessionId(X_Auth_Find[0].sub)
-    } else if (usertype === 'IB_CUSTOMER') {
-        headerProspectId = await dbService.getProspectWithIBID(X_Auth_Find[0].sub)
-    }
+    
+    var headerProspectId = await cookie.validateCookie(X_Auth_Find[0].userType,X_Auth_Find[0].sub);
     //var headerProspectId = await dbService.getProspectWithSessionId(cookie);
     //if prospect id is null for x-aurhrazition-id header return error message
     if (headerProspectId == null) {
@@ -40,7 +30,7 @@ async function findProspect(req) {
         const prospect = (await db.getRecord(prospect_query)).recordset
         return { prospect, prospect_identifier }
     } else {
-        return { "error": `Prospect with id ${prospectId} retrieved from request for identifier ${reqBody.IdentifierValue} could not match with the prospect id retrieved from db for x-aurhrazition-id header ${headerProspectId}` };
+        return { "error": `Prospect with id ${prospectId} retrieved from request for identifier ${reqBody.IdentifierValue} could not match with the prospect id retrieved from db for x-aurhrazition-id header ` + X_Auth_Find[0].sub};
     }
 }
 
@@ -49,20 +39,7 @@ async function findProspectById(req) {
     const reqParams = req.params;
     var prospectId = reqParams.ProspectId;
     console.log("prospectId : " + prospectId);
-    //TO-DO needs to be integrated with Domus Cookie /validate api to get the session id, and read the value from "sub". For now mocked sub.
-    //var X_Auth_ID = req.headers['x-authrization-id']; 
-    // invoke /validate(X_Auth_ID.json as body)
-    //var cookie = X_Auth_Find[1].sub;
-
-    //var headerProspectId = await dbService.getProspectWithSessionId(cookie);
-
-    var usertype = X_Auth_Find[0].userType
-    var headerProspectId;
-    if (usertype === 'UNAUTH_CUSTOMER') {
-        headerProspectId = await dbService.getProspectWithSessionId(X_Auth_Find[0].sub)
-    } else if (usertype === 'IB_CUSTOMER') {
-        headerProspectId = await dbService.getProspectWithIBID(X_Auth_Find[0].sub)
-    }
+    var headerProspectId = await cookie.validateCookie(X_Auth_Find[0].userType,X_Auth_Find[0].sub);
 
     //if prospect id is null for x-aurhrazition-id header return error message
     if (headerProspectId == null) {
@@ -85,7 +62,7 @@ async function findProspectById(req) {
 
         return { prospect, prospect_identifiers }
     } else {
-        return { "error": `Prospect id from uri ${prospectId} could not match with the prospect id retrieved from db for x-aurhrazition-id header ${headerProspectId}` };
+        return { "error": `Prospect id from uri ${prospectId} could not match with the prospect id retrieved from db for x-aurhrazition-id header ` + X_Auth_Find[0].sub };
     }
 }
 
