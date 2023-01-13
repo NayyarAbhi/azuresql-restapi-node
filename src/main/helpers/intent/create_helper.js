@@ -32,11 +32,11 @@ async function getResponse(X_Auth, req) {
     }
     if (ProspectIdfromDB == null) {
         response_status_code = HTTP.NOT_FOUND.code;
-        response_message = { error: `Prospect with userType:${usertype} and sub: ${X_Auth[0].sub} doesn't exist in the records` };
+        response_message = { error: `Prospect with userType and sub doesn't exist in the records` };
         return [response_status_code, response_message];
     } else if (ProspectIdfromDB != req.params.ProspectId) {
         response_status_code = HTTP.NOT_FOUND.code;
-        response_message = { error: `ProspectId: ${req.params.ProspectId} in the request is not associated with userType:${usertype} and sub: ${X_Auth[0].sub}` };
+        response_message = { error: `ProspectId in the request is not associated with userType and sub` };
         return [response_status_code, response_message];
     }
     //Intent is only inserted if the prospectid already exist in the prospect table
@@ -45,7 +45,7 @@ async function getResponse(X_Auth, req) {
     //do not insert if intent already exist with respect to the prospectid
     if (isintentpresent) {
         response_status_code = HTTP.OK.code;
-        response_message = { message: `Intent with ProspectId: ${req.params.ProspectId}, already exist in the system.` };
+        response_message = { message: `Intent with ProspectId, already exist in the system.` };
         return [response_status_code, response_message];
     }
     if (isprospectpresent) {
@@ -66,7 +66,7 @@ async function getResponse(X_Auth, req) {
         return [response_status_code, response_message];
     } else {
         response_status_code = HTTP.BAD_REQUEST.code;
-        response_message = { error: `Prospect with ProspectId: ${req.params.ProspectId}, does not exist in the records.` };
+        response_message = { error: `Prospect with ProspectId, does not exist in the records.` };
         return [response_status_code, response_message];
     }
 }

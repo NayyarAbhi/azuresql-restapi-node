@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require('body-parser');
 const prospect_route = require('./route/prospect_route.js');
 const intent_route = require('./route/intent_route.js');
+const prospect_information_route = require('./route/prospect_information_route');
 const HTTP = require('./variables/status.js').HTTP;
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./config/swagger.json');
@@ -20,7 +21,9 @@ app.listen(port, host, () => {
 //prospect api entry point
 app.use('/api/v1/prospect',
     prospect_route.prospectRoutes,
-    intent_route.intentRoutes
+    intent_route.intentRoutes,
+    prospect_information_route.prospectInformationRoutes
+
 );
 
 // unknown request

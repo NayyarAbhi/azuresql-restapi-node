@@ -76,7 +76,7 @@ async function getResponse(X_Auth, req) {
 
     } else {
         response_status_code = HTTP.OK.code;
-        response_message = { message: `ProspectId: ${ProspectIdfromDB}, already exist in the system.` };
+        response_message = { message: `ProspectId, already exist in the system.` };
         return [response_status_code, response_message];
     }
 
