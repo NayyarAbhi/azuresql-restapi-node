@@ -34,14 +34,14 @@ async function getResponseAndPayload(By, req, reqProspectId) {
         intent = await INTENT_HELPER.getIntentData(reqProspectId, reqIntentId);
         if (intent.length === 0) {
             response_status_code = HTTP.NOT_FOUND.code;
-            response_message = { error: `No Intent Record found with ProspectId: ${reqProspectId} and IntentId: ${reqIntentId}` };
+            response_message = { error: `No Intent Record found with ProspectId` };
             return [response_status_code, response_message];
         }
     } else if (By === 'ProspectId') {
         intent = await INTENT_HELPER.getActiveIntentData(reqProspectId);
         if (intent.length === 0) {
             response_status_code = HTTP.NOT_FOUND.code;
-            response_message = { error: `No Active Intent Record found with ProspectId: ${reqProspectId}` };
+            response_message = { error: `No Active Intent Record found with ProspectId` };
             return [response_status_code, response_message];
         }
     }
@@ -76,7 +76,7 @@ async function getResponse(X_Auth_Find, req, By) {
     /* checking if Prospect is present in tbl_prospect_identifier table, and returning 404, if not present  */
     if (prospectId == null) {
         response_status_code = HTTP.NOT_FOUND.code;
-        response_message = { error: `Prospect Record not found with userType:${auth_userType} and sub: ${auth_sub}` };
+        response_message = { error: `Prospect Record not found with userType and sub` };
         return [response_status_code, response_message];
     }
 
@@ -84,14 +84,14 @@ async function getResponse(X_Auth_Find, req, By) {
        and returning 404, if not matching */
     if (prospectId != reqProspectId) {
         response_status_code = HTTP.NOT_FOUND.code;
-        response_message = { error: `ProspectId: ${reqProspectId} in the request is not associated with userType:${auth_userType} and sub: ${auth_sub}` };
+        response_message = { error: `ProspectId in the request is not associated with userType and sub` };
         return [response_status_code, response_message];
     }
 
     /* checking if Prospect is present in tbl_prospect, and returning 404, if not present */
     if (!(await PROSPECT_HELPER.isProspectPresent(prospectId))) {
         response_status_code = HTTP.NOT_FOUND.code;
-        response_message = { error: `Prospect Record not found in Prospect table with ProspectId: ${reqProspectId}` };
+        response_message = { error: `Prospect Record not found in Prospect table with ProspectId` };
         return [response_status_code, response_message];
     }
 

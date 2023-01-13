@@ -29,5 +29,9 @@ const TBL_INTENT_QUERY = {
     UPDATE_ACTIVETO: "UPDATE <tableName> SET active_to=GETDATE() WHERE prospect_id=<prospectId> and active_to is NULL"
 }
 
+const TBL_PROSPECT_INFORMATION_QUERY = {
+
+}
+
 // exporting modules, to be used in the other .js files
-module.exports = { TBL_PROSPECT_QUERY, TBL_PROSPECT_IDENTIFIER_QUERY, TBL_INTENT_QUERY }
+module.exports = { TBL_PROSPECT_QUERY, TBL_PROSPECT_IDENTIFIER_QUERY, TBL_INTENT_QUERY, TBL_PROSPECT_INFORMATION_QUERY }

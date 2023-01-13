@@ -1,37 +1,37 @@
-// Importing packages
-const { Table } = require('mssql');
-const azureSql = require('../main/utils/azureSql.js');
+// // Importing packages
+// const { Table } = require('mssql');
+// const azureSql = require('../../main/utils/azureSql.js');
 
-// create schema in the db
-async function createSchema(sql) {
-    const result = await azureSql.dbOperation(sql);
-    console.log(result);
-}
+// // create schema in the db
+// async function createSchema(sql) {
+//     const result = await azureSql.dbOperation(sql);
+//     console.log(result);
+// }
 
-// create table in the db
-async function createTable(sql) {
-    const result = await azureSql.dbOperation(sql);
-    console.log(result);
-    return
-}
+// // create table in the db
+// async function createTable(sql) {
+//     const result = await azureSql.dbOperation(sql);
+//     console.log(result);
+//     return
+// }
 
-// insert record in the db
-async function insertRecord(sql) {
-    const result = await azureSql.dbOperation(sql);
-    console.log(result);
-}
+// // insert record in the db
+// async function insertRecord(sql) {
+//     const result = await azureSql.dbOperation(sql);
+//     console.log(result);
+// }
 
-// get record from the db
-async function getRecord(sql) {
-    const result = await azureSql.dbOperation(sql);
-    console.log(result);
-}
+// // get record from the db
+// async function getRecord(sql) {
+//     const result = await azureSql.dbOperation(sql);
+//     console.log(result);
+// }
 
-// update record in the db
-async function updateRecord(sql) {
-    const result = await azureSql.dbOperation(sql);
-    console.log(result);
-}
+// // update record in the db
+// async function updateRecord(sql) {
+//     const result = await azureSql.dbOperation(sql);
+//     console.log(result);
+// }
 
 /* 
 Sql Operation
