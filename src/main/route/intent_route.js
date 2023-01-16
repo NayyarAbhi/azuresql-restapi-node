@@ -8,6 +8,7 @@ intentRoutes.route('/:ProspectId/intent')
 
 intentRoutes.route('/:ProspectId/intent/:IntentId')
     .get(controller.findByIntentIdProspectId)
+    .put(controller.updateIntent)
 
 // exporting modules, to be used in the other .js files
 module.exports = { intentRoutes }

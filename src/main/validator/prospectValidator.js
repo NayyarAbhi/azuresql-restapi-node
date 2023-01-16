@@ -10,6 +10,7 @@ const createProspectSchema = joi.object({
 const xAuthSchema = joi.object({
     'x-authorization-id': joi.string().required()
 });
+
 const prospectIdSchmea = joi.object({
     ProspectId: joi.number().required()
 });
@@ -30,7 +31,7 @@ const addProspectSchema = joi.array().items(joi.object({
     IdentifierType: joi.string().required(),
     IdentifierValue: joi.string().required(),
     ActiveFrom: joi.date().required()
-}));
+})).min(1);
 
 const findProspectSchema = joi.object({
     IdentifierType: joi.string().required(),

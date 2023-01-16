@@ -174,14 +174,14 @@ async function getResponse(X_Auth_Add, req, ById) {
     /* checking if Prospect is present in tbl_prospect_identifier table, and returning 404, if not present  */
     if (prospectId == null) {
         response_status_code = HTTP.NOT_FOUND.code;
-        response_message = { error: `Prospect Record not found with userType:${auth_userType} and sub: ${auth_sub}` };
+        response_message = { error: `Prospect Record not found with userType and sub` };
         return [response_status_code, response_message];
     }
 
     /* checking if Prospect is present in tbl_prospect, and returning 404, if not present */
     if (!(await PROSPECT_HELPER.isProspectPresent(prospectId))) {
         response_status_code = HTTP.NOT_FOUND.code;
-        response_message = { error: `Prospect Record not found in Prospect table with ProspectId: ${reqProspectId}` };
+        response_message = { error: `Prospect Record not found in Prospect table` };
         return [response_status_code, response_message];
     }
 
@@ -195,7 +195,7 @@ async function getResponse(X_Auth_Add, req, ById) {
             return [response_status_code, response_message];
         } else {
             response_status_code = HTTP.NOT_FOUND.code;
-            response_message = { error: `ProspectId: ${reqProspectId} in the request is not associated with userType:${auth_userType} and sub: ${auth_sub}` };
+            response_message = { error: `ProspectId in the request is not associated with userType and sub` };
             return [response_status_code, response_message];
         }
     } else {

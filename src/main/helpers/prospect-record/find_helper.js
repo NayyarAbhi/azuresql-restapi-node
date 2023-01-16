@@ -11,7 +11,7 @@ async function findProspect(req) {
     //var headerProspectId = await dbService.getProspectWithSessionId(cookie);
     //if prospect id is null for x-aurhrazition-id header return error message
     if (headerProspectId == null) {
-        return { "error": `Prospect could not found with SESSIONID ${X_Auth_Find[0].sub} in the system` };
+        return { "error": `Prospect could not found in the system` };
     }
     const prospect_identifier_query = PROSPECT_IDENTIFIER_QUERY.PROSPECT_IDENTIFIER_VALUES_BY_IDENTIFIER_TYPE_AND_VALUE
         .replace('<tableName>', TABLES.PROSPECT_IDENTIFIERS)
@@ -20,7 +20,7 @@ async function findProspect(req) {
     const prospect_identifier = (await db.getRecord(prospect_identifier_query)).recordset
 
     if (prospect_identifier[0] === undefined) {
-        return { error: `Prospect Record does not exist with IdentifierType as ${reqBody.IdentifierType} and IdentifierValue as ${reqBody.IdentifierValue} in the system` };
+        return { error: `Prospect Record does not exist with IdentifierType and IdentifierValue in the system` };
     }
     const prospectId = prospect_identifier[0].prospect_id;
     if (`${prospectId}` === `${headerProspectId}`) {

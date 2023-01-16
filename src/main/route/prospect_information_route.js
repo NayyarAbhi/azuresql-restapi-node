@@ -8,8 +8,11 @@ prospectInformationRoute.route('/:ProspectId/fetch')
 prospectInformationRoute.route('/:ProspectId/fetch/:PayloadIdentifier')
     .get(controller.findProspectInfoByPayloadIdentifier);
 
-    prospectInformationRoute.route('/:ProspectId/fetch/:PayloadIdentifier/:PayloadId')
+prospectInformationRoute.route('/:ProspectId/fetch/:PayloadIdentifier/:PayloadId')
      .get(controller.findProspectInfoByPayloadIdentifierAndPayloadId);
+     
+prospectInformationRoute.route('/:ProspectId/save')
+    .post(controller.createProspectInformation)
 
 // exporting modules, to be used in the other .js files
 module.exports = { prospectInformationRoute }
