@@ -30,6 +30,9 @@ const TBL_INTENT_QUERY = {
 }
 
 const TBL_PROSPECT_INFORMATION_QUERY = {
+    GET_PROSPECT_INFORMATION_BY_PROSPECTID: "SELECT * FROM <tableName> WHERE prospect_id=<prospectId> and active_to is NULL",
+    GET_PROSPECT_INFORMATION_BY_PROSPECTID_AND_PAYLOAD_IDENTIFIER: "SELECT * FROM <tableName> WHERE prospect_id=<prospectId> AND payload_identifier='<payloadIdentifier>' and active_to is NULL",
+    GET_PROSPECT_INFORMATION_BY_PROSPECTID_AND_PAYLOAD_IDENTIFIER_AND_PAYLOADID: "SELECT * FROM <tableName> WHERE prospect_id=<prospectId> AND payload_identifier='<payloadIdentifier>' and payload_id='<payloadId>' and active_to is NULL"
 
 }
 

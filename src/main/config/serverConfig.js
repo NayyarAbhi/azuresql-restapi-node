@@ -1,9 +1,9 @@
 // Create a configuration object for our Azure SQL connection parameters
 var dbConfig = {
-  server: "servermortgage.database.windows.net",
-  database: "Mortgages",
-  user: "test",
-  password: "Password@1",
+  server: "prospectserver.database.windows.net",
+  database: "prospectdb",
+  user: "prospect",
+  password: "Passwor!",
   port: 1433,
   options: {
     encrypt: true
