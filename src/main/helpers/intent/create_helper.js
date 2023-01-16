@@ -30,6 +30,8 @@ async function getResponse(X_Auth, req) {
         response_message = { error: `Auth userType: ${usertype}, is not valid.` };
         return [response_status_code, response_message];
     }
+
+    //Check if prospect id from DB is null or the prospect id from DB is associated with userType and sub or not
     if (ProspectIdfromDB == null) {
         response_status_code = HTTP.NOT_FOUND.code;
         response_message = { error: `Prospect with userType and sub doesn't exist in the records` };

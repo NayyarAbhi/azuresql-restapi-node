@@ -1,3 +1,7 @@
+test('adds 1 + 2 to equal 3', () => {
+    expect(1 + 2).toBe(3);
+  });
+
 // // Importing packages
 // const { Table } = require('mssql');
 // const azureSql = require('../../main/utils/azureSql.js');

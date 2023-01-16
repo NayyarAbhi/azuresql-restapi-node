@@ -36,7 +36,7 @@ async function getMaxIntentId() {
         .recordset[0].MAXINTENTID);
 }
 
-/*this function will check the max prospect_identifier_id and return the next prospect_identifier_id to be added
+/*this function will check the max IntentId and return the next IntentId to be added
 */
 function getNextIntentId(intentId) {
     return (intentId == 'INTnull') ? 'INT1'
