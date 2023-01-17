@@ -90,9 +90,9 @@
         "/api/v1/prospect/{ProspectId}": {
             "get": {
                 "tags": [
-                    "Find Prospects"
+                    "Find Prospect"
                 ],
-                "description": "Find prospect details in the system",
+                "description": "Find prospect details for given ProspectId in the system",
                 "parameters": [
                     {
                         "name": "x-authorization-id",
@@ -159,9 +159,9 @@
         "/api/v1/prospect/find": {
             "post": {
                 "tags": [
-                    "Find Prospects"
+                    "Find Prospect"
                 ],
-                "description": "Find prospect details in the system",
+                "description": "Find prospect details for given IdentifierType and IdentifierValue in the system",
                 "parameters": [
                     {
                         "name": "x-authorization-id",
@@ -186,7 +186,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/Prospect"
+                            "$ref": "#/definitions/ProspectDetails"
                         }
                     }
                 }
@@ -197,7 +197,7 @@
                 "tags": [
                     "Find Prospect Information"
                 ],
-                "description": "Find prospect details in the system",
+                "description": "Finds prospect information for given ProspectId in the system",
                 "parameters": [
                     {
                         "name": "x-authorization-id",
@@ -220,8 +220,15 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "ProspectId" : {
+                            "properties": {
+                                "ProspectId": {
+                                    "type": "string"
+                                }
+                            }
+                        },
                         "schema": {
-                            "$ref": "#/definitions/Prospect"
+                            "$ref": "#/definitions/ProspectInformation"
                         }
                     }
                 }
@@ -232,7 +239,7 @@
                 "tags": [
                     "Find Prospect Information"
                 ],
-                "description": "Find prospect details in the system",
+                "description": "Finds prospect information for given ProspectId and PayloadIdentifier in the system",
                 "parameters": [
                     {
                         "name": "x-authorization-id",
@@ -263,7 +270,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/Prospect"
+                            "$ref": "#/definitions/ProspectInformation"
                         }
                     }
                 }
@@ -274,7 +281,7 @@
                 "tags": [
                     "Find Prospect Information"
                 ],
-                "description": "Find prospect details in the system",
+                "description": "Finds prospect information for given ProspectId, PayloadIdentifier and PayloadId in the system",
                 "parameters": [
                     {
                         "name": "x-authorization-id",
@@ -312,7 +319,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/Prospect"
+                            "$ref": "#/definitions/ProspectInformation"
                         }
                     }
                 }
@@ -447,20 +454,52 @@
             }
         },
         "ProspectDetails" : {
-            "Prospect": "#/definitions/Prospect",
-            "ProspectIdentifier" : ["#/definitions/ProspectIdentifier"]
-
+            "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/Prospect"
+            },
+            "properties" : {
+                "name" : {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/ProspectIdentifier"
+                }
+                }
+              }
+        },
+        "FindProspectResponse" : {
 
         },
-        "prospectInformation" : [
-            {
-                "payload_id": "10002",
-                "prospect_id": 10000001,
-                "payload_identifier": "TopupHomeCalculator",
-                "payload_body": "dummyString1",
-                "active_from": "1894-07-03T00:00:00.000Z",
-                "active_to": null
-              }
-        ]
+        "ProspectInformation" : {
+            "required": [
+                "payload_id",
+                "prospect_id",
+                "payload_identifier",
+                "payload_body",
+                "active_from",
+                "active_to"
+            ],
+            "properties": {
+                "payload_id": {
+                    "type": "string"
+                },
+                "prospect_id": {
+                    "type": "integer"
+                },
+                "payload_identifier": {
+                    "type": "string"
+                },
+                "payload_body": {
+                    "type": "string"
+                },
+                "active_from": {
+                    "type": "date"
+                },
+                "active_to": {
+                    "type": "date"
+                }
+            }
+        }
+            
     }
 }
