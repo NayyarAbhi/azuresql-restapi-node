@@ -1,6 +1,5 @@
 const HTTP = require('../variables/status.js').HTTP;
 const validator = require('../validator/prospectValidator.js');
-const infovalidator = require('../validator/prospectInformationValidator');
 const CREATE_HELPER = require('../helpers/prospect_information/create_helper');
 const FIND_HELPER = require('../helpers/prospect_information/find_helper.js');
 let X_Auth = require('../variables/x-authorisation.json');

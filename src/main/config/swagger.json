@@ -5,7 +5,7 @@
         "title": "Mortgage DataFoundation",
         "description": "Mortgage DataFoundation API"
     },
-    "host": "localhost:8000",
+    "host": "localhost:8001",
     "basePath": "/",
     "tags": [
         {
@@ -23,7 +23,7 @@
         "application/json"
     ],
     "paths": {
-        "/prospect/v1": {
+        "/api/v1/prospect": {
             "put": {
                 "tags": [
                     "Add Prospect Contact"
@@ -84,12 +84,15 @@
                         }
                     }
                 }
-            },
+            }
+        },
+        
+        "/api/v1/prospect/{ProspectId}": {
             "get": {
                 "tags": [
-                    "Find Prospects"
+                    "Find Prospect"
                 ],
-                "description": "Find prospect details in the system",
+                "description": "Find prospect details for given ProspectId in the system",
                 "parameters": [
                     {
                         "name": "x-authorization-id",
@@ -101,9 +104,9 @@
                     {
                         "name": "ProspectId",
                         "in": "path",
-                        "description": "Find prospect details in the system",
+                        "description": "Enter prospect Id",
                         "required": true,
-                        "type": "string"
+                        "type": "integer"
                     }
                 ],
                 "produces": [
@@ -113,13 +116,11 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/FindProspect"
+                            "$ref": "#/definitions/Prospect"
                         }
                     }
                 }
-            }
-        },
-        "/prospect/v1/{ProspectId}": {
+            },
             "put": {
                 "tags": [
                     "Add Prospect Contact"
@@ -155,12 +156,12 @@
                 }
             }
         },
-        "/prospect/v1/find": {
+        "/api/v1/prospect/find": {
             "post": {
                 "tags": [
-                    "Find Prospects"
+                    "Find Prospect"
                 ],
-                "description": "Find prospect details in the system",
+                "description": "Find prospect details for given IdentifierType and IdentifierValue in the system",
                 "parameters": [
                     {
                         "name": "x-authorization-id",
@@ -185,7 +186,140 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/Prospect"
+                            "$ref": "#/definitions/ProspectDetails"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/prospect/{ProspectId}/fetch": {
+            "get": {
+                "tags": [
+                    "Find Prospect Information"
+                ],
+                "description": "Finds prospect information for given ProspectId in the system",
+                "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "An authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ProspectId",
+                        "in": "path",
+                        "description": "Enter prospect Id",
+                        "required": true,
+                        "type": "integer"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "ProspectId" : {
+                            "properties": {
+                                "ProspectId": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "schema": {
+                            "$ref": "#/definitions/ProspectInformation"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/prospect/{ProspectId}/fetch/{PayloadIdentifier}": {
+            "get": {
+                "tags": [
+                    "Find Prospect Information"
+                ],
+                "description": "Finds prospect information for given ProspectId and PayloadIdentifier in the system",
+                "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "An authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ProspectId",
+                        "in": "path",
+                        "description": "Enter prospect Id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "PayloadIdentifier",
+                        "in": "path",
+                        "description": "Enter prospect Id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ProspectInformation"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/prospect/{ProspectId}/fetch/{PayloadIdentifier}/{PayloadId}": {
+            "get": {
+                "tags": [
+                    "Find Prospect Information"
+                ],
+                "description": "Finds prospect information for given ProspectId, PayloadIdentifier and PayloadId in the system",
+                "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "An authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ProspectId",
+                        "in": "path",
+                        "description": "Enter prospect Id",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "name": "PayloadIdentifier",
+                        "in": "path",
+                        "description": "Enter prospect Id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "PayloadId",
+                        "in": "path",
+                        "description": "Enter PayloadId Id",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/ProspectInformation"
                         }
                     }
                 }
@@ -318,6 +452,54 @@
                     "type": "date"
                 }
             }
+        },
+        "ProspectDetails" : {
+            "type" : "array",
+                "items" : {
+                  "$ref" : "#/definitions/Prospect"
+            },
+            "properties" : {
+                "name" : {
+                    "type" : "array",
+                    "items" : {
+                      "$ref" : "#/definitions/ProspectIdentifier"
+                }
+                }
+              }
+        },
+        "FindProspectResponse" : {
+
+        },
+        "ProspectInformation" : {
+            "required": [
+                "payload_id",
+                "prospect_id",
+                "payload_identifier",
+                "payload_body",
+                "active_from",
+                "active_to"
+            ],
+            "properties": {
+                "payload_id": {
+                    "type": "string"
+                },
+                "prospect_id": {
+                    "type": "integer"
+                },
+                "payload_identifier": {
+                    "type": "string"
+                },
+                "payload_body": {
+                    "type": "string"
+                },
+                "active_from": {
+                    "type": "date"
+                },
+                "active_to": {
+                    "type": "date"
+                }
+            }
         }
+            
     }
 }
