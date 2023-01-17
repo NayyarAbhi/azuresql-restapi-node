@@ -1,8 +1,8 @@
 {
     "openapi": "3.0.3",
     "info": {
-      "title": "Swagger Petstore - OpenAPI 3.0",
-      "description": "This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!\nYou can now help us improve the API whether it's by making changes to the definition itself or to the code.\nThat way, with time, we can improve the API in general, and expose some of the new features in OAS3.",
+      "title": "Swagger Prospect Management Micro Service - OpenAPI 3.0",
+      "description": "This is Prospect Management Micro Service Node Server based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). In the third iteration of the prospect managment micro service, we've switched to the design first approach!\nYou can now help us improve the API whether it's by making changes to the definition itself or to the code.\nThat way, with time, we can improve the API in general, and expose some of the new features in OAS3.",
       "termsOfService": "http://swagger.io/terms/",
       "contact": {
         "email": "apiteam@swagger.io"
@@ -91,7 +91,7 @@
               "description": "Invalid ID supplied"
             },
             "404": {
-              "description": "Pet not found"
+              "description": "Prospect not found"
             },
             "405": {
               "description": "Validation exception"
@@ -159,7 +159,7 @@
               "description": "Invalid ID supplied"
             },
             "404": {
-              "description": "Pet not found"
+              "description": "Prospect not found"
             },
             "405": {
               "description": "Validation exception"
@@ -237,7 +237,7 @@
               "description": "Invalid ID supplied"
             },
             "404": {
-              "description": "Pet not found"
+              "description": "Prospect not found"
             },
             "405": {
               "description": "Validation exception"
@@ -295,7 +295,7 @@
               "description": "Invalid ID supplied"
             },
             "404": {
-              "description": "Pet not found"
+              "description": "Prospect not found"
             },
             "405": {
               "description": "Validation exception"
@@ -324,7 +324,7 @@
             }
           ],
           "requestBody": {
-            "description": "Create a new pet in the store",
+            "description": "Create a new Prospect in the store",
             "content": {
               "application/json": {
                 "schema": {
