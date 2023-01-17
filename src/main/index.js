@@ -29,5 +29,8 @@ app.get('/readiness', (req,res) => res.status(HTTP.OK.code).json({message : 'App
 app.get('/liveness', (req,res) => res.status(HTTP.OK.code).json({message : 'Appilcation is live'}));
 app.get('/health', (req,res) => res.status(HTTP.OK.code).json({message : 'Appilcation is up and running'}));
 
+// valid request
+app.get('/api/v1/prospect', (req, res) => res.status(HTTP.OK.code).json({ message: 'valid request' }));
+
 // unknown request
 app.get('*', (req, res) => res.status(HTTP.BAD_REQUEST.code).json({ message: 'not a valid request' }));
