@@ -8,14 +8,14 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./config/swagger.json');
 
 const port = 8001;
-const host = '0.0.0.0';
+//const host = '0.0.0.0';
 const app = express();
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.listen(port, host, () => {
-    console.log(`Server running on host:${host} and port:${port}`);
+app.listen(port, () => {
+    console.log(`Server running on port:${port}`);
 });
 
 //prospect api entry point
