@@ -80,7 +80,7 @@ async function findProspect(req, res) {
     // getting domus reponse payload
     let domus_cookie_response = await domusCookie.getResponsePayload();
 
-    const result = await FIND_HELPER.findProspect(req, domus_cookie_response);
+    const result = await FIND_HELPER.findProspect(domus_cookie_response, req);
     console.log(result.error);
 
     if (result.error == null) {
@@ -107,7 +107,7 @@ async function findProspectById(req, res) {
     // getting domus reponse payload
     let domus_cookie_response = await domusCookie.getResponsePayload();
 
-    const result = await FIND_HELPER.findProspectById(req, domus_cookie_response);
+    const result = await FIND_HELPER.findProspectById(domus_cookie_response, req);
     console.log(result.error);
 
     if (result.error == null) {
