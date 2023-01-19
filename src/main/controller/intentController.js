@@ -3,25 +3,23 @@ const validator = require('../validator/intentValidator');
 const FIND_HELPER = require('../helpers/intent/find_helper');
 const UPDATE_HELPER = require('../helpers/intent/update_helper');
 const CREATE_HELPER = require('../helpers/intent/create_helper');
-let X_Auth = require('../variables/x-authorisation.json');
-let X_Auth_Find = require('../variables/x-auth-id-find.json');
-const X_Auth_Add = require('../variables/x-auth-add.json');
+const domusCookie = require('../helpers/domus/domusCookie.js');
 
 // Adding the intent of the prospect, if the prospect id exist in the records
 async function addIntent(req, res) {
 
     console.log("in add intent")
-        const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
-        const [response_status_code_1, response_message_1] = await CREATE_HELPER.xAauthValidation(authObj, req.body);
-        
-        if(response_message_1==="X_AUTH passes"){
-            const [response_status_code, response_message] = await CREATE_HELPER.getResponse(X_Auth, req);
-            res.status(response_status_code).send(response_message);
-        }else{
-            res.status(response_status_code_1).send(response_message_1)
-            
-        }
+    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
+    const [response_status_code_1, response_message_1] = await CREATE_HELPER.xAauthValidation(authObj, req.body);
 
+    if (response_message_1 === "X_AUTH passes") {
+        let domus_cookie_response = await domusCookie.getResponsePayload();
+        const [response_status_code, response_message] = await CREATE_HELPER.getResponse(domus_cookie_response, req);
+        res.status(response_status_code).send(response_message);
+    } else {
+        res.status(response_status_code_1).send(response_message_1)
+
+    }
 }
 
 /* 
@@ -36,7 +34,11 @@ async function findByIntentIdProspectId(req, res) {
             .send(error.details);
     }
 
-    const [response_status_code, response_message] = await FIND_HELPER.getResponse(X_Auth_Find[0], req, "IntentIdProspectId");
+    // getting domus reponse payload
+    let domus_cookie_response = await domusCookie.getResponsePayload();
+
+    // getting reponse status code and message
+    const [response_status_code, response_message] = await FIND_HELPER.getResponse(domus_cookie_response, req, "IntentIdProspectId");
     res.status(response_status_code)
         .send(response_message);
 }
@@ -52,7 +54,11 @@ async function findByProspectId(req, res) {
             .send(error.details);
     }
 
-    const [response_status_code, response_message] = await FIND_HELPER.getResponse(X_Auth_Find[0], req, "ProspectId");
+    // getting domus reponse payload
+    let domus_cookie_response = await domusCookie.getResponsePayload();
+
+    // getting reponse status code and message
+    const [response_status_code, response_message] = await FIND_HELPER.getResponse(domus_cookie_response, req, "ProspectId");
     res.status(response_status_code)
         .send(response_message);
 }
@@ -70,7 +76,11 @@ async function updateIntent(req, res) {
             .send(error.details);
     }
 
-    const [response_status_code, response_message] = await UPDATE_HELPER.getResponse(X_Auth_Add, req);
+    // getting domus reponse payload
+    let domus_cookie_response = await domusCookie.getResponsePayload();
+
+    // getting reponse status code and message
+    const [response_status_code, response_message] = await UPDATE_HELPER.getResponse(domus_cookie_response, req);
     res.status(response_status_code)
         .send(response_message);
 }
