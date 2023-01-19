@@ -6,6 +6,10 @@ const CREATE_HELPER = require('../helpers/prospect-record/create_helper');
 let X_Auth = require('../variables/x-authorisation.json');
 let X_Auth_Find = require('../variables/x-auth-id-find.json');
 const X_Auth_Add = require('../variables/x-auth-add.json');
+const domus_cookie = require('../variables/domus_cookie_response.json');
+const { get } = require('axios');
+
+const ENV = 'AppDev';
 
 
 // creating the prospect, if the customer id does not exist in the system
@@ -36,9 +40,21 @@ async function addProspectById(req, res) {
             .send(error.details);
     }
 
-    const [response_status_code, response_message] = await ADD_HELPER.getResponse(X_Auth_Add, req, true);
-    res.status(response_status_code)
-        .send(response_message);
+    console.log("************************************")
+    console.log(process.env.ENV)
+    let domus_cookie_response = '';
+    if (ENV == 'AppDev') {
+        let mockResponse = await get('http://localhost:3000/domuscookie');
+        domus_cookie_response = mockResponse.data;
+    } else {
+        domus_cookie_response = domus_cookie;
+    }
+
+    // const [response_status_code, response_message] = await ADD_HELPER.getResponse(X_Auth_Add, req, true);
+    // res.status(response_status_code)
+    //     .send(response_message);
+    res.status(200)
+        .send("success");
 }
 
 /* Add Prospect API to add Prospect contact details to the already existing Prospect
