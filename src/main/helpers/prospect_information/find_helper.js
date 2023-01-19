@@ -11,7 +11,7 @@ async function findProspectInfoByProspectId(req) {
     var headerProspectId = await cookie.validateCookie(X_Auth_Find[0].userType,X_Auth_Find[0].sub);
     //if prospect id is null for x-aurhrazition-id header return error message
     if (headerProspectId == null) {
-        return { "error": `Prospect could not found with SESSIONID ${X_Auth_Find[0].sub} in the system` };
+        return { "error": `Prospect could not found in the system` };
     }
     //check below,
     //prospect id retrieved from db for x-aurhrazition-id header is not null and 

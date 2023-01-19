@@ -3,7 +3,7 @@ var dbConfig = {
   server: "servermortgage.database.windows.net",
   database: "Mortgages",
   user: "test",
-  password: "Password@1",
+  password: "Password1@",
   port: 1433,
   options: {
     encrypt: true

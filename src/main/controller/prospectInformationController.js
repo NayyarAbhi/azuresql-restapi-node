@@ -10,10 +10,10 @@ const X_Auth_Add = require('../variables/x-auth-add.json');
 async function createProspectInformation(req, res) {
     const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
 
-    if (error = (validator.validateXAuthHeader(authObj) || validator.validateAddPayload(req.body) || validator.validateProspectId(req.params))) {
-        return res.status(HTTP.BAD_REQUEST.code)
-            .send(error.details);
-    }
+    // if (error = (validator.validateXAuthHeader(authObj) || validator.validateAddPayload(req.body) || validator.validateProspectId(req.params))) {
+    //     return res.status(HTTP.BAD_REQUEST.code)
+    //         .send(error.details);
+    // }
     const [response_status_code, response_message] = await CREATE_HELPER.getResponse(X_Auth, req);
     res.status(response_status_code)
         .send(response_message);
@@ -96,4 +96,4 @@ async function findProspectInfoByPayloadIdentifierAndPayloadId(req, res) {
 }
 
 // exporting modules, to be used in the api router
-module.exports = { findProspectInfoByProspectId, findProspectInfoByPayloadIdentifier, findProspectInfoByPayloadIdentifierAndPayloadId }
+module.exports = { createProspectInformation, findProspectInfoByProspectId, findProspectInfoByPayloadIdentifier, findProspectInfoByPayloadIdentifierAndPayloadId }
