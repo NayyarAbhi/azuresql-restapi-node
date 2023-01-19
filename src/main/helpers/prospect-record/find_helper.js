@@ -2,12 +2,11 @@ let PROSPECT_IDENTIFIER_QUERY = require('../../variables/queries.js').TBL_PROSPE
 const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
 const cookie = require('../../validator/cookieValidator.js');
-let X_Auth_Find = require('../../variables/x-auth-id-find.json');
 
-async function findProspect(req) {
+async function findProspect(req, domus_cookie_response) {
     const reqBody = req.body;
 
-    var headerProspectId = await cookie.validateCookie(X_Auth_Find[0].userType,X_Auth_Find[0].sub);
+    var headerProspectId = await cookie.validateCookie(domus_cookie_response.userType,domus_cookie_response.sub);
     //var headerProspectId = await dbService.getProspectWithSessionId(cookie);
     //if prospect id is null for x-aurhrazition-id header return error message
     if (headerProspectId == null) {
@@ -30,20 +29,20 @@ async function findProspect(req) {
         const prospect = (await db.getRecord(prospect_query)).recordset
         return { prospect, prospect_identifier }
     } else {
-        //return { "error": `Prospect with id ${prospectId} retrieved from request for identifier ${reqBody.IdentifierValue} could not match with the prospect id retrieved from db for x-aurhrazition-id header ` + X_Auth_Find[0].sub};
+        //return { "error": `Prospect with id ${prospectId} retrieved from request for identifier ${reqBody.IdentifierValue} could not match with the prospect id retrieved from db for x-aurhrazition-id header ` + domus_cookie_response.sub};
         return { "error": `Prospect id could not found`};
     }
 }
 
-async function findProspectById(req) {
+async function findProspectById(req, domus_cookie_response) {
 
     const reqParams = req.params;
     var prospectId = reqParams.ProspectId;
-    var headerProspectId = await cookie.validateCookie(X_Auth_Find[0].userType,X_Auth_Find[0].sub);
+    var headerProspectId = await cookie.validateCookie(domus_cookie_response.userType,domus_cookie_response.sub);
 
     //if prospect id is null for x-aurhrazition-id header return error message
     if (headerProspectId == null) {
-        //return { "error": `Prospect could not found with SESSIONID ${X_Auth_Find[0].sub} in the system` };
+        //return { "error": `Prospect could not found with SESSIONID ${domus_cookie_response.sub} in the system` };
         return { "error": `Prospect id could not found`};
     }
     //check below,
@@ -63,7 +62,7 @@ async function findProspectById(req) {
 
         return { prospect, prospect_identifiers }
     } else {
-        //return { "error": `Prospect id from uri ${prospectId} could not match with the prospect id retrieved from db for x-aurhrazition-id header ` + X_Auth_Find[0].sub };
+        //return { "error": `Prospect id from uri ${prospectId} could not match with the prospect id retrieved from db for x-aurhrazition-id header ` + domus_cookie_response.sub };
         return { "error": `Prospect id could not found`};
     }
 }

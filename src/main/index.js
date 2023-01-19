@@ -1,7 +1,7 @@
 const HTTP = require('./variables/status.js').HTTP;
 const app = require('./app.js');
 
-const port = 8001
+const port = 8085
 
 app.listen(port, () => {
     console.log(`Server running on port:${port}`);

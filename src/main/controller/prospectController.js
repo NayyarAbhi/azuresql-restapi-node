@@ -3,13 +3,7 @@ const validator = require('../validator/prospectValidator');
 const FIND_HELPER = require('../helpers/prospect-record/find_helper.js');
 const ADD_HELPER = require('../helpers/prospect-record/add_helper');
 const CREATE_HELPER = require('../helpers/prospect-record/create_helper');
-let X_Auth = require('../variables/x-authorisation.json');
-let X_Auth_Find = require('../variables/x-auth-id-find.json');
-const X_Auth_Add = require('../variables/x-auth-add.json');
-const domus_cookie = require('../variables/domus_cookie_response.json');
-const { get } = require('axios');
-
-const ENV = 'AppDev';
+const domusCookie = require('../helpers/domus/domusCookie.js');
 
 
 // creating the prospect, if the customer id does not exist in the system
@@ -17,15 +11,16 @@ async function createProspect(req, res) {
 
     const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
     const [response_status_code_1, response_message_1] = await CREATE_HELPER.xAauthValidation(authObj, req.body);
-    
-    if(response_message_1==="X_AUTH passes"){
-        const [response_status_code, response_message] = await CREATE_HELPER.getResponse(X_Auth, req);
+
+    if (response_message_1 === "X_AUTH passes") {
+        let domus_cookie_response = await domusCookie.getResponsePayload();
+        const [response_status_code, response_message] = await CREATE_HELPER.getResponse(domus_cookie_response, req);
         res.status(response_status_code).send(response_message);
-    }else{
+    } else {
         res.status(response_status_code_1).send(response_message_1)
-        
+
     }
-    
+
 }
 
 /* Add Prospect API to add Prospect contact details by ProspectId to the already existing Prospect
@@ -40,21 +35,13 @@ async function addProspectById(req, res) {
             .send(error.details);
     }
 
-    console.log("************************************")
-    console.log(process.env.ENV)
-    let domus_cookie_response = '';
-    if (ENV == 'AppDev') {
-        let mockResponse = await get('http://localhost:3000/domuscookie');
-        domus_cookie_response = mockResponse.data;
-    } else {
-        domus_cookie_response = domus_cookie;
-    }
+    // getting domus reponse payload
+    let domus_cookie_response = await domusCookie.getResponsePayload();
 
-    // const [response_status_code, response_message] = await ADD_HELPER.getResponse(X_Auth_Add, req, true);
-    // res.status(response_status_code)
-    //     .send(response_message);
-    res.status(200)
-        .send("success");
+    // getting reponse status code and message
+    const [response_status_code, response_message] = await ADD_HELPER.getResponse(domus_cookie_response, req, true);
+    res.status(response_status_code)
+        .send(response_message);
 }
 
 /* Add Prospect API to add Prospect contact details to the already existing Prospect
@@ -68,7 +55,11 @@ async function addProspect(req, res) {
             .send(error.details);
     }
 
-    const [response_status_code, response_message] = await ADD_HELPER.getResponse(X_Auth_Add, req, false);
+    // getting domus reponse payload
+    let domus_cookie_response = await domusCookie.getResponsePayload();
+
+    // getting reponse status code and message
+    const [response_status_code, response_message] = await ADD_HELPER.getResponse(domus_cookie_response, req, false);
     res.status(response_status_code)
         .send(response_message);
 }
@@ -86,7 +77,10 @@ async function findProspect(req, res) {
             .send(error.details);
     }
 
-    const result = await FIND_HELPER.findProspect(req);
+    // getting domus reponse payload
+    let domus_cookie_response = await domusCookie.getResponsePayload();
+
+    const result = await FIND_HELPER.findProspect(req, domus_cookie_response);
     console.log(result.error);
 
     if (result.error == null) {
@@ -110,7 +104,10 @@ async function findProspectById(req, res) {
             .send(error.details);
     }
 
-    const result = await FIND_HELPER.findProspectById(req);
+    // getting domus reponse payload
+    let domus_cookie_response = await domusCookie.getResponsePayload();
+
+    const result = await FIND_HELPER.findProspectById(req, domus_cookie_response);
     console.log(result.error);
 
     if (result.error == null) {
