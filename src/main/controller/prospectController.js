@@ -10,16 +10,18 @@ const X_Auth_Add = require('../variables/x-auth-add.json');
 
 // creating the prospect, if the customer id does not exist in the system
 async function createProspect(req, res) {
+
     const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
-
-    if (error = (validator.validateXAuthHeader(authObj) || validator.validateCreatePayload(req.body))) {
-        return res.status(HTTP.BAD_REQUEST.code)
-            .send(error.details);
-    } 
-    const [response_status_code, response_message] = await CREATE_HELPER.getResponse(X_Auth, req);
-    res.status(response_status_code)
-        .send(response_message);
-
+    const [response_status_code_1, response_message_1] = await CREATE_HELPER.xAauthValidation(authObj, req.body);
+    
+    if(response_message_1==="X_AUTH passes"){
+        const [response_status_code, response_message] = await CREATE_HELPER.getResponse(X_Auth, req);
+        res.status(response_status_code).send(response_message);
+    }else{
+        res.status(response_status_code_1).send(response_message_1)
+        
+    }
+    
 }
 
 /* Add Prospect API to add Prospect contact details by ProspectId to the already existing Prospect

@@ -17,10 +17,11 @@ async function isProspectInfoPresent(prospectId) {
 /* getting max PayloadId from the tbl_intent
 */
 async function getMaxPayloadId() {
-    const query = INTENT_QUERY.GET_MAX_INTENT_ID
-        .replace('<tableName>', TABLES.INTENT);
+    const query = PROSPECT_INFO_QUERY.GET_MAX_PAYLOAD_ID
+        .replace('<tableName>', TABLES.PROSPECT_INFORMATION);
+        console.log(query);
     return 'PL' + ((await db.getRecord(query))
-        .recordset[0].MAXINTENTID);
+    .recordset[0].MAXPAYLOADID);
 }
 
 /*this function will check the max PayloadId and return the next PayloadId to be added

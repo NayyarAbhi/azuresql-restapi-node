@@ -5,6 +5,7 @@ const PROSPECT_HELPER = require('../prospect/prospect_helper.js');
 const PROSPECT_IDENTIFIER_HELPER = require('../prospect-record/prospect_identifier_helper.js');
 const INTENT_HELPER = require('../intent/intent_helper.js');
 let INTENT_QUERY = require('../../variables/queries.js').TBL_INTENT_QUERY;
+const validator = require('../../validator/intentValidator');
 
 
 /* Building a Response Payload to be sent back by the API.
@@ -22,6 +23,7 @@ async function getResponse(X_Auth, req) {
     //Based on the usertype the tables will distinguish between Prospect with sessionid and Prospect with IBID 
     //this is to validate prospectid via x_auth is same as the prospectid in params or not
     if (usertype === 'UNAUTH_CUSTOMER') {
+        console.log("inside unauith asuhb")
         ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(X_Auth[0].sub)
     } else if (usertype === 'IB_CUSTOMER') {
         ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithIBID(X_Auth[0].sub)
@@ -31,6 +33,8 @@ async function getResponse(X_Auth, req) {
         return [response_status_code, response_message];
     }
 
+    console.log(ProspectIdfromDB)
+    console.log(req.params.ProspectId)
     //Check if prospect id from DB is null or the prospect id from DB is associated with userType and sub or not
     if (ProspectIdfromDB == null) {
         response_status_code = HTTP.NOT_FOUND.code;
@@ -54,7 +58,7 @@ async function getResponse(X_Auth, req) {
         //creating new intentid
         var prevIntentId = await INTENT_HELPER.getMaxIntentId();
         var newIntentId = INTENT_HELPER.getNextIntentId(prevIntentId);
-        var intent_questionaire_payload_string = JSON.stringify(req.body.intent_questionaire_payload);
+        var intent_questionaire_payload_string = JSON.stringify(req.body.intent_questionaire_payload); 
         //inserting new intent record in the intent table
         const insertIntentQuery = INTENT_QUERY.INSERT_INTENT
             .replace('<tableName>', TABLES.INTENT)
@@ -73,4 +77,16 @@ async function getResponse(X_Auth, req) {
     }
 }
 
-module.exports = { getResponse };
+async function xAauthValidation(authObj, req){
+    if (error = (validator.validateXAuthHeader(authObj) || validator.validateAddPayload(req.body) || validator.validateProspectId(req.params))) {
+        response_status_code = HTTP.BAD_REQUEST.code;
+        return [response_status_code, error.details];
+    } 
+    else{
+        response_status_code = HTTP.OK.code;
+        response_message = "X_AUTH passes";
+        return [response_status_code, response_message];
+    }
+}
+
+module.exports = { getResponse,xAauthValidation };

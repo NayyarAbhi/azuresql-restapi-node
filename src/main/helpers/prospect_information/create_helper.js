@@ -48,6 +48,9 @@ async function getResponse(X_Auth, req) {
         response_status_code = HTTP.OK.code;
         response_message = { message: `Payload with ProspectId, already exist in the system.` };
         return [response_status_code, response_message];
+
+        
+
     }
     if (isprospectpresent) {
         //creating new payloadid
@@ -61,8 +64,7 @@ async function getResponse(X_Auth, req) {
             .replace('<prospect_id>', req.params.ProspectId)
             .replace('<payload_identifier>',req.body.payload_identifier)
             .replace('<payload_body>', payload_string)
-            .replace('<active_from>', req.body.active_from)
-            .replace('<active_from>', req.body.active_to);
+            .replace('<active_from>', req.body.active_from);
 
         const prospectInfoInsertResult = await db.insertRecord(insertProspectInfoQuery);
         response_status_code = HTTP.OK.code;

@@ -9,15 +9,18 @@ const X_Auth_Add = require('../variables/x-auth-add.json');
 
 // Adding the intent of the prospect, if the prospect id exist in the records
 async function addIntent(req, res) {
-    const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
 
-    if (error = (validator.validateXAuthHeader(authObj) || validator.validateAddPayload(req.body) || validator.validateProspectId(req.params))) {
-        return res.status(HTTP.BAD_REQUEST.code)
-            .send(error.details);
-    }
-    const [response_status_code, response_message] = await CREATE_HELPER.getResponse(X_Auth, req);
-    res.status(response_status_code)
-        .send(response_message);
+    console.log("in add intent")
+        const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
+        const [response_status_code_1, response_message_1] = await CREATE_HELPER.xAauthValidation(authObj, req.body);
+        
+        if(response_message_1==="X_AUTH passes"){
+            const [response_status_code, response_message] = await CREATE_HELPER.getResponse(X_Auth, req);
+            res.status(response_status_code).send(response_message);
+        }else{
+            res.status(response_status_code_1).send(response_message_1)
+            
+        }
 
 }
 

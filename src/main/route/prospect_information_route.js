@@ -2,8 +2,8 @@ const express = require("express");
 const controller = require("../controller/prospectInformationController.js");
 const prospectInformationRoutes = express.Router();
 
-// prospectInformationRoutes.route('/:ProspectId/save')
-//     .post(controller.createProspectInformation)
+ prospectInformationRoutes.route('/:ProspectId/save')
+     .post(controller.createProspectInformation)
 
 prospectInformationRoutes.route('/:ProspectId/fetch')
     .get(controller.findProspectInfoByProspectId);
