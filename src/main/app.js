@@ -13,17 +13,16 @@ app.use(bodyParser.json());
 
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.get('/readiness', (req,res) => res.status(HTTP.OK.code).json({message : 'Appilcation Ready to use'}));
-app.get('/liveness', (req,res) => res.status(HTTP.OK.code).json({message : 'Appilcation is live'}));
-app.get('/health', (req,res) => res.status(HTTP.OK.code).json({message : 'Appilcation is up and running'}));
+app.get('/readiness', (req, res) => res.status(HTTP.OK.code).json({ message: 'Appilcation Ready to use' }));
+app.get('/liveness', (req, res) => res.status(HTTP.OK.code).json({ message: 'Appilcation is live' }));
+app.get('/health', (req, res) => res.status(HTTP.OK.code).json({ message: 'Appilcation is up and running' }));
 
 //prospect api entry point
 app.use('/api/v1/prospect',
     prospect_route.prospectRoutes,
     intent_route.intentRoutes,
     prospect_information_route.prospectInformationRoutes
-
 );
 
 
-module.exports = app ;
+module.exports = app;
