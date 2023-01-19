@@ -2,9 +2,7 @@ const HTTP = require('../variables/status.js').HTTP;
 const validator = require('../validator/prospectValidator.js');
 const CREATE_HELPER = require('../helpers/prospect_information/create_helper');
 const FIND_HELPER = require('../helpers/prospect_information/find_helper.js');
-let X_Auth = require('../variables/x-authorisation.json');
-let X_Auth_Find = require('../variables/x-auth-id-find.json');
-const X_Auth_Add = require('../variables/x-auth-add.json');
+const domusCookie = require('../helpers/domus/domusCookie.js');
 
 // Adding the intent of the prospect, if the prospect id exist in the records
 async function createProspectInformation(req, res) {
@@ -14,10 +12,13 @@ async function createProspectInformation(req, res) {
     //     return res.status(HTTP.BAD_REQUEST.code)
     //         .send(error.details);
     // }
-    const [response_status_code, response_message] = await CREATE_HELPER.getResponse(X_Auth, req);
+
+    // getting domus reponse payload
+    let domus_cookie_response = await domusCookie.getResponsePayload();
+
+    const [response_status_code, response_message] = await CREATE_HELPER.getResponse(domus_cookie_response, req);
     res.status(response_status_code)
         .send(response_message);
-
 }
 
 /* Find Prospect Information API to retrieve Prospect Information details
@@ -33,7 +34,10 @@ async function findProspectInfoByProspectId(req, res) {
             .send(error.details);
     }
 
-    const result = await FIND_HELPER.findProspectInfoByProspectId(req);
+    // getting domus reponse payload
+    let domus_cookie_response = await domusCookie.getResponsePayload();
+
+    const result = await FIND_HELPER.findProspectInfoByProspectId(domus_cookie_response, req);
     console.log(result.error);
 
     if (result.error == null) {
@@ -58,7 +62,10 @@ async function findProspectInfoByPayloadIdentifier(req, res) {
             .send(error.details);
     }
 
-    const result = await FIND_HELPER.findProspectInfoByPayloadIdentifier(req);
+    // getting domus reponse payload
+    let domus_cookie_response = await domusCookie.getResponsePayload();
+
+    const result = await FIND_HELPER.findProspectInfoByPayloadIdentifier(domus_cookie_response, req);
     console.log(result.error);
 
     if (result.error == null) {
@@ -83,7 +90,10 @@ async function findProspectInfoByPayloadIdentifierAndPayloadId(req, res) {
             .send(error.details);
     }
 
-    const result = await FIND_HELPER.findProspectInfoByPayloadIdentifierAndPayloadId(req);
+    // getting domus reponse payload
+    let domus_cookie_response = await domusCookie.getResponsePayload();
+
+    const result = await FIND_HELPER.findProspectInfoByPayloadIdentifierAndPayloadId(domus_cookie_response, req);
     console.log(result.error);
 
     if (result.error == null) {

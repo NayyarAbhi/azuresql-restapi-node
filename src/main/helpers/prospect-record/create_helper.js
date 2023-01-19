@@ -16,17 +16,17 @@ const validator = require('../../validator/prospectValidator');
    the function will create new record in prospect and prospect identifier tables
 */
 
-async function getResponse(X_Auth, req) {
+async function getResponse(domus_cookie_response, req) {
 
     var ProspectIdfromDB
-    var usertype = X_Auth[0].userType
+    var usertype = domus_cookie_response.userType
     //console.log(req)
 
     //Based on the usertype the tables will distinguish between Prospect with sessionid and Prospect with IBID 
     if (usertype === 'UNAUTH_CUSTOMER') {
-        ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(X_Auth[0].sub)
+        ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(domus_cookie_response.sub)
     } else if (usertype === 'IB_CUSTOMER') {
-        ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithIBID(X_Auth[0].sub)
+        ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithIBID(domus_cookie_response.sub)
     } else {
         response_status_code = HTTP.BAD_REQUEST.code;
         response_message = { error: `Auth userType: ${usertype}, is not valid.` };
@@ -48,10 +48,10 @@ async function getResponse(X_Auth, req) {
             .replace('<channel_identifier>', req.body.channel_identifier == undefined ? '' : req.body.channel_identifier);
 
         const prospectInsertResult = await db.insertRecord(insertProspectQuery);
-        
+
         var prevProspectIdentifierId = await PROSPECT_IDENTIFIER_HELPER.getMaxProspectIdenId();
         var newProspectIdentifierId = PROSPECT_IDENTIFIER_HELPER.getNextProspectIdenId(prevProspectIdentifierId)
-        var usertype = X_Auth[0].userType
+        var usertype = domus_cookie_response.userType
 
         //Adding new record in prospect identifier table based on the usertype
         if (usertype === 'UNAUTH_CUSTOMER') {
@@ -60,7 +60,7 @@ async function getResponse(X_Auth, req) {
                 .replace('<prospect_identifier_id>', newProspectIdentifierId)
                 .replace('<prospect_id>', newProspectId)
                 .replace('<identifier_type>', 'SessionId')
-                .replace('<identifier>', X_Auth[0].sub)
+                .replace('<identifier>', domus_cookie_response.sub)
 
         } else {
             var insertProspectIdentifierQuery = PROSPECT_IDENTIFIER_QUERY.INSERT_PROSPECT_IDENTIFIERS
@@ -68,7 +68,7 @@ async function getResponse(X_Auth, req) {
                 .replace('<prospect_identifier_id>', newProspectIdentifierId)
                 .replace('<prospect_id>', newProspectId)
                 .replace('<identifier_type>', 'IBID')
-                .replace('<identifier>', X_Auth[0].sub)
+                .replace('<identifier>', domus_cookie_response.sub)
         }
 
 
@@ -87,16 +87,16 @@ async function getResponse(X_Auth, req) {
 }
 
 
-async function xAauthValidation(authObj, req){
+async function xAauthValidation(authObj, req) {
     if (error = (validator.validateXAuthHeader(authObj) || validator.validateCreatePayload(req))) {
         response_status_code = HTTP.BAD_REQUEST.code;
         return [response_status_code, error.details];
-    } 
-    else{
+    }
+    else {
         response_status_code = HTTP.OK.code;
         response_message = "X_AUTH passes";
         return [response_status_code, response_message];
     }
 }
 
-module.exports = { getResponse,xAauthValidation };
+module.exports = { getResponse, xAauthValidation };
