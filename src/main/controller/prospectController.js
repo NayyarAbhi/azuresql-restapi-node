@@ -19,7 +19,6 @@ async function createProspect(req, res) {
         res.status(response_status_code).send(response_message);
     }else{
         res.status(response_status_code_1).send(response_message_1)
-        
     }
     
 }

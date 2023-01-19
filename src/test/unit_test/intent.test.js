@@ -6,6 +6,7 @@ PROSPECT_IDENTIFIER_HELPER = require("../../main/helpers/prospect-record/prospec
 const { intentRoutes } = require('../../main/route/intent_route.js');
 const X_Auth = require("../../main/variables/x-authorisation.json");
 PROSPECT_HELPER = require("../../main/helpers/prospect/prospect_helper")
+INTENT_HELPER = require("../../main/helpers/intent/intent_helper")
 db = require('../../main/utils/azureSql');
 
 
@@ -100,7 +101,7 @@ describe("Intent", () =>{
     describe("Depending onUsertype but prospectid from db doesnot match with prospectid by sessionid",() =>{
 
         if(X_Auth[0].userType=='UNAUTH_CUSTOMER' && dummysub!=10000008){
-        it("Should return 200",async () =>{
+        it("Should return 404",async () =>{
 
             const xAauthValidationMock = jest
             .spyOn(CREATE_HELPER,'xAauthValidation')
@@ -119,8 +120,60 @@ describe("Intent", () =>{
 
         })
     }else if(X_Auth[0].userType=='UNAUTH_CUSTOMER' && dummysub2==10000008){
+
+        it("Should return ",async () =>{
+
+            const xAauthValidationMock = jest
+            .spyOn(CREATE_HELPER,'xAauthValidation')
+            .mockReturnValueOnce(xValidationdummyresponse);
+                
+            const getProspectWithIBIDMock = jest
+            .spyOn(PROSPECT_IDENTIFIER_HELPER,'getProspectWithIBID')
+            .mockReturnValueOnce(dummysub);
+    
+            //var isprospectpresent = await PROSPECT_HELPER.isProspectPresent(req.params.ProspectId);
+            //var isintentpresent = await INTENT_HELPER.isIntentPresent(req.params.ProspectId);
             //yahan pe extra jo functions hain unko karo mock
+
+            const isProspectPresentMock = jest
+            .spyOn(PROSPECT_HELPER,'getProspectWithIBID')
+            .mockReturnValueOnce(true);
+
+            const isIntentPresentMock = jest
+            .spyOn(INTENT_HELPER,'getProspectWithIBID')
+            .mockReturnValueOnce(false);
+
+
+            //Calling Create Intent function while taking prospectId = 10000008 as an example
+            const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();         
+            expect(statusCode).toBe(404)
+            expect(res.text).toEqual(notFoundResponse)
+            expect(getProspectWithIBIDMock).toHaveBeenCalled();
+            expect(xAauthValidationMock).toHaveBeenCalled();
+    
+            })
+
+        
     }else if(X_Auth[0].userType=='IB_CUSTOMER' && dummysub!=10000008){
+
+        it("Should return 404",async () =>{
+
+            const xAauthValidationMock = jest
+            .spyOn(CREATE_HELPER,'xAauthValidation')
+            .mockReturnValueOnce(xValidationdummyresponse);
+            
+            const getProspectWithIBIDMock = jest
+            .spyOn(PROSPECT_IDENTIFIER_HELPER,'getProspectWithIBID')
+            .mockReturnValueOnce(dummysub);
+
+            //Calling Create Intent function while taking prospectId = 10000008 as an example
+            const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();         
+            expect(statusCode).toBe(404)
+            expect(res.text).toEqual(notFoundResponse)
+            expect(getProspectWithIBIDMock).toHaveBeenCalled();
+            expect(xAauthValidationMock).toHaveBeenCalled();
+
+        })
 
     }else if(X_Auth[0].userType=='IB_CUSTOMER' && dummysub2==10000008){
 

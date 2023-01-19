@@ -48,6 +48,10 @@ async function getResponse(X_Auth, req) {
     //Intent is only inserted if the prospectid already exist in the prospect table
     var isprospectpresent = await PROSPECT_HELPER.isProspectPresent(req.params.ProspectId);
     var isintentpresent = await INTENT_HELPER.isIntentPresent(req.params.ProspectId);
+
+    console.log(isprospectpresent)
+    console.log(isintentpresent)
+
     //do not insert if intent already exist with respect to the prospectid
     if (isintentpresent) {
         response_status_code = HTTP.OK.code;
