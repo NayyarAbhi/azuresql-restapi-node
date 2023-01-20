@@ -31,9 +31,16 @@
                 "description": "Add prospect contact details in the system",
                 "parameters": [
                     {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "Specify the authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
                         "name": "Payload",
                         "in": "body",
-                        "description": "Update Prospect Request Payload",
+                        "description": "Request Payload",
                         "schema": {
                             "$ref": "#/definitions/AddProspectContact_ReqPayload"
                         }
@@ -127,16 +134,23 @@
                 "description": "Add prospect contact details in the system",
                 "parameters": [
                     {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "Specify the authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
                         "name": "ProspectId",
                         "in": "path",
-                        "description": "Add prospect details in the system with ProspectId",
+                        "description": "Specify the ProspectId of the Prospect",
                         "required": true,
                         "type": "string"
                     },
                     {
                         "name": "Payload",
                         "in": "body",
-                        "description": "Update Prospect Request Payload",
+                        "description": "Request Payload",
                         "schema": {
                             "$ref": "#/definitions/AddProspectContact_ReqPayload"
                         }
@@ -201,7 +215,7 @@
                     {
                         "name": "x-authorization-id",
                         "in": "header",
-                        "description": "An authorization header",
+                        "description": "Specify the authorization header",
                         "required": true,
                         "type": "string"
                     },
@@ -222,7 +236,7 @@
                     {
                         "name": "Payload",
                         "in": "body",
-                        "description": "Add Intent Request Payload",
+                        "description": "Request Payload",
                         "schema": {
                             "$ref": "#/definitions/UpdateIntent_ReqPayload"
                         }
