@@ -156,12 +156,12 @@ async function addProspectContact(dbProspectId, reqPayload) {
    response_status_code: contains the response status code
    response_message: contains the response message
 */
-async function getResponse(X_Auth_Add, req, ById) {
+async function getResponse(domus_cookie_response, req, ById) {
     let response_status_code;
     let response_message;
     const reqPayload = req.body;
-    const auth_userType = X_Auth_Add.userType;
-    const auth_sub = X_Auth_Add.sub;
+    const auth_userType = domus_cookie_response.userType;
+    const auth_sub = domus_cookie_response.sub;
     const { prospectId, invalid_auth_userType } = await getProspectId(auth_userType, auth_sub);
 
     /* checking if auth_userType is valid or not, and returning 404, if invalid */

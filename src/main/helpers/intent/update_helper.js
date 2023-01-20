@@ -79,14 +79,14 @@ async function updateIntent(prospectId, reqPayload) {
    response_status_code: contains the response status code
    response_message: contains the response message
 */
-async function getResponse(X_Auth_Find, req) {
+async function getResponse(domus_cookie_response, req) {
     let response_status_code;
     let response_message;
     const reqProspectId = req.params.ProspectId;
     const reqIntentId = req.params.IntentId;
     const reqPayload = req.body;
-    const auth_userType = X_Auth_Find.userType;
-    const auth_sub = X_Auth_Find.sub;
+    const auth_userType = domus_cookie_response.userType;
+    const auth_sub = domus_cookie_response.sub;
     const { prospectId, invalid_auth_userType } = await getProspectId(auth_userType, auth_sub);
 
     /* checking if auth_userType is valid or not, and returning 404, if invalid */

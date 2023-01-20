@@ -17,16 +17,16 @@ const validator = require('../../validator/intentValidator');
    if the prospect with intentid already exist in the intent table then the function will do nothing and return the same
    else the function will create new record in intent table
 */
-async function getResponse(X_Auth, req) {
+async function getResponse(domus_cookie_response, req) {
     var ProspectIdfromDB;
-    var usertype = X_Auth[0].userType
+    var usertype = domus_cookie_response.userType
     //Based on the usertype the tables will distinguish between Prospect with sessionid and Prospect with IBID 
     //this is to validate prospectid via x_auth is same as the prospectid in params or not
     if (usertype === 'UNAUTH_CUSTOMER') {
         console.log("inside unauith asuhb")
-        ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(X_Auth[0].sub)
+        ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(domus_cookie_response.sub)
     } else if (usertype === 'IB_CUSTOMER') {
-        ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithIBID(X_Auth[0].sub)
+        ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithIBID(domus_cookie_response.sub)
     } else {
         response_status_code = HTTP.BAD_REQUEST.code;
         response_message = { error: `Auth userType: ${usertype}, is not valid.` };
