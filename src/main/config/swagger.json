@@ -5,7 +5,7 @@
         "title": "Mortgage DataFoundation",
         "description": "Mortgage DataFoundation API"
     },
-    "host": "localhost:8001",
+    "host": "localhost:8085",
     "basePath": "/",
     "tags": [
         {
@@ -31,9 +31,16 @@
                 "description": "Add prospect contact details in the system",
                 "parameters": [
                     {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "Specify the authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
                         "name": "Payload",
                         "in": "body",
-                        "description": "Update Prospect Request Payload",
+                        "description": "Request Payload",
                         "schema": {
                             "$ref": "#/definitions/AddProspectContact_ReqPayload"
                         }
@@ -86,7 +93,6 @@
                 }
             }
         },
-        
         "/api/v1/prospect/{ProspectId}": {
             "get": {
                 "tags": [
@@ -128,16 +134,23 @@
                 "description": "Add prospect contact details in the system",
                 "parameters": [
                     {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "Specify the authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
                         "name": "ProspectId",
                         "in": "path",
-                        "description": "Add prospect details in the system with ProspectId",
+                        "description": "Specify the ProspectId of the Prospect",
                         "required": true,
                         "type": "string"
                     },
                     {
                         "name": "Payload",
                         "in": "body",
-                        "description": "Update Prospect Request Payload",
+                        "description": "Request Payload",
                         "schema": {
                             "$ref": "#/definitions/AddProspectContact_ReqPayload"
                         }
@@ -192,6 +205,131 @@
                 }
             }
         },
+        "/api/v1/prospect/{ProspectId}/intent/{IntentId}": {
+            "put": {
+                "tags": [
+                    "Update Intent"
+                ],
+                "description": "Update intent details in the system",
+                "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "Specify the authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ProspectId",
+                        "in": "path",
+                        "description": "Specify the ProspectId of the Intent",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "IntentId",
+                        "in": "path",
+                        "description": "Specify the IntentId of the Intent",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Payload",
+                        "in": "body",
+                        "description": "Request Payload",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateIntent_ReqPayload"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/UpdateIntent_ResPayload"
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Find Intent"
+                ],
+                "description": "Get intent details from the system",
+                "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "Specify the authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ProspectId",
+                        "in": "path",
+                        "description": "Specify the ProspectId of the Intent",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "IntentId",
+                        "in": "path",
+                        "description": "Specify the IntentId of the Intent",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/FindIntent_ResPayload"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/prospect/{ProspectId}/intent": {
+            "get": {
+                "tags": [
+                    "Find Intent"
+                ],
+                "description": "Get active intent details from the system",
+                "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "Specify the authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ProspectId",
+                        "in": "path",
+                        "description": "Specify the ProspectId of the Intent",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/FindIntent_ResPayload"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/prospect/{ProspectId}/fetch": {
             "get": {
                 "tags": [
@@ -220,7 +358,7 @@
                 "responses": {
                     "200": {
                         "description": "OK",
-                        "ProspectId" : {
+                        "ProspectId": {
                             "properties": {
                                 "ProspectId": {
                                     "type": "string"
@@ -355,6 +493,44 @@
                 }
             }
         },
+        "UpdateIntent_ReqPayload": {
+            "required": [
+                "intent_questionaire_payload",
+                "active_from"
+            ],
+            "properties": {
+                "intent_questionaire_payload": {
+                    "type": "string"
+                },
+                "active_from": {
+                    "type": "string"
+                }
+            }
+        },
+        "UpdateIntent_ResPayload": {
+            "required": [
+                "IntentId"
+            ],
+            "properties": {
+                "IntentId": {
+                    "type": "string"
+                }
+            }
+        },
+        "FindIntent_ResPayload": {
+            "required": [
+                "intent_questionaire_payload",
+                "active_from"
+            ],
+            "properties": {
+                "intent_questionaire_payload": {
+                    "type": "string"
+                },
+                "active_from": {
+                    "type": "string"
+                }
+            }
+        },
         "CreateProspect": {
             "required": [
                 "CustomerId",
@@ -453,24 +629,22 @@
                 }
             }
         },
-        "ProspectDetails" : {
-            "type" : "array",
-                "items" : {
-                  "$ref" : "#/definitions/Prospect"
+        "ProspectDetails": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/Prospect"
             },
-            "properties" : {
-                "name" : {
-                    "type" : "array",
-                    "items" : {
-                      "$ref" : "#/definitions/ProspectIdentifier"
+            "properties": {
+                "name": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/ProspectIdentifier"
+                    }
                 }
-                }
-              }
+            }
         },
-        "FindProspectResponse" : {
-
-        },
-        "ProspectInformation" : {
+        "FindProspectResponse": {},
+        "ProspectInformation": {
             "required": [
                 "payload_id",
                 "prospect_id",
@@ -500,6 +674,5 @@
                 }
             }
         }
-            
     }
 }
