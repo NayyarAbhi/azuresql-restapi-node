@@ -49,8 +49,6 @@ async function getResponse(domus_cookie_response, req) {
         response_message = { message: `Payload with ProspectId, already exist in the system.` };
         return [response_status_code, response_message];
 
-        
-
     }
     if (isprospectpresent) {
         //creating new payloadid

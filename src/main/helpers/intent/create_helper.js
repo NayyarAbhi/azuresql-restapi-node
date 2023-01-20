@@ -29,7 +29,7 @@ async function getResponse(domus_cookie_response, req) {
         ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithIBID(domus_cookie_response.sub)
     } else {
         response_status_code = HTTP.BAD_REQUEST.code;
-        response_message = { error: `Auth userType: ${usertype}, is not valid.` };
+        response_message = { error: `Auth userType is not valid.` };
         return [response_status_code, response_message];
     }
 
@@ -61,7 +61,9 @@ async function getResponse(domus_cookie_response, req) {
     if (isprospectpresent) {
         //creating new intentid
         var prevIntentId = await INTENT_HELPER.getMaxIntentId();
+        console.log(prevIntentId)
         var newIntentId = INTENT_HELPER.getNextIntentId(prevIntentId);
+        console.log(newIntentId)
         var intent_questionaire_payload_string = JSON.stringify(req.body.intent_questionaire_payload); 
         //inserting new intent record in the intent table
         const insertIntentQuery = INTENT_QUERY.INSERT_INTENT

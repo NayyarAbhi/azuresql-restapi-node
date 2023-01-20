@@ -19,16 +19,15 @@ async function isProspectInfoPresent(prospectId) {
 async function getMaxPayloadId() {
     const query = PROSPECT_INFO_QUERY.GET_MAX_PAYLOAD_ID
         .replace('<tableName>', TABLES.PROSPECT_INFORMATION);
-        console.log(query);
     return 'PL' + ((await db.getRecord(query))
     .recordset[0].MAXPAYLOADID);
 }
 
 /*this function will check the max PayloadId and return the next PayloadId to be added
 */
-function getNextPayloadId(intentId) {
-    return (intentId == 'PLnull') ? 'PL1'
-        : 'PL' + (parseInt(intentId.substring(3)) + 1);
+function getNextPayloadId(payloadid) {
+    return (payloadid == 'PLnull') ? 'PL1'
+        : 'PL' + (parseInt(payloadid.substring(2)) + 1);
 }
 
 
