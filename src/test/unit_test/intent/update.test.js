@@ -174,7 +174,7 @@ describe("Update Intent", () => {
     })
 
     describe("Active Intent present in the DB and Intent is updated", () => {
-        it("Should return 404 along with error message", async () => {
+        it("Should return 200 along with response message", async () => {
             const valid_prospectId = 10000000;
 
             const validateXAuth_mock = jest
