@@ -1,6 +1,6 @@
-const dbService = require('../helpers/prospect-record/prospect_identifier_helper.js');
+const dbService = require('../helpers/prospect_record/prospect_identifier_helper.js');
 
-async function validateCookie(userType,sub) {
+async function validateCookie(userType, sub) {
     //TO-DO needs to be integrated with Domus Cookie /validate api to get the session id, and read the value from "sub". For now mocked sub.
     //var X_Auth_ID = req.headers['x-authrization-id']; 
     // invoke /validate(X_Auth_ID.json as body)
@@ -16,4 +16,4 @@ async function validateCookie(userType,sub) {
 }
 
 // exporting modules, to be used in the other .js files
-module.exports = {validateCookie };
+module.exports = { validateCookie };

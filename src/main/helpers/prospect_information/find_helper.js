@@ -1,7 +1,7 @@
 let PROSPECT_INFORMATION_QUERYS = require('../../variables/queries.js').TBL_PROSPECT_INFORMATION_QUERY;
 const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
-const dbService = require('../prospect-record/prospect_identifier_helper.js');
+const dbService = require('../prospect_record/prospect_identifier_helper.js');
 const cookie = require('../../validator/cookieValidator.js');
 
 async function findProspectInfoByProspectId(domus_cookie_response, req) {

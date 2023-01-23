@@ -2,7 +2,7 @@ const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
 const HTTP = require('../../variables/status.js').HTTP;
 const PROSPECT_HELPER = require('../prospect/prospect_helper.js');
-const PROSPECT_IDENTIFIER_HELPER = require('../prospect-record/prospect_identifier_helper.js');
+const PROSPECT_IDENTIFIER_HELPER = require('../prospect_record/prospect_identifier_helper.js');
 const PROSPECT_INFORMATION_HELPER = require('../prospect_information/prospect_info_helper.js');
 let PROSPECT_INFORMATION_QUERY = require('../../variables/queries.js').TBL_PROSPECT_INFORMATION_QUERY;
 
@@ -29,7 +29,7 @@ async function getResponse(domus_cookie_response, req) {
         response_message = { error: `Auth userType: ${usertype}, is not valid.` };
         return [response_status_code, response_message];
     }
-    
+
     if (ProspectIdfromDB == null) {
         response_status_code = HTTP.NOT_FOUND.code;
         response_message = { error: `Prospect with userType and sub doesn't exist in the records` };
@@ -60,7 +60,7 @@ async function getResponse(domus_cookie_response, req) {
             .replace('<tableName>', TABLES.PROSPECT_INFORMATION)
             .replace('<payload_id>', newPayloadId)
             .replace('<prospect_id>', req.params.ProspectId)
-            .replace('<payload_identifier>',req.body.payload_identifier)
+            .replace('<payload_identifier>', req.body.payload_identifier)
             .replace('<payload_body>', payload_string)
             .replace('<active_from>', req.body.active_from);
 
