@@ -23,18 +23,16 @@ async function getResponse(domus_cookie_response, req) {
     //Based on the usertype the tables will distinguish between Prospect with sessionid and Prospect with IBID 
     //this is to validate prospectid via x_auth is same as the prospectid in params or not
     if (usertype === 'UNAUTH_CUSTOMER') {
-        console.log("inside unauith asuhb")
         ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithSessionId(domus_cookie_response.sub)
     } else if (usertype === 'IB_CUSTOMER') {
         ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithIBID(domus_cookie_response.sub)
+    //if usertype is anything other than the above mentioned then it is invalid
     } else {
         response_status_code = HTTP.BAD_REQUEST.code;
         response_message = { error: `Auth userType is not valid.` };
         return [response_status_code, response_message];
     }
 
-    console.log(ProspectIdfromDB)
-    console.log(req.params.ProspectId)
     //Check if prospect id from DB is null or the prospect id from DB is associated with userType and sub or not
     if (ProspectIdfromDB == null) {
         response_status_code = HTTP.NOT_FOUND.code;
@@ -45,12 +43,10 @@ async function getResponse(domus_cookie_response, req) {
         response_message = { error: `ProspectId in the request is not associated with userType and sub` };
         return [response_status_code, response_message];
     }
+
     //Intent is only inserted if the prospectid already exist in the prospect table
     var isprospectpresent = await PROSPECT_HELPER.isProspectPresent(req.params.ProspectId);
     var isintentpresent = await INTENT_HELPER.isIntentPresent(req.params.ProspectId);
-
-    console.log(isprospectpresent)
-    console.log(isintentpresent)
 
     //do not insert if intent already exist with respect to the prospectid
     if (isintentpresent) {
@@ -58,13 +54,12 @@ async function getResponse(domus_cookie_response, req) {
         response_message = { message: `Intent with ProspectId, already exist in the system.` };
         return [response_status_code, response_message];
     }
+    //do not create if prospect with prospectid does not exist
     if (isprospectpresent) {
         //creating new intentid
-        var prevIntentId = await INTENT_HELPER.getMaxIntentId();
-        console.log(prevIntentId)
-        var newIntentId = INTENT_HELPER.getNextIntentId(prevIntentId);
-        console.log(newIntentId)
+        var newIntentId = INTENT_HELPER.getNextIntentId(await INTENT_HELPER.getMaxIntentId());
         var intent_questionaire_payload_string = JSON.stringify(req.body.intent_questionaire_payload); 
+
         //inserting new intent record in the intent table
         const insertIntentQuery = INTENT_QUERY.INSERT_INTENT
             .replace('<tableName>', TABLES.INTENT)
@@ -78,7 +73,7 @@ async function getResponse(domus_cookie_response, req) {
         return [response_status_code, response_message];
     } else {
         response_status_code = HTTP.BAD_REQUEST.code;
-        response_message = { error: `Prospect with ProspectId, does not exist in the records.` };
+        response_message = { error: `Prospect with ProspectId, does not exist in the prospect table records.` };
         return [response_status_code, response_message];
     }
 }
