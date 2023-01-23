@@ -41,7 +41,7 @@ describe("Prospect", () =>{
     describe("Create Prospect", () =>{
         //create prospect when usertype is ok
 
-        describe("Given the Usertype is valid but X_auth is missing ",() =>{
+        describe("Given X_auth is missing ",() =>{
 
             it("Should return 400 and prospectId not created",async () =>{
 
@@ -53,7 +53,7 @@ describe("Prospect", () =>{
             })
 
 
-         describe("Given the Usertype is valid but X_auth is not missing",() =>{
+         describe("Given the Usertype is valid and X_auth is not missing",() =>{
 
             it("Should return 200 and prospectId created",async () =>{
                 
@@ -75,6 +75,7 @@ describe("Prospect", () =>{
                 expect(res.text).toEqual(dummy_response[1])
                 expect(getResponseServiceMock).toHaveBeenCalled();
                 expect(xAauthValidationMock).toHaveBeenCalled();
+                expect(getResponsePayloadMock).toHaveBeenCalled();
                 
             })
 

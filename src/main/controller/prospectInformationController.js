@@ -7,18 +7,16 @@ const domusCookie = require('../helpers/domus/domusCookie.js');
 // Adding the intent of the prospect, if the prospect id exist in the records
 async function createProspectInformation(req, res) {
     const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
-
-    // if (error = (validator.validateXAuthHeader(authObj) || validator.validateAddPayload(req.body) || validator.validateProspectId(req.params))) {
-    //     return res.status(HTTP.BAD_REQUEST.code)
-    //         .send(error.details);
-    // }
-
-    // getting domus reponse payload
-    let domus_cookie_response = await domusCookie.getResponsePayload();
-
-    const [response_status_code, response_message] = await CREATE_HELPER.getResponse(domus_cookie_response, req);
-    res.status(response_status_code)
-        .send(response_message);
+    const [response_status_code_1, response_message_1] = await CREATE_HELPER.xAauthValidation(authObj, req.body);
+    
+        if (response_message_1 === "X_AUTH passes") {
+            // getting domus reponse payload
+            let domus_cookie_response = await domusCookie.getResponsePayload();
+            const [response_status_code, response_message] = await CREATE_HELPER.getResponse(domus_cookie_response, req);
+            res.status(response_status_code).send(response_message);
+        } else {
+           res.status(response_status_code_1).send(response_message_1)
+        }
 }
 
 /* Find Prospect Information API to retrieve Prospect Information details
