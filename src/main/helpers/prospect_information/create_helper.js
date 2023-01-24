@@ -2,7 +2,7 @@ const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
 const HTTP = require('../../variables/status.js').HTTP;
 const PROSPECT_HELPER = require('../prospect/prospect_helper.js');
-const PROSPECT_IDENTIFIER_HELPER = require('../prospect-record/prospect_identifier_helper.js');
+const PROSPECT_IDENTIFIER_HELPER = require('../prospect_record/prospect_identifier_helper.js');
 const PROSPECT_INFORMATION_HELPER = require('../prospect_information/prospect_info_helper.js');
 let PROSPECT_INFORMATION_QUERY = require('../../variables/queries.js').TBL_PROSPECT_INFORMATION_QUERY;
 const validator = require('../../validator/prospectInformationValidator');
@@ -27,10 +27,10 @@ async function getResponse(domus_cookie_response, req) {
         ProspectIdfromDB = await PROSPECT_IDENTIFIER_HELPER.getProspectWithIBID(domus_cookie_response.sub)
     } else {
         response_status_code = HTTP.BAD_REQUEST.code;
-        response_message = { error: `Auth userType: ${usertype}, is not valid.` };
+        response_message = { error: `Auth userType is not valid.` };
         return [response_status_code, response_message];
     }
-    
+
     if (ProspectIdfromDB == null) {
         response_status_code = HTTP.NOT_FOUND.code;
         response_message = { error: `Prospect with userType and sub doesn't exist in the records` };
@@ -61,7 +61,7 @@ async function getResponse(domus_cookie_response, req) {
             .replace('<tableName>', TABLES.PROSPECT_INFORMATION)
             .replace('<payload_id>', newPayloadId)
             .replace('<prospect_id>', req.params.ProspectId)
-            .replace('<payload_identifier>',req.body.payload_identifier)
+            .replace('<payload_identifier>', req.body.payload_identifier)
             .replace('<payload_body>', payload_string)
             .replace('<active_from>', req.body.active_from);
 
@@ -120,7 +120,7 @@ async function updateInfo(prospectId, reqPayload) {
         [response_status_code, response_message] = await addProspectInfoRecord(prospectId, reqPayload);
     } else {
         response_status_code = HTTP.NOT_FOUND.code;
-        response_message = { error: `Payload doesnot is empty ` };
+        response_message = { error: `Payload should not be empty ` };
     }
 
     /* returing 200 response along with response payload */
@@ -153,7 +153,7 @@ async function addProspectInfoRecord(prospectId, reqPayload) {
 
         const prospectInfoInsertResult = await db.insertRecord(insertProspectInfoQuery);
         response_status_code = HTTP.OK.code;
-        response_message = { message: `Prospect Information with new IntentId ${newIntentId} is updated successfully` };
+        response_message = { message: `Prospect Information with new PayloadId ${newPayloadId} is updated successfully` };
         return [response_status_code, response_message];
 
 }

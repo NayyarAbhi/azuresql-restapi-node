@@ -1,13 +1,13 @@
+
 const supertest = require('supertest');
 var app = require("../../main/app.js");
-const CREATE_HELPER = require("../../main/helpers/intent/create_helper");
+const CREATE_HELPER = require("../../main/helpers/prospect_information/create_helper");
 PROSPECT_IDENTIFIER_HELPER = require("../../main/helpers/prospect-record/prospect_identifier_helper")
-const { intentRoutes } = require('../../main/route/intent_route.js');
 const domusCookie = require('../../main/helpers/domus/domusCookie');
 PROSPECT_HELPER = require("../../main/helpers/prospect/prospect_helper")
 INTENT_HELPER = require("../../main/helpers/intent/intent_helper")
+const PROSPECT_INFORMATION_HELPER = require('../../main/helpers/prospect_information/prospect_info_helper');
 const db = require('../../main/utils/azureSql');
-
 
 
 const X_Auth_dummy = [
@@ -25,48 +25,39 @@ const X_Auth_dummy = [
         "userType": "Not_Unauth_or_IB",
         "sub": "123232330",
         "exp": 1666343413
-    },
-    {
-        "userType": "UNAUTH_CUSTOMER",
-        "sub": "10000008",
-        "exp": 1666343413
-    },
+    }
 ]
 
 
-const dummyprospectId = 10000001;
-const dummyprospectIdentifierId = 'PID1';
-const dummy_response = [ 200,"message: ProspectId is created successfully"]
+const dummy_response = [ 200,"message: PayloadId PL2 is created successfully"]
 const xValidationdummyresponse= [ 200,"X_AUTH passes"]
 const notFoundResponse = "{\"error\":\"ProspectId in the request is not associated with userType and sub\"}"
 const doesNotExistResponse = "{\"error\":\"Prospect with userType and sub doesn't exist in the records\"}"
-const dummy_response_prospect_exist = "{\"message\":\"ProspectId, already exist in the system.\"}"
-const intentCreated = "{\"message\":\"IntentId INT5 is created successfully\"}"
 const notValidUserType = "{\"error\":\"Auth userType is not valid.\"}"
-const dummy_response_intent_exist = "{\"message\":\"Intent with ProspectId, already exist in the system.\"}"
+const prospect_doesnt_exist = "{\"error\":\"Prospect with ProspectId, does not exist in the Prospect table records.\"}"
+const payload_created_dummy = "{\"message\":\"PayloadId PL2 is created successfully\"}"
 const dummysub = "123232320";
 const dummysub2 = "10000008";
 const nulldummysub = null;
 
 
-describe("Intent", () =>{
+describe("Prospect Information", () =>{
     //create prospect
-    describe("Create Intent", () =>{
-        //create prospect when usertype is ok
+    describe("Create Prospect Information Record", () =>{
+        //create prospect information when usertype is ok
 
         describe("Given the Usertype is valid but X_auth is missing ",() =>{
 
-            it("Should return 400 and Intent not created",async () =>{
-                const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();
+            it("Should return 400 and Prospect Information not created",async () =>{
+                const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/save/").send();
                 expect(statusCode).toBe(400)
-
             })
             })
 
 
         describe("Given the Usertype is valid but X_auth is not missing",() =>{
 
-            it("Should return 200 and intent created",async () =>{
+            it("Should return 200 and Prospect Information created",async () =>{
                 
                 const getResponseServiceMock = jest
                 .spyOn(CREATE_HELPER,'getResponse')
@@ -80,7 +71,7 @@ describe("Intent", () =>{
                 .spyOn(CREATE_HELPER,'xAauthValidation')
                 .mockReturnValueOnce(xValidationdummyresponse);
                 
-                const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();
+                const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/save/").send();
                 console.log(statusCode)
                 expect(statusCode).toBe(200)
                 expect(res.text).toEqual(dummy_response[1])
@@ -111,7 +102,7 @@ describe("Intent", () =>{
             .mockReturnValueOnce(dummysub);
 
             //Calling Create Intent function while taking prospectId = 10000008 as an example
-            const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();         
+            const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/save/").send();         
             expect(statusCode).toBe(404)
             expect(res.text).toEqual(notFoundResponse)
             expect(getProspectWithSessionIdMock).toHaveBeenCalled();
@@ -121,7 +112,7 @@ describe("Intent", () =>{
     }
     
         if(X_Auth_dummy[0].userType=='UNAUTH_CUSTOMER' && dummysub2==10000008){
-        it("Should return 200",async () =>{
+        it("Should return 400",async () =>{
 
             const xAauthValidationMock = jest
             .spyOn(CREATE_HELPER,'xAauthValidation')
@@ -134,24 +125,65 @@ describe("Intent", () =>{
             const getProspectWithSessionIdMock = jest
             .spyOn(PROSPECT_IDENTIFIER_HELPER,'getProspectWithSessionId')
             .mockReturnValueOnce(dummysub2);
-
+    
             const isProspectPresentMock = jest
             .spyOn(PROSPECT_HELPER,'isProspectPresent')
-            .mockReturnValueOnce(true);
+            .mockReturnValueOnce(false);
 
-            const isIntentPresentMock = jest
-            .spyOn(INTENT_HELPER,'isIntentPresent')
-            .mockReturnValueOnce(true);
+            const isProspectInfoPresentMock = jest
+            .spyOn(PROSPECT_INFORMATION_HELPER,'isProspectInfoPresent')
+            .mockReturnValueOnce(false);
 
             //Calling Create Intent function while taking prospectId = 10000008 as an example
-            const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();         
-            expect(statusCode).toBe(200)
-            expect(res.text).toEqual(dummy_response_intent_exist)
+            const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/save/").send();         
+            expect(statusCode).toBe(400)
+            expect(res.text).toEqual(prospect_doesnt_exist)
             expect(getProspectWithSessionIdMock).toHaveBeenCalled();
     
             })
 
         }
+
+        if(X_Auth_dummy[0].userType=='UNAUTH_CUSTOMER' && dummysub2==10000008){
+          it("Should return 200 and prospect info created",async () =>{
+  
+              const xAauthValidationMock = jest
+              .spyOn(CREATE_HELPER,'xAauthValidation')
+              .mockReturnValueOnce(xValidationdummyresponse);
+  
+              const getResponsePayloadMock = jest
+              .spyOn(domusCookie,'getResponsePayload')
+              .mockReturnValueOnce(X_Auth_dummy[0]);
+                  
+              const getProspectWithSessionIdMock = jest
+              .spyOn(PROSPECT_IDENTIFIER_HELPER,'getProspectWithSessionId')
+              .mockReturnValueOnce(dummysub2);
+      
+              const isProspectPresentMock = jest
+              .spyOn(PROSPECT_HELPER,'isProspectPresent')
+              .mockReturnValueOnce(true);
+
+              const getNextPayloadIdMock = jest
+              .spyOn(PROSPECT_INFORMATION_HELPER,'getNextPayloadId')
+              .mockReturnValueOnce("PL2");
+  
+              const isProspectInfoPresentMock = jest
+              .spyOn(PROSPECT_INFORMATION_HELPER,'isProspectInfoPresent')
+              .mockReturnValueOnce(false);
+
+              const insertRecordMock = jest
+              .spyOn(db,'insertRecord')
+              .mockReturnValueOnce()
+
+              //Calling Create Intent function while taking prospectId = 10000008 as an example
+              const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/save/").send();         
+              expect(statusCode).toBe(200)
+              expect(res.text).toEqual(payload_created_dummy)
+              expect(getProspectWithSessionIdMock).toHaveBeenCalled();
+      
+              })
+  
+          }
 
         if(X_Auth_dummy[1].userType=='IB_CUSTOMER' && dummysub!=10000008){
             it("Should return 404",async () =>{
@@ -169,7 +201,7 @@ describe("Intent", () =>{
                 .mockReturnValueOnce(dummysub);
     
                 //Calling Create Intent function while taking prospectId = 10000008 as an example
-                const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();         
+                const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/save/").send();         
                 expect(statusCode).toBe(404)
                 expect(res.text).toEqual(notFoundResponse)
                 expect(getProspectWithIBIDIdMock).toHaveBeenCalled();
@@ -179,7 +211,7 @@ describe("Intent", () =>{
         }
         
             if(X_Auth_dummy[1].userType=='IB_CUSTOMER' && dummysub2==10000008){
-            it("Should return ",async () =>{
+            it("Should return 400",async () =>{
     
                 const xAauthValidationMock = jest
                 .spyOn(CREATE_HELPER,'xAauthValidation')
@@ -195,21 +227,63 @@ describe("Intent", () =>{
         
                 const isProspectPresentMock = jest
                 .spyOn(PROSPECT_HELPER,'isProspectPresent')
-                .mockReturnValueOnce(true);
-    
-                const isIntentPresentMock = jest
-                .spyOn(INTENT_HELPER,'isIntentPresent')
-                .mockReturnValueOnce(true);
+                .mockReturnValueOnce(false);
+
+                const isProspectInfoPresentMock = jest
+                .spyOn(PROSPECT_INFORMATION_HELPER,'isProspectInfoPresent')
+                .mockReturnValueOnce(false);
+
     
                 //Calling Create Intent function while taking prospectId = 10000008 as an example
-                const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();         
-                expect(statusCode).toBe(200)
-                expect(res.text).toEqual(dummy_response_intent_exist)
+                const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/save/").send();         
+                expect(statusCode).toBe(400)
+                expect(res.text).toEqual(prospect_doesnt_exist)
                 expect(getProspectWithIBIDIdMock).toHaveBeenCalled();
         
                 })
     
             }
+
+            if(X_Auth_dummy[1].userType=='IB_CUSTOMER' && dummysub2==10000008){
+              it("Should return 200 and prospect info created",async () =>{
+      
+                  const xAauthValidationMock = jest
+                  .spyOn(CREATE_HELPER,'xAauthValidation')
+                  .mockReturnValueOnce(xValidationdummyresponse);
+      
+                  const getResponsePayloadMock = jest
+                  .spyOn(domusCookie,'getResponsePayload')
+                  .mockReturnValueOnce(X_Auth_dummy[1]);
+                      
+                  const getProspectWithIBIDIdMock = jest
+                  .spyOn(PROSPECT_IDENTIFIER_HELPER,'getProspectWithIBID')
+                  .mockReturnValueOnce(dummysub2);
+          
+                  const isProspectPresentMock = jest
+                  .spyOn(PROSPECT_HELPER,'isProspectPresent')
+                  .mockReturnValueOnce(true);
+    
+                  const getNextPayloadIdMock = jest
+                  .spyOn(PROSPECT_INFORMATION_HELPER,'getNextPayloadId')
+                  .mockReturnValueOnce("PL2");
+      
+                  const isProspectInfoPresentMock = jest
+                  .spyOn(PROSPECT_INFORMATION_HELPER,'isProspectInfoPresent')
+                  .mockReturnValueOnce(false);
+    
+                  const insertRecordMock = jest
+                  .spyOn(db,'insertRecord')
+                  .mockReturnValueOnce()
+    
+                  //Calling Create Intent function while taking prospectId = 10000008 as an example
+                  const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/save/").send();         
+                  expect(statusCode).toBe(200)
+                  expect(res.text).toEqual(payload_created_dummy)
+                  expect(getProspectWithIBIDIdMock).toHaveBeenCalled();
+          
+                  })
+      
+              }
         
             if(X_Auth_dummy[2].userType=='Not_Unauth_or_IB'){
 
@@ -223,7 +297,7 @@ describe("Intent", () =>{
                     .spyOn(domusCookie,'getResponsePayload')
                     .mockReturnValueOnce(X_Auth_dummy[2]);
     
-                    const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();
+                    const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/save/").send();
                     expect(statusCode).toBe(400)
                     expect(res.text).toEqual(notValidUserType)
                     expect(xAauthValidationMock).toHaveBeenCalled();
@@ -231,7 +305,7 @@ describe("Intent", () =>{
     
                 })
             }
-        })
+         })
 
         //Testing based on the usertype
         describe("Testing Based on Usertype",() =>{
@@ -252,7 +326,7 @@ describe("Intent", () =>{
                 .spyOn(PROSPECT_IDENTIFIER_HELPER,'getProspectWithSessionId')
                 .mockReturnValueOnce(X_Auth_dummy[0].sub);
 
-                const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();
+                const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/save/").send();
                 expect(statusCode).toBe(404)
                 expect(res.text).toEqual(notFoundResponse)
                 expect(getProspectWithSessionIdMock).toHaveBeenCalled();
@@ -275,9 +349,9 @@ describe("Intent", () =>{
 
                     const getProspectWithSessionIdMock = jest
                     .spyOn(PROSPECT_IDENTIFIER_HELPER,'getProspectWithSessionId')
-                    .mockReturnValueOnce(null);
+                    .mockReturnValueOnce(nulldummysub);
                     
-                    const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();
+                    const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/save/").send();
                     expect(statusCode).toBe(404)
                     expect(res.text).toEqual(doesNotExistResponse)
                     expect(xAauthValidationMock).toHaveBeenCalled();
@@ -297,9 +371,9 @@ describe("Intent", () =>{
 
                     const getProspectWithIBIDIdMock = jest
                     .spyOn(PROSPECT_IDENTIFIER_HELPER,'getProspectWithIBID')
-                    .mockReturnValueOnce(null);
+                    .mockReturnValueOnce(nulldummysub);
                     
-                    const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();
+                    const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/save/").send();
                     expect(statusCode).toBe(404)
                     expect(res.text).toEqual(doesNotExistResponse)
                     expect(xAauthValidationMock).toHaveBeenCalled();
@@ -307,49 +381,6 @@ describe("Intent", () =>{
         
                 })
             
-            if(X_Auth_dummy[3].userType=='UNAUTH_CUSTOMER'){
-
-                it("Should return 400",async () =>{
-
-                    const xAauthValidationMock = jest
-                    .spyOn(CREATE_HELPER,'xAauthValidation')
-                    .mockReturnValueOnce(xValidationdummyresponse);
-
-                    const getResponsePayloadMock = jest
-                    .spyOn(domusCookie,'getResponsePayload')
-                    .mockReturnValueOnce(X_Auth_dummy[3]);
-
-                    const getProspectWithSessionIdMock = jest
-                    .spyOn(PROSPECT_IDENTIFIER_HELPER,'getProspectWithSessionId')
-                    .mockReturnValueOnce(X_Auth_dummy[3].sub);
-
-                    const getMaxIntentIdMock = jest
-                    .spyOn(INTENT_HELPER,'getMaxIntentId')
-                    .mockReturnValueOnce('INT4');
-
-                    const insertRecordMock = jest
-                    .spyOn(db,'insertRecord')
-                    .mockReturnValueOnce()
-
-                    const isProspectPresentMock = jest
-                    .spyOn(PROSPECT_HELPER,'isProspectPresent')
-                    .mockReturnValueOnce(true);
-
-                    const isIntentPresentMock = jest
-                    .spyOn(INTENT_HELPER,'isIntentPresent')
-                    .mockReturnValueOnce(false);
-                    
-                    const getProspectWithIBIDIdMock = jest
-                    .spyOn(PROSPECT_IDENTIFIER_HELPER,'getProspectWithIBID')
-                    .mockReturnValueOnce(dummysub);
-
-                    const {statusCode,res} = await supertest(app).post("/api/v1/prospect/10000008/intent/").send();
-                    expect(statusCode).toBe(200);
-                    expect(res.text).toEqual(intentCreated)
-        
-                })
-
-            }
-    })
+     })
 })
 })

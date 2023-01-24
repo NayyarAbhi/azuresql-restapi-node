@@ -11,6 +11,7 @@ async function createProspectInformation(req, res) {
     
         if (response_message_1 === "X_AUTH passes") {
             // getting domus reponse payload
+            console.log('in create information')
             let domus_cookie_response = await domusCookie.getResponsePayload();
             const [response_status_code, response_message] = await CREATE_HELPER.getResponse(domus_cookie_response, req);
             res.status(response_status_code).send(response_message);

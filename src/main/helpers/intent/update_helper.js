@@ -1,5 +1,5 @@
 const HTTP = require('../../variables/status.js').HTTP;
-const PROSPECT_IDENTIFIER_HELPER = require('../prospect-record/prospect_identifier_helper');
+const PROSPECT_IDENTIFIER_HELPER = require('../prospect_record/prospect_identifier_helper');
 const PROSPECT_HELPER = require('../prospect/prospect_helper.js');
 const INTENT_HELPER = require('./intent_helper');
 const INTENT_QUERY = require('../../variables/queries').TBL_INTENT_QUERY;

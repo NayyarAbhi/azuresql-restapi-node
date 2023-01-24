@@ -1,8 +1,8 @@
 const HTTP = require('../variables/status.js').HTTP;
 const validator = require('../validator/prospectValidator');
-const FIND_HELPER = require('../helpers/prospect-record/find_helper.js');
-const ADD_HELPER = require('../helpers/prospect-record/add_helper');
-const CREATE_HELPER = require('../helpers/prospect-record/create_helper');
+const FIND_HELPER = require('../helpers/prospect_record/find_helper.js');
+const ADD_HELPER = require('../helpers/prospect_record/add_helper');
+const CREATE_HELPER = require('../helpers/prospect_record/create_helper');
 const domusCookie = require('../helpers/domus/domusCookie.js');
 
 

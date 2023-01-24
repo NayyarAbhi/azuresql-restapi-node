@@ -2,7 +2,7 @@ const TABLES = require('../../variables/tables.js').TABLES;
 const db = require('../../utils/azureSql.js');
 const HTTP = require('../../variables/status.js').HTTP;
 const PROSPECT_HELPER = require('../prospect/prospect_helper.js');
-const PROSPECT_IDENTIFIER_HELPER = require('../prospect-record/prospect_identifier_helper.js');
+const PROSPECT_IDENTIFIER_HELPER = require('../prospect_record/prospect_identifier_helper.js');
 const INTENT_HELPER = require('../intent/intent_helper.js');
 let INTENT_QUERY = require('../../variables/queries.js').TBL_INTENT_QUERY;
 const validator = require('../../validator/intentValidator');
@@ -78,16 +78,16 @@ async function getResponse(domus_cookie_response, req) {
     }
 }
 
-async function xAauthValidation(authObj, req){
+async function xAauthValidation(authObj, req) {
     if (error = (validator.validateXAuthHeader(authObj) || validator.validateAddPayload(req.body) || validator.validateProspectId(req.params))) {
         response_status_code = HTTP.BAD_REQUEST.code;
         return [response_status_code, error.details];
-    } 
-    else{
+    }
+    else {
         response_status_code = HTTP.OK.code;
         response_message = "X_AUTH passes";
         return [response_status_code, response_message];
     }
 }
 
-module.exports = { getResponse,xAauthValidation };
+module.exports = { getResponse, xAauthValidation };
