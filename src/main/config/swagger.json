@@ -60,14 +60,14 @@
             },
             "post": {
                 "tags": [
-                    "Prospects"
+                    "Create Prospect"
                 ],
                 "description": "Create prospect details in the system",
                 "parameters": [
                     {
                         "name": "x-authorization-id",
                         "in": "header",
-                        "description": "An authorization header",
+                        "description": "Specify the authorization header",
                         "required": true,
                         "type": "string"
                     },
@@ -87,7 +87,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/CreateProspect"
+                            "$ref": "#/definitions/CreateProspect_ResPayload"
                         }
                     }
                 }
@@ -328,6 +328,90 @@
                         }
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Create Intent"
+                ],
+                "description": "Create Intent details in the system",
+                "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "Specify the authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ProspectId",
+                        "in": "path",
+                        "description": "Specify the ProspectId of the Intent",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Intent Payload",
+                        "in": "body",
+                        "description": "Create Prospect Intent Request Payload",
+                        "schema": {
+                            "$ref": "#/definitions/CreateIntent"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/CreateIntent_ResPayload"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/prospect/{ProspectId}/save": {
+            "post": {
+                "tags": [
+                    "Create Prospect Information"
+                ],
+                "description": "Create Prospect Information details in the system",
+                "parameters": [
+                    {
+                        "name": "x-authorization-id",
+                        "in": "header",
+                        "description": "Specify the authorization header",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "ProspectId",
+                        "in": "path",
+                        "description": "Specify the ProspectId of the Intent",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "Prospect Information Payload",
+                        "in": "body",
+                        "description": "Create Prospect Information Request Payload",
+                        "schema": {
+                            "$ref": "#/definitions/CreateProspectInformation"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/CreateProspectInformation_ResPayload"
+                        }
+                    }
+                }
             }
         },
         "/api/v1/prospect/{ProspectId}/fetch": {
@@ -479,7 +563,7 @@
                     "type": "string"
                 },
                 "ActiveFrom": {
-                    "type": "string"
+                    "type": "date"
                 }
             }
         },
@@ -503,7 +587,7 @@
                     "type": "string"
                 },
                 "active_from": {
-                    "type": "string"
+                    "type": "date"
                 }
             }
         },
@@ -533,30 +617,84 @@
         },
         "CreateProspect": {
             "required": [
-                "CustomerId",
-                "Cookie",
-                "SessionId",
-                "OtpEmailId",
-                "DomusCookieId",
-                "IBLogon"
+                "first_name",
+                "created_on",
+                "brand_identifier",
+                "channel_identifier"
             ],
             "properties": {
-                "customerId": {
+                "first_name": {
                     "type": "string"
                 },
-                "Cookie": {
+                "created_on": {
+                    "type": "date"
+                },
+                "brand_identifier": {
                     "type": "string"
                 },
-                "SessionId": {
+                "channel_identifier": {
+                    "type": "string"
+                }
+            }
+        },
+        "CreateProspect_ResPayload": {
+            "required": [
+                "ProspectId"
+            ],
+            "properties": {
+                "ProspectId": {
+                    "type": "integer"
+                }
+            }
+        },
+        "CreateIntent": {
+            "required": [
+                "intent_questionaire_payload",
+                "active_from"
+            ],
+            "properties": {
+                "intent_questionaire_payload": {
+                    "type": "json"
+                },
+                "active_from": {
+                    "type": "date"
+                }
+            }
+        },
+        "CreateIntent_ResPayload": {
+            "required": [
+                "IntentId"
+            ],
+            "properties": {
+                "IntentId": {
+                    "type": "string"
+                }
+            }
+        },
+        "CreateProspectInformation": {
+            "required": [
+                "payload_identifier",
+                "intent_questionaire_payload",
+                "active_from"
+            ],
+            "properties": {
+                "payload_identifier": {
                     "type": "string"
                 },
-                "OtpEmailId": {
-                    "type": "string"
+                "intent_questionaire_payload": {
+                    "type": "json"
                 },
-                "DomusCookieId": {
-                    "type": "string"
-                },
-                "IBLogon": {
+                "active_from": {
+                    "type": "date"
+                }
+            }
+        },
+        "CreateProspectInformation_ResPayload": {
+            "required": [
+                "PayloadId"
+            ],
+            "properties": {
+                "PayloadId": {
                     "type": "string"
                 }
             }

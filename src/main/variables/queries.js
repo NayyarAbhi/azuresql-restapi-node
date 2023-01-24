@@ -35,6 +35,8 @@ const TBL_PROSPECT_INFORMATION_QUERY = {
     GET_PROSPECT_INFORMATION_BY_PROSPECTID_AND_PAYLOAD_IDENTIFIER_AND_PAYLOADID: "SELECT * FROM <tableName> WHERE prospect_id=<prospectId> AND payload_identifier='<payloadIdentifier>' and payload_id='<payloadId>' and active_to is NULL",
     RECORD_COUNT: "SELECT COUNT(*) as RECORD_COUNT FROM <tableName> WHERE prospect_id=<prospectId>",
     INSERT_PROSPECT_INFORMATION: "INSERT INTO <tableName> (payload_id,prospect_id,payload_identifier,payload_body,active_from) values  ('<payload_id>',<prospect_id>,'<payload_identifier>','<payload_body>',CAST('<active_from>' as datetime))",
+    UPDATE_ACTIVETO: "UPDATE <tableName> SET active_to=GETDATE() WHERE prospect_id=<prospectId> and active_to is NULL",
+    IS_PROSPECT_INFO_ACTIVE: "SELECT COUNT(*) as ACTIVE_PROSPECT_INFO_COUNT from <tableName> WHERE prospect_id=<prospectId> and active_to is NULL",
     GET_MAX_PAYLOAD_ID: "SELECT MAX(CAST(SUBSTRING(payload_id,3,len(payload_id)) as int))as MAXPAYLOADID from <tableName>"
 
 }

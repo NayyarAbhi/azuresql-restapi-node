@@ -2,7 +2,7 @@ const joi = require('joi');
 
 const addIntentSchema = joi.object({
     intent_questionaire_payload: joi.required(),
-    active_from: joi.date().optional()
+    active_from: joi.date().required()
 });
 
 const xAuthSchema = joi.object({

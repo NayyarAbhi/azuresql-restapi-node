@@ -1,9 +1,7 @@
-const ProspectService = require("../../../main/controller/prospectController");
 const supertest = require('supertest');
 var app = require("../../../main/app.js");
 const CREATE_HELPER = require("../../../main/helpers/prospect_record/create_helper");
 PROSPECT_IDENTIFIER_HELPER = require("../../../main/helpers/prospect_record/prospect_identifier_helper")
-const { intentRoutes } = require('../../../main/route/intent_route.js');
 const PROSPECT_HELPER = require("../../../main/helpers/prospect/prospect_helper")
 const domusCookie = require('../../../main/helpers/domus/domusCookie');
 const db = require('../../../main/utils/azureSql');
@@ -14,7 +12,7 @@ const dummyprospectIdentifierId = 'PID1';
 const dummy_response = [200, "message: ProspectId is created successfully"]
 const dummy_prospect_created_response = "{\"message\":\"ProspectId 10000002 is created successfully\"}"
 const xValidationdummyresponse = [200, "X_AUTH passes"]
-dummy_response_prospect_exist = "{\"message\":\"ProspectId, already exist in the system.\"}"
+const dummy_response_prospect_exist = "{\"message\":\"ProspectId, already exist in the system.\"}"
 const dummysub = "123232320";
 const nulldummysub = null;
 const X_Auth_dummy = [
@@ -36,34 +34,107 @@ const X_Auth_dummy = [
 ]
 
 
-describe("Prospect", () => {
+describe("Create Prospect", () => {
     //create prospect
-    describe("Create Prospect", () => {
-        //create prospect when usertype is ok
+    describe("Given X_auth is missing ", () => {
+        it("Should return 400 and prospectId not created", async () => {
+            const { statusCode, res } = await supertest(app).post("/api/v1/prospect/").send();
+            expect(statusCode).toBe(400)
+        })
+    })
 
-        describe("Given the Usertype is valid but X_auth is missing ", () => {
 
-            it("Should return 400 and prospectId not created", async () => {
+    describe("Given the Usertype is valid and X_auth is not missing", () => {
+        it("Should return 200 and prospectId created", async () => {
 
-                const { statusCode, res } = await supertest(app).post("/api/v1/prospect/").send();
-                expect(statusCode).toBe(400)
+            const getResponseServiceMock = jest
+                .spyOn(CREATE_HELPER, 'getResponse')
+                .mockReturnValueOnce(dummy_response);
 
-            })
+            const getResponsePayloadMock = jest
+                .spyOn(domusCookie, 'getResponsePayload')
+                .mockReturnValueOnce(dummy_response);
+
+            const xAauthValidationMock = jest
+                .spyOn(CREATE_HELPER, 'xAauthValidation')
+                .mockReturnValueOnce(xValidationdummyresponse);
+
+            const { statusCode, res } = await supertest(app).post("/api/v1/prospect/").send();
+
+            expect(statusCode).toBe(200)
+            expect(res.text).toEqual(dummy_response[1])
+            expect(getResponseServiceMock).toHaveBeenCalled();
+            expect(xAauthValidationMock).toHaveBeenCalled();
+            expect(getResponsePayloadMock).toHaveBeenCalled();
 
         })
+    })
 
+    //testing create function as a whole
+    describe("everything valid inside create method", () => {
+        if (X_Auth_dummy[0].userType == 'UNAUTH_CUSTOMER') {
+            it("should return 200", async () => {
 
-        describe("Given the Usertype is valid but X_auth is not missing", () => {
+                const getProspectWithSessionIdMock = jest
+                    .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getProspectWithSessionId')
+                    .mockReturnValueOnce(nulldummysub);
 
-            it("Should return 200 and prospectId created", async () => {
-
-                const getResponseServiceMock = jest
-                    .spyOn(CREATE_HELPER, 'getResponse')
-                    .mockReturnValueOnce(dummy_response);
+                const getMaxProspectIdMock = jest
+                    .spyOn(PROSPECT_HELPER, 'getMaxProspectId')
+                    .mockReturnValueOnce(dummyprospectId);
 
                 const getResponsePayloadMock = jest
                     .spyOn(domusCookie, 'getResponsePayload')
-                    .mockReturnValueOnce(dummy_response);
+                    .mockReturnValueOnce(X_Auth_dummy[0]);
+
+                const insertRecordMock = jest
+                    .spyOn(db, 'insertRecord')
+                    .mockReturnValueOnce().mockReturnValueOnce();
+
+                const getMaxProspectIdenIdMock = jest
+                    .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getMaxProspectIdenId')
+                    .mockReturnValueOnce(dummyprospectIdentifierId);
+
+                const xAauthValidationMock = jest
+                    .spyOn(CREATE_HELPER, 'xAauthValidation')
+                    .mockReturnValueOnce(xValidationdummyresponse);
+
+                const { statusCode, res } = await supertest(app).post("/api/v1/prospect/").send();
+                
+                expect(statusCode).toBe(200)
+                expect(res.text).toEqual(dummy_prospect_created_response)
+                expect(xAauthValidationMock).toHaveBeenCalled();
+                expect(getMaxProspectIdenIdMock).toHaveBeenCalled();
+                expect(insertRecordMock).toHaveBeenCalled();
+                expect(getMaxProspectIdMock).toHaveBeenCalled();
+                expect(getProspectWithSessionIdMock).toHaveBeenCalled();
+                expect(getResponsePayloadMock).toHaveBeenCalled();
+
+            })
+        }
+        
+        if (X_Auth_dummy[1].userType == 'IB_CUSTOMER') {
+            it("should return 200", async () => {
+
+                const getProspectWithIBIdMock = jest
+                    .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getProspectWithIBID')
+                    .mockReturnValueOnce(nulldummysub);
+
+                const getMaxProspectIdMock = jest
+                    .spyOn(PROSPECT_HELPER, 'getMaxProspectId')
+                    .mockReturnValueOnce(dummyprospectId);
+
+                const getResponsePayloadMock = jest
+                    .spyOn(domusCookie, 'getResponsePayload')
+                    .mockReturnValueOnce(X_Auth_dummy[1]);
+
+                const insertRecordMock = jest
+                    .spyOn(db, 'insertRecord')
+                    .mockReturnValueOnce().mockReturnValueOnce();
+
+                const getMaxProspectIdenIdMock = jest
+                    .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getMaxProspectIdenId')
+                    .mockReturnValueOnce(dummyprospectIdentifierId);
 
                 const xAauthValidationMock = jest
                     .spyOn(CREATE_HELPER, 'xAauthValidation')
@@ -72,200 +143,122 @@ describe("Prospect", () => {
                 const { statusCode, res } = await supertest(app).post("/api/v1/prospect/").send();
 
                 expect(statusCode).toBe(200)
-                expect(res.text).toEqual(dummy_response[1])
-                expect(getResponseServiceMock).toHaveBeenCalled();
+                expect(res.text).toEqual(dummy_prospect_created_response)
+                expect(getMaxProspectIdenIdMock).toHaveBeenCalled();
+                expect(xAauthValidationMock).toHaveBeenCalled();
+                expect(insertRecordMock).toHaveBeenCalled();
+                expect(getMaxProspectIdMock).toHaveBeenCalled();
+                expect(getProspectWithIBIdMock).toHaveBeenCalled();
+
+            })
+        }
+
+        if (X_Auth_dummy[2].userType == 'Not_Unauth_or_IB') {
+            it("Should return 400", async () => {
+
+                const xAauthValidationMock = jest
+                    .spyOn(CREATE_HELPER, 'xAauthValidation')
+                    .mockReturnValueOnce(xValidationdummyresponse);
+
+                const getResponsePayloadMock = jest
+                    .spyOn(domusCookie, 'getResponsePayload')
+                    .mockReturnValueOnce(X_Auth_dummy[2]);
+
+                const getProspectWithIBIDIdMock = jest
+                    .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getProspectWithIBID')
+                    .mockReturnValueOnce(dummysub);
+
+                const { statusCode } = await supertest(app).post("/api/v1/prospect/").send();
+
+                expect(statusCode).toBe(400);
+                expect(getProspectWithIBIDIdMock).toHaveBeenCalled();
+                expect(getResponsePayloadMock).toHaveBeenCalled();
                 expect(xAauthValidationMock).toHaveBeenCalled();
 
             })
+        }
+    })
 
-        })
+    //Testing based on the usertype
+    //prospect already exist
+    describe("Testing Based on Usertype)", () => {
+        if (X_Auth_dummy[0].userType == 'UNAUTH_CUSTOMER') {
+            it("Should return 200", async () => {
 
+                const xAauthValidationMock = jest
+                    .spyOn(CREATE_HELPER, 'xAauthValidation')
+                    .mockReturnValueOnce(xValidationdummyresponse);
 
+                const getResponsePayloadMock = jest
+                    .spyOn(domusCookie, 'getResponsePayload')
+                    .mockReturnValueOnce(X_Auth_dummy[0]);
 
-        //testing create function as a whole
-        describe("everything valid inside create method", () => {
+                const getProspectWithSessionIdMock = jest
+                    .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getProspectWithSessionId')
+                    .mockReturnValueOnce(dummysub);
 
-            if (X_Auth_dummy[0].userType == 'UNAUTH_CUSTOMER') {
-                it("should return 200", async () => {
+                const { statusCode, res } = await supertest(app).post("/api/v1/prospect/").send();
 
-                    const getProspectWithSessionIdMock = jest
-                        .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getProspectWithSessionId')
-                        .mockReturnValueOnce(nulldummysub);
+                expect(res.text).toEqual(dummy_response_prospect_exist)
+                expect(getProspectWithSessionIdMock).toHaveBeenCalled();
+                expect(getResponsePayloadMock).toHaveBeenCalled();
+                expect(xAauthValidationMock).toHaveBeenCalled();
 
-                    const getMaxProspectIdMock = jest
-                        .spyOn(PROSPECT_HELPER, 'getMaxProspectId')
-                        .mockReturnValueOnce(dummyprospectId);
+            })
+        }
 
-                    const getResponsePayloadMock = jest
-                        .spyOn(domusCookie, 'getResponsePayload')
-                        .mockReturnValueOnce(X_Auth_dummy[0]);
+        if (X_Auth_dummy[1].userType == 'IB_CUSTOMER') {
+            it("Should return 200", async () => {
 
-                    const insertRecordMock = jest
-                        .spyOn(db, 'insertRecord')
-                        .mockReturnValueOnce().mockReturnValueOnce();
+                const xAauthValidationMock = jest
+                    .spyOn(CREATE_HELPER, 'xAauthValidation')
+                    .mockReturnValueOnce(xValidationdummyresponse);
 
-                    const getMaxProspectIdenIdMock = jest
-                        .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getMaxProspectIdenId')
-                        .mockReturnValueOnce(dummyprospectIdentifierId);
+                const getProspectWithIBIDIdMock = jest
+                    .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getProspectWithIBID')
+                    .mockReturnValueOnce(dummysub);
 
-                    const xAauthValidationMock = jest
-                        .spyOn(CREATE_HELPER, 'xAauthValidation')
-                        .mockReturnValueOnce(xValidationdummyresponse);
+                const getResponsePayloadMock = jest
+                    .spyOn(domusCookie, 'getResponsePayload')
+                    .mockReturnValueOnce(X_Auth_dummy[1]);
 
+                const { statusCode, res } = await supertest(app).post("/api/v1/prospect/").send();
 
-                    const { statusCode, res } = await supertest(app).post("/api/v1/prospect/").send();
-                    //console.log(statusCode, res)
-                    expect(statusCode).toBe(200)
-                    expect(res.text).toEqual(dummy_prospect_created_response)
-                    expect(xAauthValidationMock).toHaveBeenCalled();
-                    expect(getMaxProspectIdenIdMock).toHaveBeenCalled();
-                    expect(insertRecordMock).toHaveBeenCalled();
-                    expect(getMaxProspectIdMock).toHaveBeenCalled();
-                    expect(getProspectWithSessionIdMock).toHaveBeenCalled();
-                    expect(getResponsePayloadMock).toHaveBeenCalled();
+                expect(statusCode).toBe(200)
+                expect(res.text).toEqual(dummy_response_prospect_exist)
+                expect(getProspectWithIBIDIdMock).toHaveBeenCalled();
+                expect(getResponsePayloadMock).toHaveBeenCalled();
+                expect(xAauthValidationMock).toHaveBeenCalled();
 
-                })
-            }
-            if (X_Auth_dummy[1].userType == 'IB_CUSTOMER') {
-                it("should return 200", async () => {
+            })
+        } 
 
-                    const getProspectWithIBIdMock = jest
-                        .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getProspectWithIBID')
-                        .mockReturnValueOnce(nulldummysub);
+        if (X_Auth_dummy[2].userType == 'Not_Unauth_or_IB') {
+            it("Should return 400", async () => {
 
-                    const getMaxProspectIdMock = jest
-                        .spyOn(PROSPECT_HELPER, 'getMaxProspectId')
-                        .mockReturnValueOnce(dummyprospectId);
+                const xAauthValidationMock = jest
+                    .spyOn(CREATE_HELPER, 'xAauthValidation')
+                    .mockReturnValueOnce(xValidationdummyresponse);
 
-                    const getResponsePayloadMock = jest
-                        .spyOn(domusCookie, 'getResponsePayload')
-                        .mockReturnValueOnce(X_Auth_dummy[1]);
+                const getResponsePayloadMock = jest
+                    .spyOn(domusCookie, 'getResponsePayload')
+                    .mockReturnValueOnce(X_Auth_dummy[2]);
 
-                    const insertRecordMock = jest
-                        .spyOn(db, 'insertRecord')
-                        .mockReturnValueOnce().mockReturnValueOnce();
+                const getProspectWithIBIDIdMock = jest
+                    .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getProspectWithIBID')
+                    .mockReturnValueOnce(dummysub);
 
-                    const getMaxProspectIdenIdMock = jest
-                        .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getMaxProspectIdenId')
-                        .mockReturnValueOnce(dummyprospectIdentifierId);
+                const { statusCode } = await supertest(app).post("/api/v1/prospect/").send();
+                expect(statusCode).toBe(400);
+                expect(getProspectWithIBIDIdMock).toHaveBeenCalled();
+                expect(getResponsePayloadMock).toHaveBeenCalled();
+                expect(xAauthValidationMock).toHaveBeenCalled();
 
-                    const xAauthValidationMock = jest
-                        .spyOn(CREATE_HELPER, 'xAauthValidation')
-                        .mockReturnValueOnce(xValidationdummyresponse);
-
-                    const { statusCode, res } = await supertest(app).post("/api/v1/prospect/").send();
-
-                    expect(statusCode).toBe(200)
-                    expect(res.text).toEqual(dummy_prospect_created_response)
-                    expect(getMaxProspectIdenIdMock).toHaveBeenCalled();
-                    expect(xAauthValidationMock).toHaveBeenCalled();
-                    expect(insertRecordMock).toHaveBeenCalled();
-                    expect(getMaxProspectIdMock).toHaveBeenCalled();
-                    expect(getProspectWithIBIdMock).toHaveBeenCalled();
-
-                })
-
-
-            } if (X_Auth_dummy[2].userType == 'Not_Unauth_or_IB') {
-
-                it("Should return 400", async () => {
-
-                    const xAauthValidationMock = jest
-                        .spyOn(CREATE_HELPER, 'xAauthValidation')
-                        .mockReturnValueOnce(xValidationdummyresponse);
-
-                    const getResponsePayloadMock = jest
-                        .spyOn(domusCookie, 'getResponsePayload')
-                        .mockReturnValueOnce(X_Auth_dummy[2]);
-
-                    const getProspectWithIBIDIdMock = jest
-                        .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getProspectWithIBID')
-                        .mockReturnValueOnce(dummysub);
-
-                    const { statusCode } = await supertest(app).post("/api/v1/prospect/").send();
-                    expect(statusCode).toBe(400);
-
-                })
-
-            }
-
-        })
-
-
-        //Testing based on the usertype
-        //prospect already exist
-        describe("Testing Based on Usertype)", () => {
-
-            if (X_Auth_dummy[0].userType == 'UNAUTH_CUSTOMER') {
-
-                it("Should return 200", async () => {
-
-                    const xAauthValidationMock = jest
-                        .spyOn(CREATE_HELPER, 'xAauthValidation')
-                        .mockReturnValueOnce(xValidationdummyresponse);
-
-                    const getResponsePayloadMock = jest
-                        .spyOn(domusCookie, 'getResponsePayload')
-                        .mockReturnValueOnce(X_Auth_dummy[0]);
-
-                    const getProspectWithSessionIdMock = jest
-                        .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getProspectWithSessionId')
-                        .mockReturnValueOnce(dummysub);
-
-                    const { statusCode, res } = await supertest(app).post("/api/v1/prospect/").send();
-                    expect(res.text).toEqual(dummy_response_prospect_exist)
-                    expect(getProspectWithSessionIdMock).toHaveBeenCalled();
-
-                })
-            }
-            if (X_Auth_dummy[1].userType == 'IB_CUSTOMER') {
-
-                it("Should return 200", async () => {
-
-                    const xAauthValidationMock = jest
-                        .spyOn(CREATE_HELPER, 'xAauthValidation')
-                        .mockReturnValueOnce(xValidationdummyresponse);
-
-                    const getProspectWithIBIDIdMock = jest
-                        .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getProspectWithIBID')
-                        .mockReturnValueOnce(dummysub);
-
-                    const getResponsePayloadMock = jest
-                        .spyOn(domusCookie, 'getResponsePayload')
-                        .mockReturnValueOnce(X_Auth_dummy[1]);
-
-                    const { statusCode, res } = await supertest(app).post("/api/v1/prospect/").send();
-                    expect(statusCode).toBe(200)
-                    expect(res.text).toEqual(dummy_response_prospect_exist)
-                    expect(getProspectWithIBIDIdMock).toHaveBeenCalled();
-
-                })
-
-            } if (X_Auth_dummy[2].userType == 'Not_Unauth_or_IB') {
-
-                it("Should return 400", async () => {
-
-                    const xAauthValidationMock = jest
-                        .spyOn(CREATE_HELPER, 'xAauthValidation')
-                        .mockReturnValueOnce(xValidationdummyresponse);
-
-                    const getResponsePayloadMock = jest
-                        .spyOn(domusCookie, 'getResponsePayload')
-                        .mockReturnValueOnce(X_Auth_dummy[2]);
-
-                    const getProspectWithIBIDIdMock = jest
-                        .spyOn(PROSPECT_IDENTIFIER_HELPER, 'getProspectWithIBID')
-                        .mockReturnValueOnce(dummysub);
-
-                    const { statusCode } = await supertest(app).post("/api/v1/prospect/").send();
-                    expect(statusCode).toBe(400);
-
-                })
-
-            }
-        })
+            })
+        }
     })
 })
+
 
 
 
@@ -453,7 +446,7 @@ Sql Operation
 //     }
 // ]
 
-// Scenario 4 
+// Scenario 4
 
 // {
 //     "ProspectId": 10000000
@@ -529,6 +522,4 @@ VALUES
 ('INT3', 10000001, 
 '{"CustomerIntention":"Customer_Intention1","FirstProperty":"FirstProperty1","BuyingReadiness":"BuyingReadiness1","NoOfApplicants":"NoOfApplicants1","Occupying":"Occupying1","LbgMortgaged":"LbgMortgaged1","RemoReadiness":"RemoReadiness1"}'
 , GETDATE(), null)
-
-
 */
