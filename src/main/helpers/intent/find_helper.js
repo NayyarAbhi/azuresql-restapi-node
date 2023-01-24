@@ -91,7 +91,7 @@ async function getResponse(domus_cookie_response, req, By) {
     /* checking if Prospect is present in tbl_prospect, and returning 404, if not present */
     if (!(await PROSPECT_HELPER.isProspectPresent(prospectId))) {
         response_status_code = HTTP.NOT_FOUND.code;
-        response_message = { error: `Prospect Record not found in Prospect table with ProspectId` };
+        response_message = { error: `Prospect Record not found in Prospect table` };
         return [response_status_code, response_message];
     }
 
