@@ -79,7 +79,7 @@ async function getResponse(domus_cookie_response, req) {
         return [response_status_code, response_message];
 
     } else {
-        response_status_code = HTTP.OK.code;
+        response_status_code = HTTP.BAD_REQUEST.code;
         response_message = { message: `ProspectId, already exist in the system.` };
         return [response_status_code, response_message];
     }
