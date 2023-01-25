@@ -50,7 +50,7 @@ async function getResponse(domus_cookie_response, req) {
 
     //do not insert if intent already exist with respect to the prospectid
     if (isintentpresent) {
-        response_status_code = HTTP.OK.code;
+        response_status_code = HTTP.BAD_REQUEST;
         response_message = { message: `Intent with ProspectId, already exist in the system.` };
         return [response_status_code, response_message];
     }

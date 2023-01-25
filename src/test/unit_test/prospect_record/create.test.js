@@ -224,7 +224,7 @@ describe("Create Prospect", () => {
 
                 const { statusCode, res } = await supertest(app).post("/api/v1/prospect/").send();
 
-                expect(statusCode).toBe(200)
+                expect(statusCode).toBe(400)
                 expect(res.text).toEqual(dummy_response_prospect_exist)
                 expect(getProspectWithIBIDIdMock).toHaveBeenCalled();
                 expect(getResponsePayloadMock).toHaveBeenCalled();
