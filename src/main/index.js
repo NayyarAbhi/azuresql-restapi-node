@@ -1,14 +1,15 @@
 const HTTP = require('./variables/status.js').HTTP;
 const app = require('./app.js');
+const envConfig = require('./helpers/config/evnconfig_reader');
 
-const port = 8085
+const port = envConfig.port();
 
 app.listen(port, () => {
     console.log(`Server running on port:${port}`);
 });
 
-app.get('/readiness', (req, res) => res.status(HTTP.OK.code).json({ message: 'Appilcation Ready to use' }));
-app.get('/liveness', (req, res) => res.status(HTTP.OK.code).json({ message: 'Appilcation is live' }));
+app.get('/ready', (req, res) => res.status(HTTP.OK.code).json({ message: 'Appilcation Ready to use' }));
+app.get('/live', (req, res) => res.status(HTTP.OK.code).json({ message: 'Appilcation is live' }));
 app.get('/health', (req, res) => res.status(HTTP.OK.code).json({ message: 'Appilcation is up and running' }));
 
 // unknown request
