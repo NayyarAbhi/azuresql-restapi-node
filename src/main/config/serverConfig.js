@@ -2,10 +2,10 @@ const passwordConfig = require('./passwordConfig');
 
 // Create a configuration object for our Azure SQL connection parameters
 var dbConfig = {
-  server: "servermortgage.database.windows.net",
+  server: "servermortgages.database.windows.net",
   database: "Mortgages",
   user: "test",
-  password: passwordConfig.getPassword(),
+  password: "Password@1",
   port: 1433,
   options: {
     encrypt: true

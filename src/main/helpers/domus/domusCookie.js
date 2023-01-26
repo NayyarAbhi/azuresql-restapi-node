@@ -25,9 +25,6 @@ async function getResponsePayload() {
         case 'APPDEV':
             response_payload = getStubResponse(env_config.APPDEV.DOMUSCOOKIE_STUB_URL);
             break;
-        case 'INTEGRATION':
-            response_payload = getStubResponse(env_config.INTEGRATION.DOMUSCOOKIE_STUB_URL);
-            break;
         default:
             console.log('default')
             response_payload = domus_cookie;
