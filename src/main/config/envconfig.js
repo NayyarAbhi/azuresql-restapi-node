@@ -1,4 +1,4 @@
-let environment = {
+const env_config = {
     LOCAL: {
         APP_PORT: '8085',
         APP_ENTRY_POINT: '/dataapi/prospect/',
@@ -16,4 +16,7 @@ let environment = {
     }
 }
 
-module.exports = { environment }
+const env = env_config[process.env.ENV];
+
+// exporting modules
+module.exports = { env }

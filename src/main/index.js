@@ -1,10 +1,10 @@
 const HTTP = require('./variables/status.js').HTTP;
 const app = require('./app.js');
-const envConfig = require('./helpers/config/evnconfig_reader');
+const env = require('./config/envconfig').env;
 
-const port = envConfig.port();
+const port = env.APP_PORT;
 
-app.listen(port, () => {
+app.listen(env.APP_PORT, () => {
     console.log(`Server running on port:${port}`);
 });
 
