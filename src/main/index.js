@@ -4,7 +4,7 @@ const env = require('./config/envconfig').env;
 
 const port = env.APP_PORT;
 
-app.listen(env.APP_PORT, () => {
+app.listen(port, () => {
     console.log(`Server running on port:${port}`);
 });
 
