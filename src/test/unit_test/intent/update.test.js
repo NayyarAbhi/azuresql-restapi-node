@@ -6,9 +6,11 @@ const UPDATE_HELPER = require('../../../main/helpers/intent/update_helper');
 const INTENT_HELPER = require('../../../main/helpers/intent/intent_helper');
 const PROSPECT_IDENTIFIER_HELPER = require('../../../main/helpers/prospect_record/prospect_identifier_helper');
 const domusCookie = require('../../../main/helpers/domus/domusCookie');
+const env = require('../../../main/config/envconfig').env;
 
 
-const endpoint = "/api/v1/prospect/10000000/intent/INT1";
+const app_entry_point = env.APP_ENTRY_POINT + env.APP_VERSION;
+const endpoint = `${app_entry_point}/10000000/intent/INT1`;
 const update_intent_response = [200, "IntentId: INT1"];
 const invalid_userType = { "id": 1, "userType": "UNAUTH_CUSTOMER1", "sub": "session121212", "exp": 1666343413 };
 const valid_userType = { "id": 1, "userType": "UNAUTH_CUSTOMER", "sub": "session121212", "exp": 1666343413 };

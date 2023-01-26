@@ -5,8 +5,10 @@ const PROSPECT_HELPER = require('../../../main/helpers/prospect/prospect_helper'
 const INTENT_HELPER = require('../../../main/helpers/intent/intent_helper');
 const PROSPECT_IDENTIFIER_HELPER = require('../../../main/helpers/prospect_record/prospect_identifier_helper');
 const domusCookie = require('../../../main/helpers/domus/domusCookie');
+const env = require('../../../main/config/envconfig').env;
 
 
+const app_entry_point = env.APP_ENTRY_POINT + env.APP_VERSION;
 const invalid_userType = { "id": 1, "userType": "UNAUTH_CUSTOMER1", "sub": "session121212", "exp": 1666343413 };
 const valid_userType = { "id": 1, "userType": "UNAUTH_CUSTOMER", "sub": "session121212", "exp": 1666343413 };
 const prospect_data = [{
@@ -27,8 +29,8 @@ const response_payload = "{\"prospect\":[{\"prospect_id\":10000000,\"created_on\
 
 
 describe("Find/Retrieve Intent By ProspectId and Intent Id", () => {
-    const endpoint = "/api/v1/prospect/10000000/intent/INT1";
-    const invalid_endpoint = "/api/v1/prospect/abc/intent/INT1";
+    const endpoint = `${app_entry_point}/10000000/intent/INT1`;
+    const invalid_endpoint = `${app_entry_point}/abc/intent/INT1`;
 
     describe("x-authorization-id not present in the request header", () => {
         it("Should return 400 along with error message", async () => {
@@ -267,8 +269,8 @@ describe("Find/Retrieve Intent By ProspectId and Intent Id", () => {
 
 
 describe("Find/Retrieve Active Intent By ProspectId", () => {
-    const endpoint = "/api/v1/prospect/10000000/intent";
-    const invalid_endpoint = "/api/v1/prospect/abc/intent";
+    const endpoint = `${app_entry_point}/10000000/intent`;
+    const invalid_endpoint = `${app_entry_point}/abc/intent`;
 
     describe("x-authorization-id not present in the request header", () => {
         it("Should return 400 along with error message", async () => {

@@ -5,16 +5,18 @@ const PROSPECT_HELPER = require('../../../main/helpers/prospect/prospect_helper'
 const ADD_HELPER = require('../../../main/helpers/prospect_record/add_helper');
 const PROSPECT_IDENTIFIER_HELPER = require('../../../main/helpers/prospect_record/prospect_identifier_helper');
 const domusCookie = require('../../../main/helpers/domus/domusCookie');
+const env = require('../../../main/config/envconfig').env;
 
 
+const app_entry_point = env.APP_ENTRY_POINT + env.APP_VERSION;
 const add_prospect_response = [200, '{"ProspectId": 10000000}'];
 const invalid_userType = { "id": 1, "userType": "UNAUTH_CUSTOMER1", "sub": "session121212", "exp": 1666343413 };
 const valid_userType = { "id": 1, "userType": "UNAUTH_CUSTOMER", "sub": "session121212", "exp": 1666343413 };
 
 
 describe("Add Prospect By ProspectId", () => {
-    const endpoint = "/api/v1/prospect/10000000";
-    const invalid_endpoint = "/api/v1/prospect/abc";
+    const endpoint = `${app_entry_point}/10000000`;
+    const invalid_endpoint = `${app_entry_point}/abc`;
 
     describe("x-authorization-id not present in the request header", () => {
         it("Should return 400 along with error message", async () => {
@@ -212,7 +214,7 @@ describe("Add Prospect By ProspectId", () => {
 
 
 describe("Add Prospect", () => {
-    const endpoint = "/api/v1/prospect";
+    const endpoint = app_entry_point;
 
     describe("x-authorization-id not present in the request header", () => {
         it("Should return 400 along with error message", async () => {

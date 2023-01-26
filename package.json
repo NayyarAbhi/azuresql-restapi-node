@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./src/main/index.js",
     "local": "cross-env ENV=LOCAL node ./src/main/index.js",
-    "test": "jest --detectOpenHandles",
+    "test": "cross-env ENV=LOCAL jest --detectOpenHandles",
     "type": "module"
   },
   "keywords": [],
