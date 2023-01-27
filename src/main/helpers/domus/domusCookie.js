@@ -5,7 +5,7 @@ const env = require('../../config/envconfig').env;
 async function getStubResponse(url, x_auth) {
     let stubResponse = '';
     try {
-        stubResponse = (await post(url, x_auth)).data;
+        stubResponse = (await post(url, JSON.parse(x_auth))).data;
     } catch (err) {
         console.log("error: not able to connect to domus cookie stub with url:" + url);
         console.trace(err);
@@ -28,7 +28,7 @@ async function getResponsePayload(x_auth) {
     let response_payload = '';
     console.log("Domus Cookie Env is: " + process.env.ENV)
 
-    switch (env) {
+    switch (process.env.ENV) {
         case 'LOCAL':
             response_payload = getStubResponse(env.DOMUSCOOKIE_STUB_URL, x_auth);
             break;
