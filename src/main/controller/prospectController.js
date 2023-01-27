@@ -36,12 +36,16 @@ async function addProspectById(req, res) {
     }
 
     // getting domus reponse payload
-    let domus_cookie_response = await domusCookie.getResponsePayload();
+    console.log(req.headers['x-authorization-id'])
+    // let domus_cookie_response = await domusCookie.getResponsePayload();
 
     // getting reponse status code and message
-    const [response_status_code, response_message] = await ADD_HELPER.getResponse(domus_cookie_response, req, true);
-    res.status(response_status_code)
-        .send(response_message);
+    // const [response_status_code, response_message] = await ADD_HELPER.getResponse(domus_cookie_response, req, true);
+    // res.status(response_status_code)
+    //     .send(response_message);
+
+    res.status(200)
+        .send("success");
 }
 
 /* Add Prospect API to add Prospect contact details to the already existing Prospect

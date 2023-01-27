@@ -3,3 +3,5 @@
     "sub": "sessionnew123456",
     "exp": 1666343413
 }
+
+{"userType": "UNAUTH_CUSTOMER", "sub": "sessionnew123456", "exp": 1666343413, "userAgent": "Mozilla/5.0 (Linux"}
