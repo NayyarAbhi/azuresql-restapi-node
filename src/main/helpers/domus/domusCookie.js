@@ -1,11 +1,11 @@
 const domus_cookie = require('../../variables/domus_cookie_response.json');
-const { get } = require('axios');
+const { post } = require('axios');
 const env = require('../../config/envconfig').env;
 
 async function getStubResponse(url, x_auth) {
     let stubResponse = '';
     try {
-        stubResponse = (await get(url)).data;
+        stubResponse = (await post(url, x_auth)).data;
     } catch (err) {
         console.log("error: not able to connect to domus cookie stub with url:" + url);
         console.trace(err);
@@ -14,8 +14,14 @@ async function getStubResponse(url, x_auth) {
 }
 
 async function getActualResponse(url, x_auth) {
-    let stubResponse = '';
-    return stubResponse;
+    let response = '';
+    try {
+        response = (await post(url, x_auth)).data;
+    } catch (err) {
+        console.log("error: not able to connect to domus cookie with url:" + url);
+        console.trace(err);
+    }
+    return response;
 }
 
 async function getResponsePayload(x_auth) {
@@ -33,8 +39,7 @@ async function getResponsePayload(x_auth) {
             response_payload = getActualResponse(env.DOMUSCOOKIE_URL, x_auth);
             break;
         default:
-            console.log('default')
-            response_payload = domus_cookie;
+            console.log(`error: env ${env} not valid for getting domus cookie response`);
     }
 
     return response_payload;

@@ -4,21 +4,21 @@ const env_config = {
         APP_ENTRY_POINT: '/dataapi/prospect/',
         APP_VERSION: 'v1',
         DOMUSCOOKIE_URL: '',
-        DOMUSCOOKIE_STUB_URL: 'http://localhost:3000/domuscookie'
+        DOMUSCOOKIE_STUB_URL: 'http://localhost:3000/validate'
     },
     APPDEV: {
         APP_PORT: '8085',
         APP_ENTRY_POINT: '/dataapi/prospect/',
         APP_VERSION: 'v1',
         DOMUSCOOKIE_URL: '',
-        DOMUSCOOKIE_STUB_URL: 'http://localhost:3000/domuscookie'
+        DOMUSCOOKIE_STUB_URL: 'http://localhost:3000/validate'
     },
     INTEGRATION: {
         APP_PORT: '8085',
         APP_ENTRY_POINT: '/dataapi/prospect/',
         APP_VERSION: 'v1',
         DOMUSCOOKIE_URL: '',
-        DOMUSCOOKIE_STUB_URL: 'http://localhost:3000/domuscookie'
+        DOMUSCOOKIE_STUB_URL: 'http://localhost:3000/validate'
     }
 }
 
