@@ -9,7 +9,7 @@ Feature: Validate Add Prospect Contact API response
         And MOC values are set wth user as "<USER_TYPE>"
         When A "post" request to "create prospect" is executed for "<TEST_DATA_CREATE>"
         Then Validate the response of "create prospect" for "<TEST_DATA_CREATE>" and "<USER_TYPE>"
-        When A prospect id is created
+        When A "prospect id" is created
         # Add/update prospect contact steps
         And Test data for "<API>" is created as "<TEST_DATA_ADD_AND_UPDATE>"
         And A "put" request to "<API>" is executed for "<TEST_DATA_ADD_AND_UPDATE>"
@@ -91,8 +91,8 @@ Feature: Validate Add Prospect Contact API response
         And MOC values are set wth user as "<USER_TYPE>"
         When A "post" request to "create prospect" is executed for "new record with All fields"
         Then Validate the response of "create prospect" for "new record with All fields" and "<USER_TYPE>"
-        When A prospect id is created
-        And The prospect id is updated to an invalid value
+        When A "prospect id" is created
+        And The "prospect id" is updated to an invalid value
         And Test data for "<API>" is created as "update both prospect and prospect identifier"
         And A "put" request to "<API>" is executed for "new record with All fields"
         Then Validate the response of "<API>" for "in-valid prospect id" and "<USER_TYPE>"
