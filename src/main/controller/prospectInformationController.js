@@ -8,16 +8,16 @@ const domusCookie = require('../helpers/domus/domusCookie.js');
 async function createProspectInformation(req, res) {
     const authObj = { 'x-authorization-id': req.headers['x-authorization-id'] };
     const [response_status_code_1, response_message_1] = await CREATE_HELPER.xAauthValidation(authObj, req.body);
-    
-        if (response_message_1 === "X_AUTH passes") {
-            // getting domus reponse payload
-            console.log('in create information')
-            let domus_cookie_response = await domusCookie.getResponsePayload();
-            const [response_status_code, response_message] = await CREATE_HELPER.getResponse(domus_cookie_response, req);
-            res.status(response_status_code).send(response_message);
-        } else {
-           res.status(response_status_code_1).send(response_message_1)
-        }
+
+    if (response_message_1 === "X_AUTH passes") {
+        // getting domus reponse payload
+        console.log('in create information')
+        let domus_cookie_response = await domusCookie.getResponsePayload(req.headers['x-authorization-id']);
+        const [response_status_code, response_message] = await CREATE_HELPER.getResponse(domus_cookie_response, req);
+        res.status(response_status_code).send(response_message);
+    } else {
+        res.status(response_status_code_1).send(response_message_1)
+    }
 }
 
 /* Find Prospect Information API to retrieve Prospect Information details
@@ -34,7 +34,7 @@ async function findProspectInfoByProspectId(req, res) {
     }
 
     // getting domus reponse payload
-    let domus_cookie_response = await domusCookie.getResponsePayload();
+    let domus_cookie_response = await domusCookie.getResponsePayload(req.headers['x-authorization-id']);
 
     const result = await FIND_HELPER.findProspectInfoByProspectId(domus_cookie_response, req);
     console.log(result.error);
@@ -62,7 +62,7 @@ async function findProspectInfoByPayloadIdentifier(req, res) {
     }
 
     // getting domus reponse payload
-    let domus_cookie_response = await domusCookie.getResponsePayload();
+    let domus_cookie_response = await domusCookie.getResponsePayload(req.headers['x-authorization-id']);
 
     const result = await FIND_HELPER.findProspectInfoByPayloadIdentifier(domus_cookie_response, req);
     console.log(result.error);
@@ -90,7 +90,7 @@ async function findProspectInfoByPayloadIdentifierAndPayloadId(req, res) {
     }
 
     // getting domus reponse payload
-    let domus_cookie_response = await domusCookie.getResponsePayload();
+    let domus_cookie_response = await domusCookie.getResponsePayload(req.headers['x-authorization-id']);
 
     const result = await FIND_HELPER.findProspectInfoByPayloadIdentifierAndPayloadId(domus_cookie_response, req);
     console.log(result.error);
