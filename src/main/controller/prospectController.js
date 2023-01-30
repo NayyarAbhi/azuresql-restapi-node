@@ -13,7 +13,7 @@ async function createProspect(req, res) {
     const [response_status_code_1, response_message_1] = await CREATE_HELPER.xAauthValidation(authObj, req.body);
 
     if (response_message_1 === "X_AUTH passes") {
-        let domus_cookie_response = await domusCookie.getResponsePayload();
+        let domus_cookie_response = await domusCookie.getResponsePayload(req.headers['x-authorization-id']);
         const [response_status_code, response_message] = await CREATE_HELPER.getResponse(domus_cookie_response, req);
         res.status(response_status_code).send(response_message);
     } else {
@@ -36,7 +36,7 @@ async function addProspectById(req, res) {
     }
 
     // getting domus reponse payload
-    let domus_cookie_response = await domusCookie.getResponsePayload();
+    let domus_cookie_response = await domusCookie.getResponsePayload(req.headers['x-authorization-id']);
 
     // getting reponse status code and message
     const [response_status_code, response_message] = await ADD_HELPER.getResponse(domus_cookie_response, req, true);
@@ -56,7 +56,7 @@ async function addProspect(req, res) {
     }
 
     // getting domus reponse payload
-    let domus_cookie_response = await domusCookie.getResponsePayload();
+    let domus_cookie_response = await domusCookie.getResponsePayload(req.headers['x-authorization-id']);
 
     // getting reponse status code and message
     const [response_status_code, response_message] = await ADD_HELPER.getResponse(domus_cookie_response, req, false);
@@ -78,7 +78,7 @@ async function findProspect(req, res) {
     }
 
     // getting domus reponse payload
-    let domus_cookie_response = await domusCookie.getResponsePayload();
+    let domus_cookie_response = await domusCookie.getResponsePayload(req.headers['x-authorization-id']);
 
     const result = await FIND_HELPER.findProspect(domus_cookie_response, req);
     console.log(result.error);
@@ -105,7 +105,7 @@ async function findProspectById(req, res) {
     }
 
     // getting domus reponse payload
-    let domus_cookie_response = await domusCookie.getResponsePayload();
+    let domus_cookie_response = await domusCookie.getResponsePayload(req.headers['x-authorization-id']);
 
     const result = await FIND_HELPER.findProspectById(domus_cookie_response, req);
     console.log(result.error);

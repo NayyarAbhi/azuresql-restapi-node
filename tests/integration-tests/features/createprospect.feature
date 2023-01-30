@@ -2,13 +2,14 @@
 @api-test
 Feature: Validate Create Prospect API response
 
+	@run-tests
 	@valid-scenarios
 	Scenario Outline: A new Prospect is created in DB
 		Given Test data for "create prospect" is created as "<TEST_DATA>"
-		And MOC values are set wth user as "<USER_TYPE>"
+		And The header values are set with user as "<USER_TYPE>"
 		When A "post" request to "create prospect" is executed for "<TEST_DATA>"
 		Then Validate the response of "create prospect" for "<TEST_DATA>" and "<USER_TYPE>"
-		When A prospect id is created
+		When A "prospect id" is created
 		And A "get" request to "find prospect using prospect id" is executed for "<TEST_DATA>"
 		Then Validate the response of "create prospect" for "<TEST_DATA>" and "<USER_TYPE>" in DB
 
@@ -65,7 +66,7 @@ Feature: Validate Create Prospect API response
 	@in-valid-scenarios
 	Scenario Outline: A new Prospect is not created in DB due to existing value of x-authorization-id
 		Given Test data for "create prospect" is created as "<TEST_DATA>"
-		And MOC values are set wth user as "<USER_TYPE>"
+		And The header values are set with user as "<USER_TYPE>"
 		When A "post" request to "create prospect" is executed for "<TEST_DATA>"
 		Then Validate the response of "create prospect" for "<TEST_DATA>" and "<USER_TYPE>"
 		And A "post" request to "create prospect" is executed for "<TEST_DATA>"

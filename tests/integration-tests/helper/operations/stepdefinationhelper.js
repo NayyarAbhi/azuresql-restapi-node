@@ -1,5 +1,6 @@
 const domus_cookie_validator_moc = require('../mocresponse/authdomuscookieresponse')
 const { expect } = require('chai');
+const { default: test } = require('node:test');
 
 
 
@@ -366,7 +367,7 @@ function validateResponse(serviceName, test_data, prospectIDCreated, user_type, 
             //invlaid conditions
             if(test_data === 'existing value of x-authorization-id'){
                 //validate status
-                expect(actual_response.status).to.be.equal(200);
+                expect(actual_response.status).to.be.equal(400);
                 //validate body
                 expect(actual_response.data.message).to.be.a('string').that.contains('ProspectId, already exist in the system.')
     
@@ -1292,6 +1293,242 @@ function validateResponse(serviceName, test_data, prospectIDCreated, user_type, 
         }catch(err){
             throw err;
         }
+    }else if(['create intent'].includes(serviceName)){
+        if(test_data === 'valid request'){
+            //validate status
+            expect(actual_response.status).to.be.equal(200);
+            //validate body
+            expect(actual_response.data.message).to.be.a('string').that.contains('is created successfully')
+        }else if(test_data === 'duplicate request'){
+            //validate status
+            expect(actual_response.status).to.be.equal(404);
+            //validate body
+            expect(actual_response.data.message).to.be.a('string').that.contains('Intent with ProspectId, already exist in the system.')
+        }else if(test_data === 'in-valid prospect id'){
+            //validate status
+            expect(actual_response.status).to.be.equal(404);
+            //validate body
+            expect(actual_response.data.error).to.be.a('string').that.contains('ProspectId in the request is not associated with userType and sub')
+        }else if (test_data == 'in-valid user type'){
+            //validate status
+            expect(actual_response.status).to.be.equal(404);
+            //validate body
+            expect(actual_response.data.error).to.be.a('string').that.contains("Prospect with userType and sub doesn't exist in the records")
+        }else if(test_data === 'without intent_questionaire_payload'){
+            const validation_object = {
+                error: [
+                    {
+                        "message": "\"intent_questionaire_payload\" is required",
+                        "path": [
+                            "intent_questionaire_payload"
+                        ],
+                        "type": "any.required",
+                        "context": {
+                            "label": "intent_questionaire_payload",
+                            "key": "intent_questionaire_payload"
+                        }
+                    }
+                ]
+            };
+
+            //validate status
+            expect(actual_response.status).to.be.equal(400);
+            //validate body
+            expect(actual_response.data).to.deep.equal(validation_object.error);
+
+        }else if(test_data === 'without active_from'){
+            const validation_object = {
+                error: [
+                    {
+                        "message": "\"active_from\" is required",
+                        "path": [
+                            "active_from"
+                        ],
+                        "type": "any.required",
+                        "context": {
+                            "label": "active_from",
+                            "key": "active_from"
+                        }
+                    }
+                ]
+            };
+
+            //validate status
+            expect(actual_response.status).to.be.equal(400);
+            //validate body
+            expect(actual_response.data).to.deep.equal(validation_object.error);
+            
+        }else if(test_data === 'active_from not as a valid string'){
+
+            const validation_object = {
+                error: [
+                    {
+                        "message": "\"active_from\" must be a valid date",
+                        "path": [
+                            "active_from"
+                        ],
+                        "type": "date.base",
+                        "context": {
+                            "label": "active_from",
+                            "value": "2023-01-44T12:26:06.521Z",
+                            "key": "active_from"
+                        }
+                    }
+                ]
+            };
+
+            //validate status
+            expect(actual_response.status).to.be.equal(400);
+            //validate body
+            expect(actual_response.data).to.deep.equal(validation_object.error);
+
+            
+        }else if(test_data === 'active_from is a number'){
+
+            const validation_object = {
+                error: [
+                    {
+                        "message": "\"active_from\" must be a valid date",
+                        "path": [
+                            "active_from"
+                        ],
+                        "type": "date.base",
+                        "context": {
+                            "label": "active_from",
+                            "value": "2023-01-44T12:26:06.521Z",
+                            "key": "active_from"
+                        }
+                    }
+                ]
+            };
+
+            //validate status
+            expect(actual_response.status).to.be.equal(400);
+            //validate body
+            expect(actual_response.data).to.deep.equal(validation_object.error);
+ 
+        }else if(test_data === 'intent_questionaire_payload is a number'){
+            const validation_object = {
+                error: [
+                    {
+                        "message": "\"intent_questionaire_payload\" is required",
+                        "path": [
+                            "intent_questionaire_payload"
+                        ],
+                        "type": "any.required",
+                        "context": {
+                            "label": "intent_questionaire_payload",
+                            "key": "intent_questionaire_payload"
+                        }
+                    }
+                ]
+            };
+
+            //validate status
+            expect(actual_response.status).to.be.equal(400);
+            //validate body
+            expect(actual_response.data).to.deep.equal(validation_object.error);
+
+            
+        }else if(test_data === 'intent_questionaire_payload is a string'){
+
+            const validation_object = {
+                error: [
+                    {
+                        "message": "\"intent_questionaire_payload\" is required",
+                        "path": [
+                            "intent_questionaire_payload"
+                        ],
+                        "type": "any.required",
+                        "context": {
+                            "label": "intent_questionaire_payload",
+                            "key": "intent_questionaire_payload"
+                        }
+                    }
+                ]
+            };
+
+            //validate status
+            expect(actual_response.status).to.be.equal(400);
+            //validate body
+            expect(actual_response.data).to.deep.equal(validation_object.error);
+            
+        }else if(test_data === 'invalid value of x-authorization-id'){
+
+            const validation_object = {
+                error: [
+                    {
+                        "message": "\"x-authorization-id\" is required",
+                        "path": [
+                            "x-authorization-id"
+                        ],
+                        "type": "any.required",
+                        "context": {
+                            "label": "x-authorization-id",
+                            "key": "x-authorization-id"
+                        }
+                    }
+                ]
+            };
+
+            //validate status
+            expect(actual_response.status).to.be.equal(400);
+            //validate body
+            expect(actual_response.data).to.deep.equal(validation_object.error);
+            
+        }else{
+            throw `test data is not defined - ${test_data}`
+        }
+    }else if(['find intent', 'find intent by id'].includes(serviceName)){
+        if(test_data === 'in-valid user type'){
+            //validate status
+            expect(actual_response.status).to.be.equal(404);
+            //validate body
+            expect(actual_response.data.error).to.be.a('string').that.contains('Prospect Record not found with userType and sub')
+        }else if(test_data === 'invalid prospect id'){
+            //validate status
+            expect(actual_response.status).to.be.equal(404);
+            //validate body
+            expect(actual_response.data.error).to.be.a('string').that.contains('ProspectId in the request is not associated with userType and sub')
+        }else if(test_data === 'intent not found'){
+            //validate status
+            expect(actual_response.status).to.be.equal(404);
+            //validate body
+            if(serviceName === 'find intent by id'){
+                expect(actual_response.data.error).to.be.a('string').that.contains('No Intent Record found with ProspectId')
+            }else{
+                expect(actual_response.data.error).to.be.a('string').that.contains('No Active Intent Record found with ProspectId')
+            }
+        }else if(test_data === 'invalid value of x-authorization-id'){
+            const validation_object = {
+                error: [
+                    {
+                        "message": "\"x-authorization-id\" is required",
+                        "path": [
+                            "x-authorization-id"
+                        ],
+                        "type": "any.required",
+                        "context": {
+                            "label": "x-authorization-id",
+                            "key": "x-authorization-id"
+                        }
+                    }
+                ]
+            };
+
+            //validate status
+            expect(actual_response.status).to.be.equal(400);
+            //validate body
+            expect(actual_response.data).to.deep.equal(validation_object.error);
+        }else if(test_data === 'invalid intent id'){
+            //validate status
+            expect(actual_response.status).to.be.equal(404);
+            //validate body
+            expect(actual_response.data.error).to.be.a('string').that.contains('No Intent Record found with ProspectId')
+        }
+        else{
+            throw `test data is not defied - ${test_data}`
+        }
     }
     else{
         throw `service name is not defined - ${serviceName}`;
@@ -1301,26 +1538,42 @@ function validateResponse(serviceName, test_data, prospectIDCreated, user_type, 
 function validateResponseInDB(serviceName, test_data, user_type, actual_response_find, responseToVerify) {
 
     //modify the respnse of find to remove remove the time
-    actual_response_find.data.prospect.forEach(element => {
-        element.created_on = element.created_on.split('T')[0]; 
-    });
-    try{
-        actual_response_find.data.prospect_identifiers.forEach(element => {
+    if(['create intent'].includes(serviceName)){
+        // Find Intent
+        actual_response_find.data.prospect.forEach(element => {
+            element.created_on = element.created_on.split('T')[0]; 
+        });
+
+        actual_response_find.data.intent.forEach(element => {
             element.active_from = element.active_from.split('T')[0]; 
             if(element.active_to != null){
                 element.active_to = element.active_to.split('T')[0]; 
             }
+            element.intent_questionaire_payload = JSON.parse(element.intent_questionaire_payload)
         });
-    }catch(err){
-        // this is for the find prospect without id
-        actual_response_find.data.prospect_identifier.forEach(element => {
-            element.active_from = element.active_from.split('T')[0]; 
-            if(element.active_to != null){
-                element.active_to = element.active_to.split('T')[0]; 
-            }
+
+    }else{
+        //Find Prospect
+        actual_response_find.data.prospect.forEach(element => {
+            element.created_on = element.created_on.split('T')[0]; 
         });
+        try{
+            actual_response_find.data.prospect_identifiers.forEach(element => {
+                element.active_from = element.active_from.split('T')[0]; 
+                if(element.active_to != null){
+                    element.active_to = element.active_to.split('T')[0]; 
+                }
+            });
+        }catch(err){
+            // this is for the find prospect without id
+            actual_response_find.data.prospect_identifier.forEach(element => {
+                element.active_from = element.active_from.split('T')[0]; 
+                if(element.active_to != null){
+                    element.active_to = element.active_to.split('T')[0]; 
+                }
+            });
+        }
     }
-    
     
     if (serviceName === 'create prospect') {
         //verify the elements 
@@ -1517,6 +1770,33 @@ function validateResponseInDB(serviceName, test_data, user_type, actual_response
                     throw `user type ${test_data} is not defined`
                 }    
             })
+    }else if(serviceName === 'create intent'){
+        if(test_data === 'valid request'){
+            const verification_object = {
+                "prospect": [
+                    {
+                        "prospect_id": parseInt(responseToVerify.prospectIDCreated),
+                        "created_on": responseToVerify.created_on.toISOString().split('T')[0],
+                        "brand_identifier": responseToVerify.brand_identifier,
+                        "channel_identifier": responseToVerify.channel_identifier,
+                        "first_name": responseToVerify.first_name
+                    }
+                ],
+                "intent": [
+                    {
+                        "intent_id": responseToVerify.intentIDCreated,
+                        "prospect_id": parseInt(responseToVerify.prospectIDCreated),
+                        "intent_questionaire_payload": responseToVerify.intentQuestionaiarPayload[responseToVerify.intentQuestionaiarPayload.length -1],
+                        "active_from": responseToVerify.active_from_intent[responseToVerify.active_from_intent.length - 1].toISOString().split('T')[0],
+                        "active_to": null
+                    }
+                ]
+            }
+            console.log("verification object is - ")
+            //console.log(JSON.stringify(actual_response_find.data, null, 4))
+            console.log(JSON.stringify(verification_object, null, 4))
+            expect(actual_response_find.data).to.deep.equal(verification_object);
+        }
     }
     else {
         throw `service name is not defined - ${serviceName}`;

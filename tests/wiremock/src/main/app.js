@@ -12,7 +12,7 @@ app.listen(port, () => {
 });
 
 //prospect api entry point
-app.use('/domuscookie', domuscookievalidatorrouter);
+app.use('/validate', domuscookievalidatorrouter);
 
 // unknown request
 app.get('*', (req, res) => res.status(500).json({ message: 'not a valid request' }));

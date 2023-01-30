@@ -29,9 +29,13 @@ let phone = [];
 let email = [];
 let mobile = [];
 let active_from = [];
+let active_from_intent = [];
 let identifier = 1234
+let header
 let test_data_body = null
 let prospectIDCreated = 1234
+let intentIDCreated = 1234
+let intentQuestionaiarPayload = []
 
 let isBackgroundExecuted = false
 
@@ -63,10 +67,16 @@ AfterAll(async () => {
 */
 BeforeAll({ timeout: 30000 }, async () => {
     setDefaultTimeout(30000);
+    console.log("############### START OF EXECUTION ###############################")
 });
 
+AfterAll({ timeout: 30000 }, async () => {
+    console.log("############### END OF EXECUTION #################################")
+});
 
-Before({ timeout: 3000 }, async () => {
+Before({ timeout: 3000 }, async (scenario) => {
+    console.log("############### START OF TEST CASE ###############################")
+    console.log(`Executiong test case :- ${scenario.pickle.name}`)
     requestHandler = new RequestHandler();
     global.requestHandler = requestHandler;
 
@@ -80,12 +90,13 @@ Before({ timeout: 3000 }, async () => {
 
 After(async () => {
     requestHandler.reset();
+    console.log("############### END OF TEST CASE ################################")
 });
 
 
 Given('Test data for {string} is created as {string}', async function (serviceName, test_data) {
     //create the test data
-
+    
     try {
         if (serviceName === 'create prospect') {
             const test_data_body_create = {
@@ -230,11 +241,64 @@ Given('Test data for {string} is created as {string}', async function (serviceNa
 });
 
 
-Given('MOC values are set wth user as {string}', async function (user_type) {
+When('New {string} is created as follows for {string}', async function(serviceName, test_data, dataTable){
+    try{
+        if(['intent'].includes(serviceName)){
+            //create an intent payload
+            let data_from_table = {};
+            dataTable.raw().forEach(function(raw) {
+                if(raw[0] !== 'field'){
+                    data_from_table[raw[0]] = raw[1]
+                } 
+            });
+            active_from_intent.push(new Date(Date.now()));
+            intentQuestionaiarPayload.push(data_from_table)
+            test_data_body = {
+                'intent_questionaire_payload' : intentQuestionaiarPayload[intentQuestionaiarPayload.length-1],
+                'active_from' : active_from_intent[active_from_intent.length - 1]
+            }
+        }else{
+            throw `service ${serviceName} is not defined`
+        }
+        if(test_data === 'valid scenario'){
+            console.log('valid scenairo - test data created successfully');
+        }else if(test_data === 'without intent_questionaire_payload'){
+            delete test_data_body.intent_questionaire_payload
+        }else if(test_data === 'without active_from'){
+            delete test_data_body.active_from
+        }else if(test_data === 'active_from not as a valid string'){
+            test_data_body.active_from = '2023-01-44T12:26:06.521Z'
+        }else if(test_data === 'active_from is a number'){
+            test_data_body.active_from = 1234
+        }else if(test_data === 'intent_questionaire_payload is a number'){
+            test_data_body.intent_questionaire_payload = 1234
+        }else if(test_data === 'intent_questionaire_payload is a string'){
+            test_data_body.intent_questionaire_payload = "1234"
+        }else if(test_data ==='invalid value of x-authorization-id'){
+            //do nothing
+            console.log('invalid value of x-authorization-id - test data created successfully');
+        }else{
+            throw `test data is not defined - ${test_data}`
+        }
+        console.log("Intent paylod created - ")
+        console.log(test_data_body);
+    }catch(err){
+        console.trace(err);
+    }
+} );
+
+
+
+Given('The header values are set with user as {string}', async function (user_type) {
     //Set MOC values to be used by the DEV COCE
     // MOC values will only be set for LOCAL and DEV environments
 
-    if (['LOCAL', 'APPDEV'].includes(process.env.ENV)) {
+    header = `{"userType": ${user_type}, "sub":  ${identifier}, "exp": 1666343413, "userAgent": "Mozilla/5.0 (Linux; U; Android 2.3.6; en-us; Nexus S Build/GRK39F) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1" }`
+
+    console.log(header)
+
+    
+    /*if (['LOCAL', 'APPDEV'].includes(process.env.ENV)) {
         //setting the moc with the stub
         try {
             const BRAND = process.env.BRAND
@@ -280,24 +344,42 @@ Given('MOC values are set wth user as {string}', async function (user_type) {
     } catch (exp) {
         console.trace(err);
         expect.fail(exp)
-    }
+    }*/
 });
 
-When('A prospect id is created', () => {
+When('A {string} is created', (id) => {
     try {
-        prospectIDCreated = global.response.data.message.split(" ")[1];
-        expect(prospectIDCreated).to.not.be.equal(null);
-        console.log(`Prospect ID is created - ${prospectIDCreated}`);
+        if(id === 'prospect id'){
+            prospectIDCreated = global.response.data.message.split(" ")[1];
+            expect(prospectIDCreated).to.not.be.equal(null);
+            console.log(`Prospect ID is created - ${prospectIDCreated}`);
+        }else if(id === 'intent id'){
+            //capture the intent id
+            let regex = /IntentId (.*?) is created successfully/; 
+            intentIDCreated = global.response.data.message.match(regex)[1]
+            expect(intentIDCreated).to.not.be.equal(null);
+            console.log(`Intent ID is created - ${intentIDCreated}`);
+        }else{
+            throw 'ID not defined'
+        }
     } catch (err) {
         console.trace(err);
         expect.fail(err);
     }
 });
 
-When('The prospect id is updated to an invalid value', async () => {
+When('The {string} is updated to an invalid value', async (id_to_update) => {
     try {
-        prospectIDCreated = 1234;
-        console.log(`Prospect ID is updated to  - ${prospectIDCreated}`);
+        if(id_to_update === 'prospect id'){
+            prospectIDCreated = 1234;
+            console.log(`Prospect ID is updated to  - ${prospectIDCreated}`);
+        }else if(id_to_update === 'intent id'){
+            intentIDCreated = 1234;
+            console.log(`Intent ID is updated to  - ${prospectIDCreated}`);
+        }else{
+            throw `In-valid request to update the id ${id_to_update}`
+        }
+        
     } catch (err) {
         console.trace(err);
         expect.fail(err);
@@ -320,14 +402,22 @@ When('A {string} request to {string} is executed for {string}', async function (
             endpoint = `${ENV_DATA[BRAND].PROSPECT_MS_ENDPOINTS.addProspect}/${prospectIDCreated}`;
         }else if (serviceName === 'add prospect contact') {
             endpoint = `${ENV_DATA[BRAND].PROSPECT_MS_ENDPOINTS.addProspect}`;
-        }else{
+        }else if (serviceName === 'create intent') {
+            endpoint = `${ENV_DATA[BRAND].PROSPECT_MS_ENDPOINTS.createIntent}/${prospectIDCreated}/intent`;
+        }else if (serviceName === 'find intent') {
+            endpoint = `${ENV_DATA[BRAND].PROSPECT_MS_ENDPOINTS.findIntent}/${prospectIDCreated}/intent`;
+        }else if (serviceName === 'find intent by id'){
+            // ProspectId/intent/:IntentId
+            endpoint = `${ENV_DATA[BRAND].PROSPECT_MS_ENDPOINTS.findIntentwithID}/${prospectIDCreated}/intent/${intentIDCreated}`; 
+        }
+        else{
             throw `service name ${serviceName} not defined`
         }
         console.log(`Executing the tests on ${url}${endpoint}`);
         await requestHandler.setEndpoint(url + endpoint);
         await requestHandler.setVerb(verb.toUpperCase());
         if(test_data !== 'invalid value of x-authorization-id'){
-            await requestHandler.setHeader(`x-authorization-id`, identifier);
+            await requestHandler.setHeader(`x-authorization-id`, header);
         }
         if (['POST', 'PUT'].includes(verb.toUpperCase())) {
             await requestHandler.setBodyJson(test_data_body)
@@ -373,7 +463,7 @@ Then('Validate the response of {string} for {string} and {string} in DB', async 
     expect(actual_response_find.status).to.be.equal(200);
 
     let data_to_verify = null;
-    if (['create prospect','add prospect contact using prospect id', 'add prospect contact', 'find prospect'].includes(serviceName)) {
+    if (['create prospect','add prospect contact using prospect id', 'add prospect contact', 'find prospect', 'create intent'].includes(serviceName)) {
         data_to_verify = {
             "created_on": created_on,
             "brand_identifier": brand_identifier,
@@ -385,6 +475,9 @@ Then('Validate the response of {string} for {string} and {string} in DB', async 
             'email' : email,
             'mobile' : mobile,
             'active_from' : active_from,
+            'active_from_intent' : active_from_intent,
+            'intentQuestionaiarPayload' : intentQuestionaiarPayload,
+            'intentIDCreated' : intentIDCreated
         }
     }else{
         throw `service - ${serviceName} is not defined`
