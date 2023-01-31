@@ -1,550 +1,1300 @@
 {
-    "openapi": "3.0.3",
-    "info": {
-      "title": "Swagger Prospect Management Micro Service - OpenAPI 3.0",
-      "description": "This is Prospect Management Micro Service Node Server based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). In the third iteration of the prospect managment micro service, we've switched to the design first approach!\nYou can now help us improve the API whether it's by making changes to the definition itself or to the code.\nThat way, with time, we can improve the API in general, and expose some of the new features in OAS3.",
-      "termsOfService": "http://swagger.io/terms/",
-      "contact": {
-        "email": "apiteam@swagger.io"
-      },
-      "license": {
-        "name": "Apache 2.0",
-        "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
-      },
-      "version": "1.0.11"
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Swagger Prospect Management Micro Service - OpenAPI 3.0",
+    "description": "This is Prospect Management Micro Service Node Server based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). In the third iteration of the prospect managment micro service, we've switched to the design first approach!\nYou can now help us improve the API whether it's by making changes to the definition itself or to the code.\nThat way, with time, we can improve the API in general, and expose some of the new features in OAS3.",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "apiteam@swagger.io"
     },
-    "externalDocs": {
-      "description": "Find out more about Swagger",
-      "url": "http://swagger.io"
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "servers": [
-      {
-        "url": "https://prospect.swagger.io/api/v3"
+    "version": "1.0.11"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "https://prospect.swagger.io/api/v3"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Find Prospect",
+      "description": "Everything about Find Prospect",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
       }
-    ],
-    "tags": [
-      {
-        "name": "Find Prospect",
-        "description": "Everything about Find Prospect",
-        "externalDocs": {
-          "description": "Find out more",
-          "url": "http://swagger.io"
-        }
-      },
-      {
-        "name": "Find Prospect Information",
-        "description": "Everything about Find Prospect information",
-        "externalDocs": {
-          "description": "Find out more",
-          "url": "http://swagger.io"
-        }
+    },
+    {
+      "name": "Find Prospect Information",
+      "description": "Everything about Find Prospect information",
+      "externalDocs": {
+        "description": "Find out more",
+        "url": "http://swagger.io"
       }
-    ],
-    "paths": {
-      "/api/v1/prospect/{ProspectId}/fetch": {
-        "get": {
-          "tags": [
-            "Find Prospect Information"
-          ],
-          "summary": "Find prospect by prospect id",
-          "description": "Find prospect by prospect id",
-          "operationId": "findProspectById",
-          "parameters": [
-            {
-              "name": "x-authorization-id",
-              "in": "header",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "format": "dummyValue"
-              },
-              "description": "Unique Request Id."
+    }
+  ],
+  "paths": {
+    "/api/v1/prospect/{ProspectId}/fetch": {
+      "get": {
+        "tags": [
+          "Find Prospect Information"
+        ],
+        "summary": "Find prospect by prospect id",
+        "description": "Find prospect by prospect id",
+        "operationId": "findProspectById",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
             },
-            {
-              "name": "ProspectId",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "description": "Prospect Id."
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful operation",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ProspectInformation"
-                  }
-                },
-                "application/xml": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ProspectInformation"
-                  }
-                }
-              }
+            "description": "Unique Request Id."
+          },
+          {
+            "name": "ProspectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
             },
-            "400": {
-              "description": "Invalid ID supplied"
-            },
-            "404": {
-              "description": "Prospect not found"
-            },
-            "405": {
-              "description": "Validation exception"
-            }
+            "description": "Prospect Id."
           }
-        }
-      },
-      "/api/v1/prospect/{ProspectId}/fetch/{PayloadIdentifier}": {
-        "get": {
-          "tags": [
-            "Find Prospect Information"
-          ],
-          "summary": "Find prospect by prospect id",
-          "description": "Find prospect by prospect id",
-          "operationId": "findProspectById",
-          "parameters": [
-            {
-              "name": "x-authorization-id",
-              "in": "header",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "format": "dummyValue"
-              },
-              "description": "Unique Request Id."
-            },
-            {
-              "name": "ProspectId",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "description": "Prospect Id."
-            },
-            {
-              "name": "PayloadIdentifier",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "format": "NewHomeCalculator"
-              },
-              "description": "Payload Identifier value."
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful operation",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ProspectInformations"
-                  }
-                },
-                "application/xml": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ProspectInformations"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": "Invalid ID supplied"
-            },
-            "404": {
-              "description": "Prospect not found"
-            },
-            "405": {
-              "description": "Validation exception"
-            }
-          }
-        }
-      },
-      "/api/v1/prospect/{ProspectId}/fetch/{PayloadIdentifier}/{PayloadId}": {
-        "get": {
-          "tags": [
-            "Find Prospect Information"
-          ],
-          "summary": "Find prospect by prospect id",
-          "description": "Find prospect by prospect id",
-          "operationId": "findProspectById",
-          "parameters": [
-            {
-              "name": "x-authorization-id",
-              "in": "header",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "format": "dummyValue"
-              },
-              "description": "Unique Request Id."
-            },
-            {
-              "name": "ProspectId",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "description": "Prospect Id."
-            },
-            {
-              "name": "PayloadIdentifier",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "format": "NewHomeCalculator"
-              },
-              "description": "Payload Identifier value."
-            },
-            {
-              "name": "PayloadId",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "format": "PL1001"
-              },
-              "description": "Payload Id value."
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful operation",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ProspectInformations"
-                  }
-                },
-                "application/xml": {
-                  "schema": {
-                    "$ref": "#/components/schemas/ProspectInformations"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": "Invalid ID supplied"
-            },
-            "404": {
-              "description": "Prospect not found"
-            },
-            "405": {
-              "description": "Validation exception"
-            }
-          }
-        }
-      },
-      "/api/v1/prospect/{ProspectId}": {
-        "get": {
-          "tags": [
-            "Find Prospect"
-          ],
-          "summary": "Find prospect by prospect id",
-          "description": "Find prospect by prospect id",
-          "operationId": "findProspectById",
-          "parameters": [
-            {
-              "name": "x-authorization-id",
-              "in": "header",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "format": "dummyValue"
-              },
-              "description": "Unique Request Id."
-            },
-            {
-              "name": "ProspectId",
-              "in": "path",
-              "required": true,
-              "schema": {
-                "type": "integer",
-                "format": "int64"
-              },
-              "description": "Prospect Id."
-            }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful operation",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Prospect"
-                  }
-                },
-                "application/xml": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Prospect"
-                  }
-                }
-              }
-            },
-            "400": {
-              "description": "Invalid ID supplied"
-            },
-            "404": {
-              "description": "Prospect not found"
-            },
-            "405": {
-              "description": "Validation exception"
-            }
-          }
-        }
-      },
-      "/api/v1/prospect/find": {
-        "post": {
-          "tags": [
-            "Find Prospect"
-          ],
-          "summary": "Find Prospect by IdentifierType and IdentifierValue",
-          "description": "Find Prospect by IdentifierType and IdentifierValue",
-          "operationId": "findProspect",
-          "parameters": [
-            {
-              "name": "x-authorization-id",
-              "in": "header",
-              "required": true,
-              "schema": {
-                "type": "string",
-                "format": "dummyValue"
-              },
-              "description": "Unique Request Id."
-            }
-          ],
-          "requestBody": {
-            "description": "Create a new Prospect in the store",
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FindProspectSchema"
+                  "$ref": "#/components/schemas/ProspectInformation"
                 }
               },
               "application/xml": {
                 "schema": {
-                  "$ref": "#/components/schemas/FindProspectSchema"
-                }
-              },
-              "application/x-www-form-urlencoded": {
-                "schema": {
-                  "$ref": "#/components/schemas/FindProspectSchema"
+                  "$ref": "#/components/schemas/ProspectInformation"
                 }
               }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Successful operation",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Prospect"
-                  }
-                },
-                "application/xml": {
-                  "schema": {
-                    "$ref": "#/components/schemas/Prospect"
-                  }
-                }
-              }
-            },
-            "405": {
-              "description": "Invalid input"
             }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Prospect not found"
+          },
+          "405": {
+            "description": "Validation exception"
           }
         }
       }
     },
-    "components": {
-      "schemas": {
-        "ProspectInformations": {
-          "type": "array",
-          "xml": {
-            "wrapped": true
-          },
-          "items": {
-            "$ref": "#/components/schemas/ProspectInformationSchema"
-          }
-        },
-        "ProspectInformation": {
-          "type": "object",
-          "properties": {
-            "prospect_id": {
-              "type": "integer",
-              "example": 10000001
+    "/api/v1/prospect/{ProspectId}/fetch/{PayloadIdentifier}": {
+      "get": {
+        "tags": [
+          "Find Prospect Information"
+        ],
+        "summary": "Find prospect by prospect id",
+        "description": "Find prospect by prospect id",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
             },
-            "ProspectIdentifier": {
-              "type": "array",
-              "xml": {
-                "wrapped": true
+            "description": "Unique Request Id."
+          },
+          {
+            "name": "ProspectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Prospect Id."
+          },
+          {
+            "name": "PayloadIdentifier",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "NewHomeCalculator"
+            },
+            "description": "Payload Identifier value."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProspectInformations"
+                }
               },
-              "items": {
-                "$ref": "#/components/schemas/ProspectInformationSchema"
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProspectInformations"
+                }
               }
             }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Prospect not found"
+          },
+          "405": {
+            "description": "Validation exception"
           }
-        },
-        "ProspectInformationSchema": {
-          "type": "object",
-          "properties": {
-            "prospect_id": {
+        }
+      }
+    },
+    "/api/v1/prospect/{ProspectId}/fetch/{PayloadIdentifier}/{PayloadId}": {
+      "get": {
+        "tags": [
+          "Find Prospect Information"
+        ],
+        "summary": "Find prospect by prospect id",
+        "description": "Find prospect by prospect id",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
+            },
+            "description": "Unique Request Id."
+          },
+          {
+            "name": "ProspectId",
+            "in": "path",
+            "required": true,
+            "schema": {
               "type": "integer",
-              "example": 10000001
+              "format": "int64"
             },
-            "payload_id": {
-              "type": "string",
-              "example": "PID1"
-            },
-            "payload_identifier": {
-              "type": "string",
-              "example": "NewHomeCalculator"
-            },
-            "payload_body": {
-              "type": "string",
-              "example": "{name: Lloyds}"
-            },
-            "active_from": {
-              "type": "string",
-              "example": "17-01-2023"
-            },
-            "active_to": {
-              "type": "string",
-              "example": "17-01-2023"
-            }
+            "description": "Prospect Id."
           },
-          "xml": {
-            "name": "ProspectInformationSchema"
-          }
-        },
-        "ProspectIdentifierSchema": {
-          "type": "object",
-          "properties": {
-            "prospect_id": {
-              "type": "integer",
-              "example": 10000001
-            },
-            "prospect_identifier_id": {
+          {
+            "name": "PayloadIdentifier",
+            "in": "path",
+            "required": true,
+            "schema": {
               "type": "string",
-              "example": "PID1"
+              "format": "NewHomeCalculator"
             },
-            "identifier": {
-              "type": "string",
-              "example": "SessionId"
-            },
-            "identifier_type": {
-              "type": "string",
-              "example": 12345621
-            },
-            "active_from": {
-              "type": "string",
-              "example": "17-01-2023"
-            },
-            "active_to": {
-              "type": "string",
-              "example": "17-01-2023"
-            }
+            "description": "Payload Identifier value."
           },
-          "xml": {
-            "name": "ProspectSchema"
+          {
+            "name": "PayloadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "PL1001"
+            },
+            "description": "Payload Id value."
           }
-        },
-        "ProspectSchema": {
-          "type": "object",
-          "properties": {
-            "prospect_id": {
-              "type": "integer",
-              "example": 10000001
-            },
-            "created_on": {
-              "type": "number",
-              "example": "17-01-2023"
-            },
-            "brand_identifier": {
-              "type": "string",
-              "example": "Lloyds"
-            },
-            "channel_identifier": {
-              "type": "string",
-              "example": "channel"
-            },
-            "first_name": {
-              "type": "string",
-              "example": "Mike"
-            }
-          },
-          "xml": {
-            "name": "ProspectSchema"
-          }
-        },
-        "FindProspectSchema": {
-          "type": "object",
-          "properties": {
-            "IdentifierType": {
-              "type": "string",
-              "example": "SessionId"
-            },
-            "IdentifierValue": {
-              "type": "string",
-              "example": 1234521
-            }
-          },
-          "xml": {
-            "name": "FindProspectSchema"
-          }
-        },
-        "Prospect": {
-          "type": "object",
-          "properties": {
-            "Prospect": {
-              "type": "array",
-              "xml": {
-                "wrapped": true
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProspectInformations"
+                }
               },
-              "items": {
-                "$ref": "#/components/schemas/ProspectSchema"
-              }
-            },
-            "ProspectIdentifier": {
-              "type": "array",
-              "xml": {
-                "wrapped": true
-              },
-              "items": {
-                "$ref": "#/components/schemas/ProspectIdentifierSchema"
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProspectInformations"
+                }
               }
             }
+          },
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Prospect not found"
+          },
+          "405": {
+            "description": "Validation exception"
           }
-        },
-        "ApiResponse": {
-          "type": "object",
-          "properties": {
-            "code": {
+        }
+      }
+    },
+    "/api/v1/prospect/{ProspectId}": {
+      "get": {
+        "tags": [
+          "Find Prospect"
+        ],
+        "summary": "Find prospect by prospect id",
+        "description": "Find prospect by prospect id\\",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
+            },
+            "description": "Unique Request Id."
+          },
+          {
+            "name": "ProspectId",
+            "in": "path",
+            "required": true,
+            "schema": {
               "type": "integer",
-              "format": "int32"
+              "format": "int64"
             },
-            "type": {
-              "type": "string"
-            },
-            "message": {
-              "type": "string"
+            "description": "Prospect Id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Prospect"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Prospect"
+                }
+              }
             }
           },
-          "xml": {
-            "name": "##default"
+          "400": {
+            "description": "Invalid ID supplied"
+          },
+          "404": {
+            "description": "Prospect not found"
+          },
+          "405": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Add Prospect"
+        ],
+        "summary": "Update prospect Details for the given prospectId",
+        "description": "Update prospect details for the given prospectId",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
+            },
+            "description": "Unique Request Id"
+          },
+          {
+            "name": "ProspectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Prospect Id."
+          }
+        ],
+        "requestBody": {
+          "description": "Update the prospect with the new details given",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProspectSchema"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProspectSchema"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProspectSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully Updated Prospect"
+          },
+          "400": {
+            "description": "Invalid usertype"
+          },
+          "404": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/v1/prospect/": {
+      "post": {
+        "tags": [
+          "Create Prospect"
+        ],
+        "summary": "Create prospect with new prospect Id",
+        "description": "Create prospect with new prospect Id",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
+            },
+            "description": "Unique Request Id"
+          }
+        ],
+        "requestBody": {
+          "description": "Create a new Prospect in the store",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProspectSchema"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProspectSchema"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProspectSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully Created Prospect",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateProspectResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateProspectResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Prospect already exists"
+          },
+          "404": {
+            "description": "Validation exception"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Add Prospect"
+        ],
+        "summary": "Update prospect Details",
+        "description": "Update prospect details",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
+            },
+            "description": "Unique Request Id"
+          }
+        ],
+        "requestBody": {
+          "description": "Update the prospect with the new details given",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProspectSchema"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProspectSchema"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProspectSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully Updated Prospect"
+          },
+          "400": {
+            "description": "Invalid usertype"
+          },
+          "404": {
+            "description": "Validation exception"
+          }
+        }
+      }
+    },
+    "/api/v1/prospect/{ProspectId}/intent": {
+      "get": {
+        "tags": [
+          "Find Intent"
+        ],
+        "summary": "Find intent by prospectId",
+        "description": "Find intent by prospectId",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
+            },
+            "description": "Unique Request Id"
+          },
+          {
+            "name": "ProspectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Prospect Id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfull Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindIntentResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindIntentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Usertype"
+          },
+          "404": {
+            "description": "Prospect Not Found / No active record"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Create Intent"
+        ],
+        "summary": "Create intent with new intent id",
+        "description": "Create intent with new intent Id",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
+            },
+            "description": "Unique Request Id"
+          },
+          {
+            "name": "ProspectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Prospect Id."
+          }
+        ],
+        "requestBody": {
+          "description": "Create a new Intent in the store",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIntentSchema"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIntentSchema"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateIntentSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully Created Intent",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateIntentResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateIntentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Intent already exists"
+          },
+          "404": {
+            "description": "Validation exception / Invalid prospectid"
+          }
+        }
+      }
+    },
+    "/api/v1/prospect/{ProspectId}/intent/{IntentId}": {
+      "get": {
+        "tags": [
+          "Find Intent by intentId and ProspectId"
+        ],
+        "summary": "Find intent by intentId and ProspectId",
+        "description": "Find intent by intentId and ProspectId",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
+            },
+            "description": "Unique Request Id"
+          },
+          {
+            "name": "ProspectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Prospect Id."
+          },
+          {
+            "name": "IntentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Intent Id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfull Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindIntentResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindIntentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Usertype"
+          },
+          "404": {
+            "description": "Prospect Not Found / No active record"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Update Intent by intentId and ProspectId"
+        ],
+        "summary": "Update intent by intentId and ProspectId",
+        "description": "Update intent by intentId and ProspectId",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
+            },
+            "description": "Unique Request Id"
+          },
+          {
+            "name": "ProspectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Prospect Id."
+          },
+          {
+            "name": "IntentId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Intent Id."
+          }
+        ],
+        "requestBody": {
+          "description": "Update intent by intentId and ProspectId",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateIntentSchema"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateIntentSchema"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateIntentSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfull Operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateIntentResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateIntentResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Usertype"
+          },
+          "404": {
+            "description": "Prospect Not Found / No active record"
+          }
+        }
+      }
+    },
+    "/api/v1/prospect/{ProspectId}/save": {
+      "post": {
+        "tags": [
+          "Create Prospect Information Record"
+        ],
+        "summary": "Create Prospect Information Record with new payload id",
+        "description": "Create Prospect Information Record with new payload id",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
+            },
+            "description": "Unique Request Id"
+          },
+          {
+            "name": "ProspectId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "description": "Prospect Id."
+          }
+        ],
+        "requestBody": {
+          "description": "Create a new Prospect Information Record in the store",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProspectInfoSchema"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProspectInfoSchema"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProspectInfoSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successfully Created Prospect Information Record",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateProspectInfoResponse"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateProspectInfoResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Prospect doesn't exist/invalid usertype"
+          },
+          "404": {
+            "description": "Validation exception / Invalid prospectid"
+          }
+        }
+      }
+    },
+    "/api/v1/prospect/find": {
+      "post": {
+        "tags": [
+          "Find Prospect"
+        ],
+        "summary": "Find Prospect by IdentifierType and IdentifierValue",
+        "description": "Find Prospect by IdentifierType and IdentifierValue",
+        "operationId": "findProspect",
+        "parameters": [
+          {
+            "name": "x-authorization-id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "dummyValue"
+            },
+            "description": "Unique Request Id."
+          }
+        ],
+        "requestBody": {
+          "description": "Create a new Prospect in the store",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindProspectSchema"
+              }
+            },
+            "application/xml": {
+              "schema": {
+                "$ref": "#/components/schemas/FindProspectSchema"
+              }
+            },
+            "application/x-www-form-urlencoded": {
+              "schema": {
+                "$ref": "#/components/schemas/FindProspectSchema"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Prospect"
+                }
+              },
+              "application/xml": {
+                "schema": {
+                  "$ref": "#/components/schemas/Prospect"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Invalid input"
           }
         }
       }
     }
+  },
+  "components": {
+    "schemas": {
+      "ProspectInformations": {
+        "type": "array",
+        "xml": {
+          "wrapped": true
+        },
+        "items": {
+          "$ref": "#/components/schemas/ProspectInformationSchema"
+        }
+      },
+      "ProspectInformation": {
+        "type": "object",
+        "properties": {
+          "prospect_id": {
+            "type": "integer",
+            "example": 10000001
+          },
+          "ProspectIdentifier": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/components/schemas/ProspectInformationSchema"
+            }
+          }
+        }
+      },
+      "ProspectInformationSchema": {
+        "type": "object",
+        "properties": {
+          "prospect_id": {
+            "type": "integer",
+            "example": 10000001
+          },
+          "payload_id": {
+            "type": "string",
+            "example": "PID1"
+          },
+          "payload_identifier": {
+            "type": "string",
+            "example": "NewHomeCalculator"
+          },
+          "payload_body": {
+            "type": "string",
+            "example": "{name: Lloyds}"
+          },
+          "active_from": {
+            "type": "string",
+            "example": "17-01-2023"
+          },
+          "active_to": {
+            "type": "string",
+            "example": "17-01-2023"
+          }
+        },
+        "xml": {
+          "name": "ProspectInformationSchema"
+        }
+      },
+      "CreateProspectResponse": {
+        "type": "object",
+        "properties": {
+          "prospect_id": {
+            "type": "integer",
+            "example": 10000001
+          }
+        }
+      },
+      "CreateIntentResponse": {
+        "type": "object",
+        "properties": {
+          "intent_id": {
+            "type": "string",
+            "example": "INT1"
+          }
+        }
+      },
+      "UpdateIntentResponse": {
+        "type": "object",
+        "properties": {
+          "intent_id": {
+            "type": "string",
+            "example": "INT1"
+          }
+        }
+      },
+      "FindIntentResponse": {
+        "type": "object",
+        "properties": {
+          "intent_id": {
+            "type": "string",
+            "example": "INT1"
+          },
+          "prospect_id": {
+            "type": "integer",
+            "example": 100000008
+          },
+          "intent_questionaire_payload": {
+            "type": "string",
+            "example": {
+              "CustomerIntention": "Customer_Intention1",
+              "FirstProperty": "FirstProperty1",
+              "BuyingReadiness": "BuyingReadiness1",
+              "NoOfApplicants": "NoOfApplicants1",
+              "Occupying": "Occupying1",
+              "LbgMortgaged": "LbgMortgaged1",
+              "RemoReadiness": "RemoReadiness1"
+            }
+          },
+          "active_from": {
+            "type": "number",
+            "example": "2021-12-07T15:45:35.023Z"
+          },
+          "active_to": {
+            "type": "number",
+            "example": "2022-12-07T15:45:35.023Z"
+          }
+        },
+        "xml": {
+          "name": "CreateIntentSchema"
+        }
+      },
+      "CreateProspectInfoResponse": {
+        "type": "object",
+        "properties": {
+          "payload_id": {
+            "type": "string",
+            "example": "PL1"
+          }
+        }
+      },
+      "ProspectIdentifierSchema": {
+        "type": "object",
+        "properties": {
+          "prospect_id": {
+            "type": "integer",
+            "example": 10000001
+          },
+          "prospect_identifier_id": {
+            "type": "string",
+            "example": "PID1"
+          },
+          "identifier": {
+            "type": "string",
+            "example": "SessionId"
+          },
+          "identifier_type": {
+            "type": "string",
+            "example": 12345621
+          },
+          "active_from": {
+            "type": "string",
+            "example": "17-01-2023"
+          },
+          "active_to": {
+            "type": "string",
+            "example": "17-01-2023"
+          }
+        },
+        "xml": {
+          "name": "ProspectSchema"
+        }
+      },
+      "ProspectSchema": {
+        "type": "object",
+        "properties": {
+          "prospect_id": {
+            "type": "integer",
+            "example": 10000001
+          },
+          "created_on": {
+            "type": "number",
+            "example": "17-01-2023"
+          },
+          "brand_identifier": {
+            "type": "string",
+            "example": "Lloyds"
+          },
+          "channel_identifier": {
+            "type": "string",
+            "example": "channel"
+          },
+          "first_name": {
+            "type": "string",
+            "example": "Mike"
+          }
+        },
+        "xml": {
+          "name": "ProspectSchema"
+        }
+      },
+      "FindProspectSchema": {
+        "type": "object",
+        "properties": {
+          "IdentifierType": {
+            "type": "string",
+            "example": "SessionId"
+          },
+          "IdentifierValue": {
+            "type": "string",
+            "example": 1234521
+          }
+        },
+        "xml": {
+          "name": "FindProspectSchema"
+        }
+      },
+      "CreateProspectSchema": {
+        "type": "object",
+        "properties": {
+          "first_name": {
+            "type": "string",
+            "example": "abcd"
+          },
+          "created_on": {
+            "type": "number",
+            "example": "2021-12-07T15:45:35.023"
+          },
+          "brand_identifier": {
+            "type": "string",
+            "example": "brand_identifier_1"
+          },
+          "channel_identifier": {
+            "type": "string",
+            "example": "channel_identifier_1"
+          }
+        },
+        "xml": {
+          "name": "CreateProspectSchema"
+        }
+      },
+      "UpdateProspectSchema": {
+        "type": "object",
+        "example": [
+          {
+            "IdentifierType": "EmailIdaq",
+            "IdentifierValue": "abc30@gmail.com",
+            "ActiveFrom": "2022-12-07T15:52:35.02"
+          },
+          {
+            "IdentifierType": "MobileNumber",
+            "IdentifierValue": "7499990000",
+            "ActiveFrom": "2022-12-07T15:56:35.023"
+          },
+          {
+            "IdentifierType": "first_name",
+            "IdentifierValue": "FirstName2",
+            "ActiveFrom": "2022-12-07T15:56:35.023"
+          },
+          {
+            "IdentifierType": "brand_identifier",
+            "IdentifierValue": "Brand2",
+            "ActiveFrom": "2022-12-07T15:56:35.023"
+          }
+        ],
+        "xml": {
+          "name": "UpdateProspectSchema"
+        }
+      },
+      "CreateIntentSchema": {
+        "type": "object",
+        "properties": {
+          "intent_questionaire_payload": {
+            "type": "string",
+            "example": {
+              "CustomerIntention": "Customer_Intention1",
+              "FirstProperty": "FirstProperty1",
+              "BuyingReadiness": "BuyingReadiness1",
+              "NoOfApplicants": "NoOfApplicants1",
+              "Occupying": "Occupying1",
+              "LbgMortgaged": "LbgMortgaged1",
+              "RemoReadiness": "RemoReadiness1"
+            }
+          },
+          "active_from": {
+            "type": "number",
+            "example": "2021-12-07T15:45:35.023Z"
+          }
+        },
+        "xml": {
+          "name": "CreateIntentSchema"
+        }
+      },
+      "UpdateIntentSchema": {
+        "type": "object",
+        "properties": {
+          "intent_questionaire_payload": {
+            "type": "string",
+            "example": {
+              "CustomerIntention": "Customer_Intention1",
+              "FirstProperty": "FirstProperty1",
+              "BuyingReadiness": "BuyingReadiness1",
+              "NoOfApplicants": "NoOfApplicants1",
+              "Occupying": "Occupying1",
+              "LbgMortgaged": "LbgMortgaged1",
+              "RemoReadiness": "RemoReadiness1"
+            }
+          },
+          "active_from": {
+            "type": "number",
+            "example": "2021-12-07T15:45:35.023Z"
+          }
+        },
+        "xml": {
+          "name": "UpdateIntentSchema"
+        }
+      },
+      "CreateProspectInfoSchema": {
+        "type": "object",
+        "properties": {
+          "payload_identifier": {
+            "type": "string",
+            "example": "payload_identifier1"
+          },
+          "payload_body": {
+            "type": "string",
+            "example": {
+              "MortCalculator_AmountBorrowingIntentFlag": "MortCalculator_AmountBorrowingIntentFlag_1",
+              "MortCalculator_MortgageCostIntentFlag": "MortCalculator_MortgageCostIntentFlag_1",
+              "MortCalculator_SingularOrMultiparty": "MortCalculator_SingularOrMultiparty_1",
+              "MortCalculator_EmploymentStatus": "MortCalculator_EmploymentStatus_1",
+              "MortCalculator_NoOfAdultsRelyingonIncome": "MortCalculator_NoOfAdultsRelyingonIncome_1",
+              "MortCalculator_AnnualBasicIncome": "MortCalculator_AnnualBasicIncome_1",
+              "MortCalculator_ProfitEarned": "MortCalculator_ProfitEarned_1",
+              "MortCalculator_BonusIncome": "MortCalculator_BonusIncome_1",
+              "MortCalculator_OvertimeIncome": "MortCalculator_OvertimeIncome_1",
+              "MortCalculator_ExtraComission": "MortCalculator_ExtraComission_1",
+              "MortCalculator_OtherIncome": "MortCalculator_OtherIncome_1",
+              "MortCalculator_outgoings_creditcardPaymentFlag": "MortCalculator_outgoings_creditcardPaymentFlag_1",
+              "MortCalculator_outgoings_total_Balance_Outstanding": "MortCalculator_outgoings_total_Balance_Outstanding_1",
+              "MortCalculator_outgoings_PayingOffLoansFlag": "MortCalculator_outgoings_PayingOffLoansFlag_1",
+              "MortCalculator_outgoings_LoansMonthyOutstanding": "MortCalculator_outgoings_LoansMonthyOutstanding_1",
+              "MortCalculator_outgoings_OtherRegularExpensesFlag": "MortCalculator_outgoings_OtherRegularExpensesFlag_1",
+              "MortCalculator_Borrowing_result_Amount": "MortCalculator_Borrowing_result_Amount_1",
+              "MortCalculator_Borrowing_Home_ApproxCost_Amount": "MortCalculator_Borrowing_Home_ApproxCost_Amount_1",
+              "MortCalculator_Borrowing_Home_DepositAmountIntent": "MortCalculator_Borrowing_Home_DepositAmountIntent_1",
+              "MortCalculator_Borrowing_TenureIntent": "MortCalculator_Borrowing_TenureIntent_1",
+              "MortCalculator_JointapplicantEmploymentStatus": "MortCalculator_JointapplicantEmploymentStatus_1",
+              "MortCalculator_JointapplicantAnnualBasicIncome": "MortCalculator_JointapplicantAnnualBasicIncome_1",
+              "MortCalculator_JointapplicantProfitEarned": "MortCalculator_JointapplicantProfitEarned_1",
+              "MortCalculator_JointapplicantProfitEarnedYear2": "MortCalculator_JointapplicantProfitEarnedYear2_1",
+              "MortCalculator_JointapplicantBonusIncome": "MortCalculator_JointapplicantBonusIncome_1",
+              "MortCalculator_JointapplicantOvertimeIncome": "MortCalculator_JointapplicantOvertimeIncome_1",
+              "MortCalculator_JointapplicantExtraComission": "MortCalculator_JointapplicantExtraComission_1",
+              "MortCalculator_JointapplicantOtherIncome": "MortCalculator_JointapplicantOtherIncome_1",
+              "MortCalculator_outgoings_OtherRegularExpensesAmount": "MortCalculator_outgoings_OtherRegularExpensesAmount_1",
+              "MortCalculator_outgoings_jointapplicanttotal_Balance_Outstanding": "MortCalculator_outgoings_jointapplicanttotal_Balance_Outstanding_1",
+              "MortCalculator_outgoings_jointapplicantPayingOffLoansFlag": "MortCalculator_outgoings_jointapplicantPayingOffLoansFlag_1",
+              "MortCalculator_outgoings_jointapplicantLoansMonthyOutstanding": "MortCalculator_outgoings_jointapplicantLoansMonthyOutstanding_1",
+              "MortCalculator_outgoings_jointapplicantOtherRegularExpensesFlag": "MortCalculator_outgoings_jointapplicantOtherRegularExpensesFlag",
+              "MortCalculator_outgoings_jointapplicantOtherRegularExpensesAmount": "MortCalculator_outgoings_jointapplicantOtherRegularExpensesAmount"
+            }
+          },
+          "active_from": {
+            "type": "number",
+            "example": "2021-12-07T15:45:35.023Z"
+          }
+        },
+        "xml": {
+          "name": "CreateProspectInfoSchema"
+        }
+      },
+      "Prospect": {
+        "type": "object",
+        "properties": {
+          "Prospect": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/components/schemas/ProspectSchema"
+            }
+          },
+          "ProspectIdentifier": {
+            "type": "array",
+            "xml": {
+              "wrapped": true
+            },
+            "items": {
+              "$ref": "#/components/schemas/ProspectIdentifierSchema"
+            }
+          }
+        }
+      },
+      "ApiResponse": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "type": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "xml": {
+          "name": "##default"
+        }
+      }
+    }
   }
+}
